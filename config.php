@@ -65,6 +65,7 @@ function getDB() {
 
 function statusLabel($status) {
     return match($status) {
+        'MENUNGGU_PENYEMAK'     => 'Menunggu Penyemak',
         'MENUNGGU_PENGARAH_JAB' => 'Menunggu Pengarah Jabatan',
         'MENUNGGU_JTIK'         => 'Menunggu Kelulusan JTIK',
         'DILULUSKAN'            => 'Diluluskan',
@@ -76,6 +77,7 @@ function statusLabel($status) {
 
 function statusClass($status) {
     return match($status) {
+        'MENUNGGU_PENYEMAK'     => 'badge-secondary',
         'MENUNGGU_PENGARAH_JAB' => 'badge-warning',
         'MENUNGGU_JTIK'         => 'badge-info',
         'DILULUSKAN'            => 'badge-success',

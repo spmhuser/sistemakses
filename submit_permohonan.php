@@ -21,8 +21,8 @@ $db = getDB();
 $no_rujukan = 'BCS-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
 
 $stmt = $db->prepare("
-    INSERT INTO permohonan (no_rujukan,user_id,nama,no_kakitangan,jawatan,gred_jawatan,jabatan,telefon,tujuan)
-    VALUES (?,?,?,?,?,?,?,?,?)
+    INSERT INTO permohonan (no_rujukan,user_id,nama,no_kakitangan,jawatan,gred_jawatan,jabatan,telefon,tujuan,status)
+    VALUES (?,?,?,?,?,?,?,?,?,'MENUNGGU_PENYEMAK')
 ");
 $stmt->execute([$no_rujukan, $_SESSION['user_id'], $nama, $no_kakitangan, $jawatan, $gred_jawatan, $jabatan, $telefon, $tujuan]);
 $pid = $db->lastInsertId();

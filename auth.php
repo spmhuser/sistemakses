@@ -24,6 +24,7 @@ function requireRole($roles) {
 function redirectByRole() {
     $map = [
         'pemohon'          => 'dashboard_pemohon.php',
+        'penyemak'         => 'dashboard_penyemak.php',
         'pengarah_jab'     => 'dashboard_pengarah_jab.php',
         'pengarah_jtik'    => 'dashboard_pengarah_jtik.php',
         'admin_it'         => 'dashboard_admin_it.php',

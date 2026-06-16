@@ -18,13 +18,24 @@ $tolak   = array_filter($selesai, fn($r)=>$r['status']==='TIDAK_DILULUSKAN');
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <?php sharedCSS(); ?>
     <style>
-        .dash-tabs{display:flex;gap:4px;border-bottom:2px solid #fce7f3;margin-bottom:0}
-        .dash-tab{background:none;border:none;border-bottom:3px solid transparent;padding:10px 20px;font-size:0.85rem;font-weight:600;color:#6b7280;cursor:pointer;margin-bottom:-2px;transition:all 0.15s}
-        .dash-tab:hover{color:#831843}
-        .dash-tab.active{color:#831843;border-bottom-color:#be185d}
+        .dash-tabs{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+        .dash-tab{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;font-size:0.9rem;font-weight:700;border-radius:50px;border:2px solid #ddd6fe;background:#fff;color:#9ca3af;cursor:pointer;transition:all 0.2s;letter-spacing:0.01em;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+        .dash-tab:hover{border-color:#c4b5fd;color:#6d28d9;background:#f5f3ff;transform:translateY(-2px);box-shadow:0 4px 12px rgba(109,40,217,0.12)}
+        .dash-tab.active{background:#6d28d9;color:#fff;border-color:#6d28d9;box-shadow:0 4px 16px rgba(109,40,217,0.4);transform:translateY(-2px)}
+        .dash-tab.active .tab-badge{background:rgba(255,255,255,0.25);color:#fff}
         .dash-tab-pane{display:none}
         .dash-tab-pane.active{display:block}
-        .tab-badge{font-size:0.7rem;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:5px}
+        .tab-badge{font-size:0.72rem;font-weight:700;padding:2px 9px;border-radius:20px;margin-left:2px;background:#f3f4f6;color:#374151}
+        .chk-col{width:42px;text-align:center}
+        .row-chk{width:16px;height:16px;cursor:pointer;accent-color:#6d28d9}
+        .bulk-bar{display:none;position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
+            background:#6d28d9;color:#fff;border-radius:50px;padding:14px 28px;
+            align-items:center;gap:16px;box-shadow:0 8px 30px rgba(109,40,217,0.5);z-index:999;white-space:nowrap}
+        .bulk-bar.show{display:flex}
+        .bulk-bar-btn{background:#fff;color:#6d28d9;border:none;border-radius:50px;
+            padding:8px 22px;font-weight:700;font-size:0.88rem;cursor:pointer;
+            display:inline-flex;align-items:center;gap:6px;transition:opacity 0.15s}
+        .bulk-bar-btn:hover{opacity:0.85}
     </style>
 </head>
 <body>
@@ -54,16 +65,22 @@ $tolak   = array_filter($selesai, fn($r)=>$r['status']==='TIDAK_DILULUSKAN');
     </div>
 
     <div id="tab-proses" class="dash-tab-pane active">
-        <div class="table-card" style="border-radius:0 0 12px 12px;border-top:none">
+        <form id="bulk-form" method="POST" action="bulk_approve_jab.php">
+        <div class="table-card">
             <table class="data-table">
-                <thead><tr><th style="padding-left:24px">#</th><th>No. Rujukan</th><th>Pemohon</th><th>Jabatan</th><th>Tujuan</th><th>Tarikh Mohon</th><th>Tindakan</th></tr></thead>
+                <thead><tr>
+                    <th class="chk-col"><input type="checkbox" id="chk-all" class="row-chk" title="Pilih Semua"></th>
+                    <th style="padding-left:8px">#</th>
+                    <th>No. Rujukan</th><th>Pemohon</th><th>Jabatan</th><th>Tujuan</th><th>Tarikh Mohon</th><th>Tindakan</th>
+                </tr></thead>
                 <tbody>
                 <?php if(empty($perlu)): ?>
-                <tr><td colspan="7"><div class="empty-state"><i class="bi bi-check2-circle"></i>Tiada permohonan menunggu perakuan.</div></td></tr>
+                <tr><td colspan="8"><div class="empty-state"><i class="bi bi-check2-circle"></i>Tiada permohonan menunggu perakuan.</div></td></tr>
                 <?php else: foreach(array_values($perlu) as $i=>$r): ?>
                 <tr>
-                    <td style="padding-left:24px;color:#9ca3af;font-size:0.8rem"><?=$i+1?></td>
-                    <td style="font-weight:600;color:#831843;font-size:0.82rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
+                    <td class="chk-col"><input type="checkbox" name="ids[]" value="<?=$r['id']?>" class="row-chk item-chk"></td>
+                    <td style="padding-left:8px;color:#9ca3af;font-size:0.8rem"><?=$i+1?></td>
+                    <td style="font-weight:600;color:#6d28d9;font-size:0.82rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
                     <td style="font-weight:500"><?= htmlspecialchars($r['nama']) ?></td>
                     <td style="font-size:0.82rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
                     <td><span class="badge-status badge-info" style="font-size:0.72rem"><?= tujuanLabel($r['tujuan']) ?></span></td>
@@ -77,10 +94,11 @@ $tolak   = array_filter($selesai, fn($r)=>$r['status']==='TIDAK_DILULUSKAN');
                 </tbody>
             </table>
         </div>
+        </form>
     </div>
 
     <div id="tab-selesai" class="dash-tab-pane">
-        <div class="table-card" style="border-radius:0 0 12px 12px;border-top:none">
+        <div class="table-card">
             <table class="data-table">
                 <thead><tr><th style="padding-left:24px">#</th><th>No. Rujukan</th><th>Pemohon</th><th>Jabatan</th><th>Tujuan</th><th>Status</th><th>Tarikh Peraku</th><th>Lihat</th></tr></thead>
                 <tbody>
@@ -89,7 +107,7 @@ $tolak   = array_filter($selesai, fn($r)=>$r['status']==='TIDAK_DILULUSKAN');
                 <?php else: foreach(array_values($selesai) as $i=>$r): ?>
                 <tr>
                     <td style="padding-left:24px;color:#9ca3af;font-size:0.8rem"><?=$i+1?></td>
-                    <td style="font-weight:600;color:#831843;font-size:0.82rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
+                    <td style="font-weight:600;color:#6d28d9;font-size:0.82rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
                     <td style="font-weight:500"><?= htmlspecialchars($r['nama']) ?></td>
                     <td style="font-size:0.82rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
                     <td style="font-size:0.82rem"><?= tujuanLabel($r['tujuan']) ?></td>
@@ -103,6 +121,15 @@ $tolak   = array_filter($selesai, fn($r)=>$r['status']==='TIDAK_DILULUSKAN');
         </div>
     </div>
 </div>
+<!-- Floating bulk action bar -->
+<div class="bulk-bar" id="bulk-bar">
+    <i class="bi bi-check2-square" style="font-size:1.1rem"></i>
+    <span id="bulk-count" style="font-weight:700">0 dipilih</span>
+    <button type="button" class="bulk-bar-btn" onclick="submitBulk()">
+        <i class="bi bi-check2-all"></i> Peraku Semua
+    </button>
+    <button type="button" onclick="clearAll()" style="background:rgba(255,255,255,0.15);color:#fff;border:none;border-radius:50px;padding:8px 16px;cursor:pointer;font-size:0.82rem">Batal</button>
+</div>
 <script>
 function switchTab(btn, id) {
     document.querySelectorAll('.dash-tab').forEach(b => b.classList.remove('active'));
@@ -110,5 +137,27 @@ function switchTab(btn, id) {
     btn.classList.add('active');
     document.getElementById(id).classList.add('active');
 }
+function updateBulkBar() {
+    const checked = document.querySelectorAll('.item-chk:checked').length;
+    const bar = document.getElementById('bulk-bar');
+    document.getElementById('bulk-count').textContent = checked + ' dipilih';
+    bar.classList.toggle('show', checked > 0);
+}
+function submitBulk() {
+    if (document.querySelectorAll('.item-chk:checked').length === 0) return;
+    if (confirm('Peraku semua permohonan yang dipilih?')) {
+        document.getElementById('bulk-form').submit();
+    }
+}
+function clearAll() {
+    document.querySelectorAll('.item-chk').forEach(c => c.checked = false);
+    document.getElementById('chk-all').checked = false;
+    updateBulkBar();
+}
+document.getElementById('chk-all').addEventListener('change', function() {
+    document.querySelectorAll('.item-chk').forEach(c => c.checked = this.checked);
+    updateBulkBar();
+});
+document.querySelectorAll('.item-chk').forEach(c => c.addEventListener('change', updateBulkBar));
 </script>
 </body></html>
