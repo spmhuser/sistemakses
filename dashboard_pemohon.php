@@ -118,12 +118,5 @@ $tolak    = count(array_filter($list, fn($r)=>$r['status']==='TIDAK_DILULUSKAN')
         </div>
     </div>
 </div>
-<script>
-function switchTab(btn, id) {
-    document.querySelectorAll('.dash-tab').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.dash-tab-pane').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(id).classList.add('active');
-}
-</script>
+<?php sharedJS(); ?>
 </body></html>

@@ -16,8 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $penyemak_nama  = trim($_POST['penyemak_nama']  ?? '');
     $penyemak_cop   = trim($_POST['penyemak_cop']   ?? '');
     if ($pemberi_nama && $penyemak_nama) {
-        $u = $db->prepare("UPDATE permohonan SET status='AKSES_DIBERIKAN',it_pemberi_nama=?,it_pemberi_cop=?,it_penyemak_nama=?,it_penyemak_cop=?,tarikh_it=datetime('now','+8 hours') WHERE id=?");
-        $u->execute([$pemberi_nama,$pemberi_cop,$penyemak_nama,$penyemak_cop,$id]);
+        $u = $db->prepare("UPDATE permohonan SET status='AKSES_DIBERIKAN',it_pemberi_nama=?,it_pemberi_cop=?,it_penyemak_nama=?,it_penyemak_cop=?,tarikh_it=? WHERE id=?");
+        $u->execute([$pemberi_nama,$pemberi_cop,$penyemak_nama,$penyemak_cop,dbNow(),$id]);
         header('Location: dashboard_admin_it.php?success=1'); exit;
     }
 }
@@ -136,4 +136,5 @@ $sistemList = $sistems->fetchAll();
             </form>
     </div>
 </div>
+<?php sharedJS(); ?>
 </body></html>

@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id']  = $user['id'];
             $_SESSION['username'] = $user['username'];
-            $_SESSION['role']     = $user['role'];
+            $_SESSION['role']     = $user['role'] === 'admin' ? 'admin_it' : $user['role'];
             $_SESSION['nama']     = $user['nama'];
             $_SESSION['jabatan']  = $user['jabatan'];
             redirectByRole();
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-$roleLabels = ['pemohon'=>'Pemohon','pengarah_jab'=>'Pengarah Jabatan','pengarah_jtik'=>'Pengarah JTIK','admin_it'=>'Admin IT'];
+$roleLabels = ['pemohon'=>'Pemohon','pengarah_jab'=>'Pengarah Jabatan','pengarah_jtik'=>'Pengarah JTIK','admin_it'=>'Admin IT','admin'=>'Admin'];
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -83,6 +83,7 @@ $roleLabels = ['pemohon'=>'Pemohon','pengarah_jab'=>'Pengarah Jabatan','pengarah
         <div class="kod-borang">KOD BORANG: 119/D35 &nbsp;|&nbsp; KEMASKINI: 10/2025</div>
     </div>
     <div class="right-panel">
+        <div class="login-card">
         <div class="panel-title">Log Masuk</div>
         <div class="panel-sub">Sila masukkan maklumat pengguna anda</div>
         <?php if ($error): ?>
@@ -116,9 +117,10 @@ $roleLabels = ['pemohon'=>'Pemohon','pengarah_jab'=>'Pengarah Jabatan','pengarah
             <?php endforeach; ?>
         </div>
         <div class="footer-note">
-            Demo: pemohon1/user123 &nbsp;|&nbsp; pengarah_jab/pengarah123<br>
+            Demo: admin/admin &nbsp;|&nbsp; pemohon1/user123 &nbsp;|&nbsp; pengarah_jab/pengarah123<br>
             pengarah_jtik/jtik123 &nbsp;|&nbsp; admin_it/it123
             <br><br>&copy; <?= date('Y') ?> Majlis Bandaraya Seberang Perai
+        </div>
         </div>
     </div>
 </div>

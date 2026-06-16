@@ -196,4 +196,5 @@ $backUrl = match($_SESSION['role']) {
     <div style="margin-top:8px"><a href="tindakan_it.php?id=<?=$r['id']?>" class="btn-primary-dark"><i class="bi bi-key"></i> Berikan Akses</a></div>
     <?php endif; ?>
 </div>
+<?php sharedJS(); ?>
 </body></html>

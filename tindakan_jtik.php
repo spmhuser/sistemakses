@@ -15,8 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $alasan    = trim($_POST['alasan']    ?? '');
     if (in_array($kelulusan, ['DILULUSKAN','TIDAK_DILULUSKAN'])) {
         $status = $kelulusan === 'DILULUSKAN' ? 'DILULUSKAN' : 'TIDAK_DILULUSKAN';
-        $u = $db->prepare("UPDATE permohonan SET status=?,kelulusan_jtik=?,alasan_jtik=?,pengarah_jtik_id=?,tarikh_jtik=datetime('now','+8 hours') WHERE id=?");
-        $u->execute([$status,$kelulusan,$alasan,$_SESSION['user_id'],$id]);
+        $u = $db->prepare("UPDATE permohonan SET status=?,kelulusan_jtik=?,alasan_jtik=?,pengarah_jtik_id=?,tarikh_jtik=? WHERE id=?");
+        $u->execute([$status,$kelulusan,$alasan,$_SESSION['user_id'],dbNow(),$id]);
         header('Location: dashboard_pengarah_jtik.php?success=1'); exit;
     }
 }
@@ -144,4 +144,5 @@ function toggleCard(el) {
     else document.getElementById('cardTolak').classList.add('tolak');
 }
 </script>
+<?php sharedJS(); ?>
 </body></html>

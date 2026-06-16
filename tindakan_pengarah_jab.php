@@ -13,8 +13,8 @@ if (!$r) { header('Location: dashboard_pengarah_jab.php'); exit; }
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama_pengarah = trim($_POST['nama_pengarah'] ?? '');
     if ($nama_pengarah) {
-        $u = $db->prepare("UPDATE permohonan SET status='MENUNGGU_JTIK', pengarah_jab_id=?, nama_pengarah_jab=?, tarikh_pengarah_jab=datetime('now','+8 hours') WHERE id=?");
-        $u->execute([$_SESSION['user_id'], $nama_pengarah, $id]);
+        $u = $db->prepare("UPDATE permohonan SET status='MENUNGGU_JTIK', pengarah_jab_id=?, nama_pengarah_jab=?, tarikh_pengarah_jab=? WHERE id=?");
+        $u->execute([$_SESSION['user_id'], $nama_pengarah, dbNow(), $id]);
         header('Location: dashboard_pengarah_jab.php?success=1'); exit;
     }
 }
@@ -118,4 +118,5 @@ $sistemList = $sistems->fetchAll();
             </form>
     </div>
 </div>
+<?php sharedJS(); ?>
 </body></html>
