@@ -97,6 +97,7 @@ $u = $user->fetch();
                     Tandakan (✓) sistem yang dipohon dan nyatakan catatan jika perlu.
                     <span id="pembatalanNote" style="display:none;color:#dc2626"> (Tidak perlu diisi bagi permohonan pembatalan capaian)</span>
                 </p>
+                <p class="table-scroll-hint"><i class="bi bi-arrow-left-right me-1"></i>Geser ke kiri/kanan untuk lihat semua lajur</p>
                 <div style="overflow-x:auto">
                 <table class="sistem-table">
                     <thead>

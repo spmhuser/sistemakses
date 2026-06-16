@@ -538,6 +538,28 @@ select.form-control-custom {
 ::-webkit-scrollbar-thumb { background: rgba(120, 120, 128, 0.3); border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(120, 120, 128, 0.5); background-clip: padding-box; }
 
+/* HAMBURGER */
+.hamburger {
+    display: none; position: fixed; top: 16px; left: 16px; z-index: 201;
+    background: var(--ios-elevated); color: #f8fafc; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;
+    width: 42px; height: 42px; font-size: 1.2rem;
+    align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: var(--shadow-md); transition: background var(--dur-fast) var(--ease-ios), transform var(--dur-normal) var(--spring);
+}
+.hamburger:hover { background: var(--blue-800); }
+
+/* SIDEBAR OVERLAY */
+.sidebar-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45); z-index: 99;
+}
+.sidebar-overlay.open { display: block; }
+
+/* TABLE SCROLL HINT — hidden on desktop */
+.table-scroll-hint {
+    display: none; font-size: 0.75rem; color: var(--yellow-400); margin-bottom: 6px;
+}
+
 /* HELPERS */
 .text-primary-theme { color: var(--blue-700) !important; }
 .bg-sec-label {
@@ -638,11 +660,29 @@ table.data-table tbody tr:hover td { background: rgba(250, 204, 21, 0.04); }
 
 /* MOBILE */
 @media (max-width: 768px) {
-    .sidebar { width: 100%; height: auto; min-height: unset; position: relative; }
-    .main-content { margin-left: 0; padding: 16px; }
-    .page-header h4 { font-size: 1.4rem; }
+    .hamburger { display: flex; }
+    .sidebar {
+        width: 100vw;
+        min-height: 100vh;
+        height: 100vh;
+        position: fixed;
+        transform: translateX(-100vw);
+        transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+        z-index: 200;
+    }
+    .sidebar.open { transform: translateX(0); }
+    .main-content { margin-left: 0; padding: 72px 16px 24px; }
+    .page-header h4 { font-size: 1.15rem; }
     .info-row { grid-template-columns: 1fr; }
     .dash-tabs { width: 100%; overflow-x: auto; }
+    .action-row { flex-wrap: wrap; }
+    .stat-num { font-size: 1.5rem; }
+    .stat-card { padding: 16px 18px; }
+    .toast-box { left: 16px; right: 16px; min-width: auto; top: 16px; }
+    .table-scroll-hint { display: block; }
+    .radio-card { padding: 10px 12px; }
+    .form-section-body { padding: 16px; }
+    .view-card-body { padding: 16px; }
 }
 
 <?php chatboxCSS(); ?>
@@ -696,8 +736,12 @@ document.addEventListener('DOMContentLoaded', () => {
 <?php }
 
 function sidebarHTML($username, $roleLabel, $navItems) { ?>
-<div class="sidebar">
-    <div class="sidebar-brand">
+<button class="hamburger" id="hamburger" aria-label="Buka menu">
+    <i class="bi bi-list"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="sidebar" id="mainSidebar">
+    <div class="sidebar-brand" style="position:relative">
         <div class="brand-icon">
             <svg width="26" height="26" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M16 2L4 8v8c0 7.2 5.1 13.9 12 15 6.9-1.1 12-7.8 12-15V8L16 2z" fill="#0d2137" stroke="#facc15" stroke-width="2"/>
@@ -706,6 +750,10 @@ function sidebarHTML($username, $roleLabel, $navItems) { ?>
         </div>
         <div class="brand-title">BORANG CAPAIAN<br>SISTEM</div>
         <div class="brand-sub"><?= htmlspecialchars($roleLabel) ?></div>
+        <button id="sidebarClose"
+            style="display:none;position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.15);border:none;border-radius:8px;color:#fff;width:34px;height:34px;font-size:1.1rem;align-items:center;justify-content:center;cursor:pointer">
+            <i class="bi bi-x-lg"></i>
+        </button>
     </div>
     <div class="sidebar-nav">
         <div class="nav-label">Menu</div>
@@ -726,6 +774,30 @@ function sidebarHTML($username, $roleLabel, $navItems) { ?>
         <a href="logout.php" class="btn-logout"><i class="bi bi-box-arrow-left"></i> Log Keluar</a>
     </div>
 </div>
+<?php renderChatbox(); ?>
+<script>
+(function(){
+    var ham     = document.getElementById('hamburger');
+    var closeBtn= document.getElementById('sidebarClose');
+    var overlay = document.getElementById('sidebarOverlay');
+    var sidebar = document.getElementById('mainSidebar');
+    function openSidebar()  {
+        sidebar.classList.add('open'); overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        ham.style.display = 'none';
+        closeBtn.style.display = 'flex';
+    }
+    function closeSidebar() {
+        sidebar.classList.remove('open'); overlay.classList.remove('open');
+        document.body.style.overflow = '';
+        ham.style.display = '';
+        closeBtn.style.display = 'none';
+    }
+    ham.addEventListener('click', openSidebar);
+    closeBtn.addEventListener('click', closeSidebar);
+    overlay.addEventListener('click', closeSidebar);
+})();
+</script>
 <?php renderChatbox(); ?>
 <?php }
 
