@@ -22,14 +22,16 @@ function requireRole($roles) {
 }
 
 function redirectByRole() {
+    $role = $_SESSION['role'] === 'admin' ? 'admin_it' : $_SESSION['role'];
     $map = [
         'pemohon'          => 'dashboard_pemohon.php',
         'penyemak'         => 'dashboard_penyemak.php',
         'pengarah_jab'     => 'dashboard_pengarah_jab.php',
         'pengarah_jtik'    => 'dashboard_pengarah_jtik.php',
         'admin_it'         => 'dashboard_admin_it.php',
+        'admin'            => 'dashboard_admin_it.php',
     ];
-    $dest = $map[$_SESSION['role']] ?? 'login.php';
+    $dest = $map[$role] ?? 'login.php';
     header("Location: $dest");
     exit;
 }
