@@ -29,16 +29,16 @@ $sistemList = $sistems->fetchAll();
 <html lang="ms">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Kelulusan JTIK</title>
+    <title>Kelulusan JTIK – Sistem Capaian Sistem</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <?php sharedCSS(); ?>
     <style>
         .keputusan-card{border:2px solid #e5e7eb;border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:12px;}
-        .keputusan-card:hover{border-color:#ea580c;}
+        .keputusan-card:hover{border-color:#1976d2;}
         .keputusan-card.lulus{border-color:#16a34a;background:#f0fdf4;}
         .keputusan-card.tolak{border-color:#dc2626;background:#fef2f2;}
-        .keputusan-card input{accent-color:#ea580c;}
+        .keputusan-card input{accent-color:#1976d2;}
     </style>
 </head>
 <body>
@@ -72,7 +72,7 @@ $sistemList = $sistems->fetchAll();
                     <tbody>
                     <?php foreach($sistemList as $s): ?>
                     <tr>
-                        <td style="font-weight:600;color:#9a3412"><?= htmlspecialchars($s['nama_sistem']) ?></td>
+                        <td style="font-weight:600;color:#003087"><?= htmlspecialchars($s['nama_sistem']) ?></td>
                         <td>
                             <?php if(!empty($s['peranan_sistem'])): ?>
                             <span class="badge-status badge-primary" style="font-size:0.72rem"><?= htmlspecialchars(SENARAI_PERANAN[$s['peranan_sistem']] ?? strtoupper($s['peranan_sistem'])) ?></span>
@@ -81,7 +81,7 @@ $sistemList = $sistems->fetchAll();
                         <td>
                             <div style="display:flex;flex-wrap:wrap;gap:3px">
                             <?php $anyHk=false; foreach(SENARAI_FUNGSI as $f): if($s[$f]??0): $anyHk=true; ?>
-                            <span style="display:inline-block;font-size:0.7rem;padding:1px 6px;border-radius:10px;background:#fff7ed;color:#9a3412;font-weight:600"><?= fungsiLabel($f) ?></span>
+                            <span style="display:inline-block;font-size:0.7rem;padding:1px 6px;border-radius:10px;background:#e8f0fe;color:#003087;font-weight:600"><?= fungsiLabel($f) ?></span>
                             <?php endif; endforeach; ?>
                             <?php if(!$anyHk): ?><span style="color:#d1d5db;font-size:0.8rem">—</span><?php endif; ?>
                             </div>
@@ -93,7 +93,7 @@ $sistemList = $sistems->fetchAll();
                 </table>
             </div>
             <?php endif; ?>
-            <div style="margin-top:12px"><a href="view_permohonan.php?id=<?=$r['id']?>" style="font-size:0.82rem;color:#9a3412;font-weight:600"><i class="bi bi-eye me-1"></i>Lihat permohonan penuh</a></div>
+            <div style="margin-top:12px"><a href="view_permohonan.php?id=<?=$r['id']?>" style="font-size:0.82rem;color:#003087;font-weight:600"><i class="bi bi-eye me-1"></i>Lihat permohonan penuh</a></div>
         </div>
     </div>
 

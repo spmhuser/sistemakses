@@ -18,15 +18,15 @@ $tolak    = count(array_filter($list, fn($r)=>$r['status']==='TIDAK_DILULUSKAN')
 <html lang="ms">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Dashboard Pemohon</title>
+    <title>Dashboard Pemohon – Sistem Capaian Sistem</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <?php sharedCSS(); ?>
     <style>
-        .dash-tabs{display:flex;gap:4px;border-bottom:2px solid #fff7ed;margin-bottom:0}
+        .dash-tabs{display:flex;gap:4px;border-bottom:2px solid #e8f0fe;margin-bottom:0}
         .dash-tab{background:none;border:none;border-bottom:3px solid transparent;padding:10px 20px;font-size:0.85rem;font-weight:600;color:#6b7280;cursor:pointer;margin-bottom:-2px;transition:all 0.15s}
-        .dash-tab:hover{color:#9a3412}
-        .dash-tab.active{color:#9a3412;border-bottom-color:#ea580c}
+        .dash-tab:hover{color:#003087}
+        .dash-tab.active{color:#003087;border-bottom-color:#1976d2}
         .dash-tab-pane{display:none}
         .dash-tab-pane.active{display:block}
         .tab-badge{font-size:0.7rem;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:5px}
@@ -58,7 +58,7 @@ $tolak    = count(array_filter($list, fn($r)=>$r['status']==='TIDAK_DILULUSKAN')
     <div class="dash-tabs">
         <button class="dash-tab active" onclick="switchTab(this,'tab-proses')">
             <i class="bi bi-hourglass-split me-1"></i>Dalam Proses
-            <?php if(count($proses)>0): ?><span class="tab-badge" style="background:#fbbf24;color:#78350f"><?=count($proses)?></span><?php endif; ?>
+            <?php if(count($proses)>0): ?><span class="tab-badge" style="background:#fbbf24;color:#1e3a5f"><?=count($proses)?></span><?php endif; ?>
         </button>
         <button class="dash-tab" onclick="switchTab(this,'tab-selesai')">
             <i class="bi bi-check2-all me-1"></i>Selesai
@@ -75,11 +75,11 @@ $tolak    = count(array_filter($list, fn($r)=>$r['status']==='TIDAK_DILULUSKAN')
                 </tr></thead>
                 <tbody>
                 <?php if(empty($proses)): ?>
-                <tr><td colspan="7"><div class="empty-state"><i class="bi bi-check2-circle"></i>Tiada permohonan dalam proses. <a href="borang_permohonan.php" style="color:#9a3412;font-weight:600">Buat sekarang</a>.</div></td></tr>
+                <tr><td colspan="7"><div class="empty-state"><i class="bi bi-check2-circle"></i>Tiada permohonan dalam proses. <a href="borang_permohonan.php" style="color:#003087;font-weight:600">Buat sekarang</a>.</div></td></tr>
                 <?php else: foreach(array_values($proses) as $i=>$r): ?>
                 <tr>
                     <td style="padding-left:24px;color:#9ca3af;font-size:0.8rem"><?=$i+1?></td>
-                    <td style="font-weight:600;color:#9a3412;font-size:0.82rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
+                    <td style="font-weight:600;color:#003087;font-size:0.82rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
                     <td style="font-size:0.82rem"><?= tujuanLabel($r['tujuan']) ?></td>
                     <td style="font-size:0.82rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
                     <td><span class="badge-status <?= statusClass($r['status']) ?>"><?= statusLabel($r['status']) ?></span></td>
@@ -105,7 +105,7 @@ $tolak    = count(array_filter($list, fn($r)=>$r['status']==='TIDAK_DILULUSKAN')
                 <?php else: foreach(array_values($selesai) as $i=>$r): ?>
                 <tr>
                     <td style="padding-left:24px;color:#9ca3af;font-size:0.8rem"><?=$i+1?></td>
-                    <td style="font-weight:600;color:#9a3412;font-size:0.82rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
+                    <td style="font-weight:600;color:#003087;font-size:0.82rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
                     <td style="font-size:0.82rem"><?= tujuanLabel($r['tujuan']) ?></td>
                     <td style="font-size:0.82rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
                     <td><span class="badge-status <?= statusClass($r['status']) ?>"><?= statusLabel($r['status']) ?></span></td>

@@ -36,7 +36,7 @@ $roleLabels = ['pemohon'=>'Pemohon','pengarah_jab'=>'Pengarah Jabatan','pengarah
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log Masuk – Sistem Capaian Pro Max Turbo</title>
+    <title>Log Masuk – Sistem Capaian Sistem</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -44,7 +44,7 @@ $roleLabels = ['pemohon'=>'Pemohon','pengarah_jab'=>'Pengarah Jabatan','pengarah
         html,body{height:100%;font-family:'Segoe UI',sans-serif}
         .login-wrapper{display:flex;min-height:100vh}
         .left-panel{
-            flex:1;background:linear-gradient(160deg,#431407 0%,#9a3412 50%,#f97316 100%);
+            flex:1;background:linear-gradient(160deg,#0a1628 0%,#003087 50%,#1565c0 100%);
             display:flex;flex-direction:column;justify-content:center;align-items:center;
             padding:60px 40px;color:#fff;text-align:center;position:relative;overflow:hidden;
         }
@@ -59,17 +59,17 @@ $roleLabels = ['pemohon'=>'Pemohon','pengarah_jab'=>'Pengarah Jabatan','pengarah
         .quote-box{border-left:4px solid rgba(255,255,255,0.5);padding:12px 18px;text-align:left;
             font-style:italic;opacity:0.8;font-size:0.88rem;max-width:360px;}
         .kod-borang{margin-top:32px;font-size:0.75rem;opacity:0.5;}
-        .right-panel{width:420px;min-width:380px;background:#fff7ed;display:flex;flex-direction:column;justify-content:center;padding:50px 44px;}
-        .panel-title{font-size:1.3rem;font-weight:700;color:#9a3412;margin-bottom:4px;}
+        .right-panel{width:420px;min-width:380px;background:#e8f0fe;display:flex;flex-direction:column;justify-content:center;padding:50px 44px;}
+        .panel-title{font-size:1.3rem;font-weight:700;color:#003087;margin-bottom:4px;}
         .panel-sub{font-size:0.85rem;color:#6c757d;margin-bottom:28px;}
         .form-label{font-size:0.83rem;font-weight:600;color:#444;}
-        .form-control{border-radius:8px;border:1px solid #fed7aa;padding:10px 14px;font-size:0.9rem;background:#fff;}
-        .form-control:focus{border-color:#ea580c;box-shadow:0 0 0 3px rgba(190,24,93,0.12);}
-        .btn-login{background:#9a3412;border:none;border-radius:8px;padding:11px;font-weight:600;font-size:0.95rem;transition:background 0.2s, box-shadow 0.2s;}
-        .btn-login:hover{background:#c2410c;box-shadow:0 4px 14px rgba(131,24,67,0.35);}
+        .form-control{border-radius:8px;border:1px solid #bfdbfe;padding:10px 14px;font-size:0.9rem;background:#fff;}
+        .form-control:focus{border-color:#1976d2;box-shadow:0 0 0 3px rgba(0,48,135,0.15);}
+        .btn-login{background:#003087;border:none;border-radius:8px;padding:11px;font-weight:600;font-size:0.95rem;transition:background 0.2s, box-shadow 0.2s;}
+        .btn-login:hover{background:#0d47a1;box-shadow:0 4px 14px rgba(0,48,135,0.35);}
         .footer-note{margin-top:auto;padding-top:36px;font-size:0.74rem;color:#adb5bd;text-align:center;}
         .role-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;}
-        .role-chip{background:#fff7ed;color:#9a3412;font-size:0.72rem;font-weight:600;padding:3px 10px;border-radius:12px;}
+        .role-chip{background:#e8f0fe;color:#003087;font-size:0.72rem;font-weight:600;padding:3px 10px;border-radius:12px;}
         @media(max-width:768px){.left-panel{display:none}.right-panel{width:100%;min-width:unset;}}
     </style>
 </head>
@@ -77,7 +77,7 @@ $roleLabels = ['pemohon'=>'Pemohon','pengarah_jab'=>'Pengarah Jabatan','pengarah
 <div class="login-wrapper">
     <div class="left-panel">
         <div class="logo-circle"><i class="bi bi-rocket-takeoff-fill"></i></div>
-        <div class="sys-title">SISTEM CAPAIAN<br>PRO MAX TURBO</div>
+        <div class="sys-title">SISTEM CAPAIAN SISTEM</div>
         <div class="sys-sub">Majlis Bandaraya Seberang Perai</div>
         <div class="quote-box">"Setiap permohonan capaian sistem hendaklah mendapat kelulusan Pengarah JTIK sebelum akses diberikan."</div>
         <div class="kod-borang">KOD BORANG: 119/D35 &nbsp;|&nbsp; KEMASKINI: 10/2025</div>

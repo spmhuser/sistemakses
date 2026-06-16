@@ -36,7 +36,7 @@ $backUrl = match($_SESSION['role']) {
 <html lang="ms">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Lihat Permohonan</title>
+    <title>Lihat Permohonan – Sistem Capaian Sistem</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <?php sharedCSS(); ?>
@@ -60,7 +60,7 @@ $backUrl = match($_SESSION['role']) {
 
     <!-- Section A -->
     <div class="view-card">
-        <div class="view-card-header"><span style="background:#9a3412;color:#fff;font-size:0.72rem;font-weight:700;padding:3px 9px;border-radius:6px">A</span><h6>Maklumat Kakitangan</h6></div>
+        <div class="view-card-header"><span style="background:#003087;color:#fff;font-size:0.72rem;font-weight:700;padding:3px 9px;border-radius:6px">A</span><h6>Maklumat Kakitangan</h6></div>
         <div class="view-card-body">
             <div class="info-row">
                 <div class="info-item"><label>Nama</label><div class="val"><?= htmlspecialchars($r['nama']) ?></div></div>
@@ -75,7 +75,7 @@ $backUrl = match($_SESSION['role']) {
 
     <!-- Section B -->
     <div class="view-card">
-        <div class="view-card-header"><span style="background:#9a3412;color:#fff;font-size:0.72rem;font-weight:700;padding:3px 9px;border-radius:6px">B</span><h6>Maklumat Sistem</h6></div>
+        <div class="view-card-header"><span style="background:#003087;color:#fff;font-size:0.72rem;font-weight:700;padding:3px 9px;border-radius:6px">B</span><h6>Maklumat Sistem</h6></div>
         <div class="view-card-body">
             <div class="info-item mb-3"><label>Tujuan Permohonan</label><div class="val"><span class="badge-status badge-info"><?= tujuanLabel($r['tujuan']) ?></span></div></div>
             <?php if (!empty($sistems)): ?>
@@ -98,7 +98,7 @@ $backUrl = match($_SESSION['role']) {
                     <td>
                         <div style="display:flex;flex-wrap:wrap;gap:3px">
                         <?php $anyHk = false; foreach(SENARAI_FUNGSI as $f): if ($s[$f] ?? 0): $anyHk = true; ?>
-                        <span style="display:inline-block;font-size:0.7rem;padding:2px 6px;border-radius:10px;background:#fff7ed;color:#9a3412;font-weight:600"><?= fungsiLabel($f) ?></span>
+                        <span style="display:inline-block;font-size:0.7rem;padding:2px 6px;border-radius:10px;background:#e8f0fe;color:#003087;font-weight:600"><?= fungsiLabel($f) ?></span>
                         <?php endif; endforeach; ?>
                         <?php if (!$anyHk): ?><span style="color:#d1d5db;font-size:0.8rem">—</span><?php endif; ?>
                         </div>
@@ -117,7 +117,7 @@ $backUrl = match($_SESSION['role']) {
 
     <!-- Status Timeline -->
     <div class="view-card">
-        <div class="view-card-header"><i class="bi bi-activity me-2" style="color:#9a3412"></i><h6>Status Permohonan</h6></div>
+        <div class="view-card-header"><i class="bi bi-activity me-2" style="color:#003087"></i><h6>Status Permohonan</h6></div>
         <div class="view-card-body">
             <ul class="timeline">
                 <li><div class="tl-dot done"></div><div class="tl-content"><div class="tl-title">Permohonan Dihantar</div><div class="tl-date"><?=$r['created_at']?></div></div></li>
@@ -147,7 +147,7 @@ $backUrl = match($_SESSION['role']) {
     <!-- Section E - Perakuan Pengarah Jab -->
     <?php if ($r['tarikh_pengarah_jab']): ?>
     <div class="view-card">
-        <div class="view-card-header"><span style="background:#9a3412;color:#fff;font-size:0.72rem;font-weight:700;padding:3px 9px;border-radius:6px">E</span><h6>Perakuan Pengarah Jabatan</h6></div>
+        <div class="view-card-header"><span style="background:#003087;color:#fff;font-size:0.72rem;font-weight:700;padding:3px 9px;border-radius:6px">E</span><h6>Perakuan Pengarah Jabatan</h6></div>
         <div class="view-card-body">
             <div class="info-row">
                 <div class="info-item"><label>Nama Pengarah</label><div class="val"><?= htmlspecialchars($r['nama_pengarah_jab']) ?></div></div>
@@ -160,7 +160,7 @@ $backUrl = match($_SESSION['role']) {
     <!-- Section F - Kelulusan JTIK -->
     <?php if ($r['tarikh_jtik']): ?>
     <div class="view-card">
-        <div class="view-card-header"><span style="background:#9a3412;color:#fff;font-size:0.72rem;font-weight:700;padding:3px 9px;border-radius:6px">F</span><h6>Kelulusan Pengarah JTIK</h6></div>
+        <div class="view-card-header"><span style="background:#003087;color:#fff;font-size:0.72rem;font-weight:700;padding:3px 9px;border-radius:6px">F</span><h6>Kelulusan Pengarah JTIK</h6></div>
         <div class="view-card-body">
             <div class="info-row">
                 <div class="info-item"><label>Keputusan</label><div class="val"><span class="badge-status <?=$r['kelulusan_jtik']==='DILULUSKAN'?'badge-success':'badge-danger'?>"><?=$r['kelulusan_jtik']?></span></div></div>
@@ -174,7 +174,7 @@ $backUrl = match($_SESSION['role']) {
     <!-- Section G - IT -->
     <?php if ($r['tarikh_it']): ?>
     <div class="view-card">
-        <div class="view-card-header"><span style="background:#9a3412;color:#fff;font-size:0.72rem;font-weight:700;padding:3px 9px;border-radius:6px">G</span><h6>Kegunaan IT</h6></div>
+        <div class="view-card-header"><span style="background:#003087;color:#fff;font-size:0.72rem;font-weight:700;padding:3px 9px;border-radius:6px">G</span><h6>Kegunaan IT</h6></div>
         <div class="view-card-body">
             <div class="info-row">
                 <div class="info-item"><label>Pemberi Akses</label><div class="val"><?= htmlspecialchars($r['it_pemberi_nama']) ?></div></div>
