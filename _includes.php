@@ -236,7 +236,7 @@ table.data-table tbody tr:hover td { background: #fdf2f8; }
 function sidebarHTML($username, $roleLabel, $navItems) { ?>
 <div class="sidebar">
     <div class="sidebar-brand">
-        <div class="brand-icon">🌸</div>
+        <div class="brand-icon"><i class="bi bi-rocket-takeoff-fill"></i></div>
         <div class="brand-title">SISTEM CAPAIAN<br>PRO MAX TURBO</div>
         <div class="brand-sub"><?= htmlspecialchars($roleLabel) ?></div>
     </div>

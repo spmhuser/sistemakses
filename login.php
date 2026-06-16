@@ -59,7 +59,7 @@ $roleLabels = ['pemohon'=>'Pemohon','pengarah_jab'=>'Pengarah Jabatan','pengarah
         .quote-box{border-left:4px solid rgba(255,255,255,0.5);padding:12px 18px;text-align:left;
             font-style:italic;opacity:0.8;font-size:0.88rem;max-width:360px;}
         .kod-borang{margin-top:32px;font-size:0.75rem;opacity:0.5;}
-        .right-panel{width:420px;min-width:380px;background:#fff0f6;display:flex;flex-direction:column;justify-content:center;padding:50px 44px;}
+        .right-panel{width:420px;min-width:380px;background:#fff7ed;display:flex;flex-direction:column;justify-content:center;padding:50px 44px;}
         .panel-title{font-size:1.3rem;font-weight:700;color:#9a3412;margin-bottom:4px;}
         .panel-sub{font-size:0.85rem;color:#6c757d;margin-bottom:28px;}
         .form-label{font-size:0.83rem;font-weight:600;color:#444;}
@@ -76,7 +76,7 @@ $roleLabels = ['pemohon'=>'Pemohon','pengarah_jab'=>'Pengarah Jabatan','pengarah
 <body>
 <div class="login-wrapper">
     <div class="left-panel">
-        <div class="logo-circle">🌸</div>
+        <div class="logo-circle"><i class="bi bi-rocket-takeoff-fill"></i></div>
         <div class="sys-title">SISTEM CAPAIAN<br>PRO MAX TURBO</div>
         <div class="sys-sub">Majlis Bandaraya Seberang Perai</div>
         <div class="quote-box">"Setiap permohonan capaian sistem hendaklah mendapat kelulusan Pengarah JTIK sebelum akses diberikan."</div>
