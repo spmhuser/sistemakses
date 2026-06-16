@@ -18,9 +18,9 @@ $u = $user->fetch();
     <?php sharedCSS(); ?>
     <style>
         .radio-card{border:2px solid #e5e7eb;border-radius:10px;padding:12px 16px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:10px;}
-        .radio-card:hover{border-color:#be185d;background:#fdf2f8;}
-        .radio-card.selected{border-color:#be185d;background:#fce7f3;}
-        .radio-card input{accent-color:#be185d;}
+        .radio-card:hover{border-color:#ea580c;background:#fdf2f8;}
+        .radio-card.selected{border-color:#ea580c;background:#fff7ed;}
+        .radio-card input{accent-color:#ea580c;}
     </style>
 </head>
 <body>
@@ -36,7 +36,7 @@ $u = $user->fetch();
                 <li class="breadcrumb-item active">Borang Permohonan</li>
             </ol>
         </nav>
-        <h4>Borang Capaian Sistem</h4>
+        <h4>Sistem Capaian Pro Max Turbo</h4>
         <p>KOD BORANG: 119/D35 &nbsp;|&nbsp; Isi semua maklumat dengan tepat dan lengkap</p>
     </div>
 
@@ -127,7 +127,7 @@ $u = $user->fetch();
                             <td>
                                 <select name="peranan_sistem_<?=$bil?>" id="ps-<?=$bil?>"
                                         disabled onchange="updateHadKuasa(<?=$bil?>)"
-                                        style="border:1px solid #fce7f3;border-radius:6px;padding:5px 8px;font-size:0.8rem;width:100%;outline:none;background:#f9f9f9;color:#9ca3af;cursor:not-allowed">
+                                        style="border:1px solid #fff7ed;border-radius:6px;padding:5px 8px;font-size:0.8rem;width:100%;outline:none;background:#f9f9f9;color:#9ca3af;cursor:not-allowed">
                                     <option value="">-- Pilih Peranan --</option>
                                     <?php foreach(SENARAI_PERANAN as $key=>$label): ?>
                                     <option value="<?=$key?>"><?= $label ?></option>
@@ -140,7 +140,7 @@ $u = $user->fetch();
                                     <label id="hklbl-<?=$bil?>-<?=$f?>"
                                            style="display:inline-flex;align-items:center;gap:3px;font-size:0.72rem;padding:2px 6px;border-radius:12px;border:1px solid #e5e7eb;background:#f9f9f9;color:#9ca3af;cursor:not-allowed;white-space:nowrap">
                                         <input type="checkbox" name="had_kuasa_<?=$bil?>[<?=$f?>]" value="1"
-                                               id="hk-<?=$bil?>-<?=$f?>" disabled style="accent-color:#be185d">
+                                               id="hk-<?=$bil?>-<?=$f?>" disabled style="accent-color:#ea580c">
                                         <?= fungsiLabel($f) ?>
                                     </label>
                                 <?php endforeach; ?>
@@ -165,7 +165,7 @@ $u = $user->fetch();
             <span class="sec-title">Pengesahan Pemohon</span>
         </div>
         <div class="form-section-body">
-            <div style="background:#fdf2f8;border:1px solid #fce7f3;border-radius:10px;padding:16px;margin-bottom:20px;font-size:0.875rem;color:#374151">
+            <div style="background:#fdf2f8;border:1px solid #fff7ed;border-radius:10px;padding:16px;margin-bottom:20px;font-size:0.875rem;color:#374151">
                 Saya dengan ini mengesahkan maklumat yang diberikan di atas adalah benar dan mengaku akan bertanggungjawab terhadap permohonan ini.
             </div>
         </div>
@@ -189,7 +189,7 @@ function enableHadKuasa(bil) {
         const lbl = document.getElementById('hklbl-' + bil + '-' + f);
         if (!cb) return;
         cb.disabled = false;
-        lbl.style.cssText = 'display:inline-flex;align-items:center;gap:3px;font-size:0.72rem;padding:2px 6px;border-radius:12px;border:1px solid #f9a8d4;background:#fff;color:#374151;cursor:default;white-space:nowrap';
+        lbl.style.cssText = 'display:inline-flex;align-items:center;gap:3px;font-size:0.72rem;padding:2px 6px;border-radius:12px;border:1px solid #fed7aa;background:#fff;color:#374151;cursor:default;white-space:nowrap';
     });
     updateHadKuasa(bil);
 }
@@ -230,7 +230,7 @@ function toggleRow(chk, bil) {
     if (chk.checked) {
         sel.disabled = false;
         sel.required = true;
-        sel.style.cssText = 'border:1px solid #f9a8d4;border-radius:6px;padding:5px 8px;font-size:0.8rem;width:100%;outline:none;background:#fff;color:#374151;cursor:default';
+        sel.style.cssText = 'border:1px solid #fed7aa;border-radius:6px;padding:5px 8px;font-size:0.8rem;width:100%;outline:none;background:#fff;color:#374151;cursor:default';
         cat.disabled = false;
         cat.style.cssText = 'background:#fff;color:#374151;cursor:default';
         row.style.background = '#fdf2f8';
@@ -239,7 +239,7 @@ function toggleRow(chk, bil) {
         sel.disabled = true;
         sel.required = false;
         sel.value = '';
-        sel.style.cssText = 'border:1px solid #fce7f3;border-radius:6px;padding:5px 8px;font-size:0.8rem;width:100%;outline:none;background:#f9f9f9;color:#9ca3af;cursor:not-allowed';
+        sel.style.cssText = 'border:1px solid #fff7ed;border-radius:6px;padding:5px 8px;font-size:0.8rem;width:100%;outline:none;background:#f9f9f9;color:#9ca3af;cursor:not-allowed';
         cat.value = '';
         cat.disabled = true;
         cat.style.cssText = 'background:#f9f9f9;color:#9ca3af;cursor:not-allowed';
