@@ -16,8 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $penyemak_nama  = trim($_POST['penyemak_nama']  ?? '');
     $penyemak_cop   = trim($_POST['penyemak_cop']   ?? '');
     if ($pemberi_nama && $penyemak_nama) {
-        $u = $db->prepare("UPDATE permohonan SET status='AKSES_DIBERIKAN',it_pemberi_nama=?,it_pemberi_cop=?,it_penyemak_nama=?,it_penyemak_cop=?,tarikh_it=datetime('now','+8 hours') WHERE id=?");
-        $u->execute([$pemberi_nama,$pemberi_cop,$penyemak_nama,$penyemak_cop,$id]);
+        $u = $db->prepare("UPDATE permohonan SET status='AKSES_DIBERIKAN',it_pemberi_nama=?,it_pemberi_cop=?,it_penyemak_nama=?,it_penyemak_cop=?,tarikh_it=? WHERE id=?");
+        $u->execute([$pemberi_nama,$pemberi_cop,$penyemak_nama,$penyemak_cop,dbNow(),$id]);
         header('Location: dashboard_admin_it.php?success=1'); exit;
     }
 }
@@ -66,7 +66,7 @@ $sistemList = $sistems->fetchAll();
                     <tbody>
                     <?php foreach($sistemList as $s): ?>
                     <tr>
-                        <td style="font-weight:600;color:#831843"><?= htmlspecialchars($s['nama_sistem']) ?></td>
+                        <td style="font-weight:600;color:#1e4976"><?= htmlspecialchars($s['nama_sistem']) ?></td>
                         <td>
                             <?php if(!empty($s['peranan_sistem'])): ?>
                             <span class="badge-status badge-primary" style="font-size:0.72rem"><?= htmlspecialchars(SENARAI_PERANAN[$s['peranan_sistem']] ?? strtoupper($s['peranan_sistem'])) ?></span>
@@ -75,7 +75,7 @@ $sistemList = $sistems->fetchAll();
                         <td>
                             <div style="display:flex;flex-wrap:wrap;gap:3px">
                             <?php $anyHk=false; foreach(SENARAI_FUNGSI as $f): if($s[$f]??0): $anyHk=true; ?>
-                            <span style="display:inline-block;font-size:0.7rem;padding:1px 6px;border-radius:10px;background:#fce7f3;color:#831843;font-weight:600"><?= fungsiLabel($f) ?></span>
+                            <span class="tag-fungsi"><?= fungsiLabel($f) ?></span>
                             <?php endif; endforeach; ?>
                             <?php if(!$anyHk): ?><span style="color:#d1d5db;font-size:0.8rem">—</span><?php endif; ?>
                             </div>
@@ -100,7 +100,7 @@ $sistemList = $sistems->fetchAll();
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div style="border:1px solid #e5e7eb;border-radius:12px;padding:20px">
-                            <div style="font-size:0.85rem;font-weight:700;color:#831843;margin-bottom:16px"><i class="bi bi-person-check me-2"></i>Pemberi Akses</div>
+                            <div style="font-size:0.85rem;font-weight:700;color:#1e4976;margin-bottom:16px"><i class="bi bi-person-check me-2"></i>Pemberi Akses</div>
                             <div class="mb-3">
                                 <label class="field-label">Nama <span class="req">*</span></label>
                                 <input type="text" name="pemberi_nama" class="form-control-custom" required value="<?= htmlspecialchars($_SESSION['nama']??'') ?>">
@@ -113,7 +113,7 @@ $sistemList = $sistems->fetchAll();
                     </div>
                     <div class="col-md-6">
                         <div style="border:1px solid #e5e7eb;border-radius:12px;padding:20px">
-                            <div style="font-size:0.85rem;font-weight:700;color:#831843;margin-bottom:16px"><i class="bi bi-person-badge me-2"></i>Penyemak</div>
+                            <div style="font-size:0.85rem;font-weight:700;color:#1e4976;margin-bottom:16px"><i class="bi bi-person-badge me-2"></i>Penyemak</div>
                             <div class="mb-3">
                                 <label class="field-label">Nama <span class="req">*</span></label>
                                 <input type="text" name="penyemak_nama" class="form-control-custom" required placeholder="Nama penyemak">
@@ -136,4 +136,5 @@ $sistemList = $sistems->fetchAll();
             </form>
     </div>
 </div>
+<?php sharedJS(); ?>
 </body></html>

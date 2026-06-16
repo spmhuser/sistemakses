@@ -13,8 +13,8 @@ if (!$r) { header('Location: dashboard_pengarah_jab.php'); exit; }
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama_pengarah = trim($_POST['nama_pengarah'] ?? '');
     if ($nama_pengarah) {
-        $u = $db->prepare("UPDATE permohonan SET status='MENUNGGU_JTIK', pengarah_jab_id=?, nama_pengarah_jab=?, tarikh_pengarah_jab=datetime('now','+8 hours') WHERE id=?");
-        $u->execute([$_SESSION['user_id'], $nama_pengarah, $id]);
+        $u = $db->prepare("UPDATE permohonan SET status='MENUNGGU_JTIK', pengarah_jab_id=?, nama_pengarah_jab=?, tarikh_pengarah_jab=? WHERE id=?");
+        $u->execute([$_SESSION['user_id'], $nama_pengarah, dbNow(), $id]);
         header('Location: dashboard_pengarah_jab.php?success=1'); exit;
     }
 }
@@ -66,7 +66,7 @@ $sistemList = $sistems->fetchAll();
                     <tbody>
                     <?php foreach($sistemList as $s): ?>
                     <tr>
-                        <td style="font-weight:600;color:#831843"><?= htmlspecialchars($s['nama_sistem']) ?></td>
+                        <td style="font-weight:600;color:#1e4976"><?= htmlspecialchars($s['nama_sistem']) ?></td>
                         <td>
                             <?php if(!empty($s['peranan_sistem'])): ?>
                             <span class="badge-status badge-primary" style="font-size:0.72rem"><?= htmlspecialchars(SENARAI_PERANAN[$s['peranan_sistem']] ?? strtoupper($s['peranan_sistem'])) ?></span>
@@ -75,7 +75,7 @@ $sistemList = $sistems->fetchAll();
                         <td>
                             <div style="display:flex;flex-wrap:wrap;gap:3px">
                             <?php $anyHk=false; foreach(SENARAI_FUNGSI as $f): if($s[$f]??0): $anyHk=true; ?>
-                            <span style="display:inline-block;font-size:0.7rem;padding:1px 6px;border-radius:10px;background:#fce7f3;color:#831843;font-weight:600"><?= fungsiLabel($f) ?></span>
+                            <span class="tag-fungsi"><?= fungsiLabel($f) ?></span>
                             <?php endif; endforeach; ?>
                             <?php if(!$anyHk): ?><span style="color:#d1d5db;font-size:0.8rem">—</span><?php endif; ?>
                             </div>
@@ -97,7 +97,7 @@ $sistemList = $sistems->fetchAll();
             <span class="sec-title">Perakuan Pengarah Jabatan Pemohon</span>
         </div>
         <div class="form-section-body">
-            <div style="background:#fdf2f8;border:1px solid #fce7f3;border-radius:10px;padding:16px;margin-bottom:20px;font-size:0.875rem;color:#374151">
+            <div style="background:#eff6ff;border:1px solid #fef9c3;border-radius:10px;padding:16px;margin-bottom:20px;font-size:0.875rem;color:#374151">
                 Saya dengan ini mengesahkan permohonan di atas dibuat selaras dengan kehendak dan keperluan pemohon untuk melaksanakan tugasan.
             </div>
             <form method="POST">
@@ -118,4 +118,5 @@ $sistemList = $sistems->fetchAll();
             </form>
     </div>
 </div>
+<?php sharedJS(); ?>
 </body></html>

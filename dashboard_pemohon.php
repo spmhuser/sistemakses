@@ -22,15 +22,6 @@ $tolak    = count(array_filter($list, fn($r)=>$r['status']==='TIDAK_DILULUSKAN')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <?php sharedCSS(); ?>
-    <style>
-        .dash-tabs{display:flex;gap:4px;border-bottom:2px solid #fce7f3;margin-bottom:0}
-        .dash-tab{background:none;border:none;border-bottom:3px solid transparent;padding:10px 20px;font-size:0.85rem;font-weight:600;color:#6b7280;cursor:pointer;margin-bottom:-2px;transition:all 0.15s}
-        .dash-tab:hover{color:#831843}
-        .dash-tab.active{color:#831843;border-bottom-color:#be185d}
-        .dash-tab-pane{display:none}
-        .dash-tab-pane.active{display:block}
-        .tab-badge{font-size:0.7rem;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:5px}
-    </style>
 </head>
 <body>
 <?php if (isset($_GET['success'])) toastHTML('Permohonan berjaya dihantar.'); ?>
@@ -75,11 +66,11 @@ $tolak    = count(array_filter($list, fn($r)=>$r['status']==='TIDAK_DILULUSKAN')
                 </tr></thead>
                 <tbody>
                 <?php if(empty($proses)): ?>
-                <tr><td colspan="7"><div class="empty-state"><i class="bi bi-check2-circle"></i>Tiada permohonan dalam proses. <a href="borang_permohonan.php" style="color:#831843;font-weight:600">Buat sekarang</a>.</div></td></tr>
+                <tr><td colspan="7"><div class="empty-state"><i class="bi bi-check2-circle"></i>Tiada permohonan dalam proses. <a href="borang_permohonan.php" style="color:#1e4976;font-weight:600">Buat sekarang</a>.</div></td></tr>
                 <?php else: foreach(array_values($proses) as $i=>$r): ?>
                 <tr>
                     <td style="padding-left:24px;color:#9ca3af;font-size:0.8rem"><?=$i+1?></td>
-                    <td style="font-weight:600;color:#831843;font-size:0.82rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
+                    <td style="font-weight:600;color:#1e4976;font-size:0.82rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
                     <td style="font-size:0.82rem"><?= tujuanLabel($r['tujuan']) ?></td>
                     <td style="font-size:0.82rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
                     <td><span class="badge-status <?= statusClass($r['status']) ?>"><?= statusLabel($r['status']) ?></span></td>
@@ -105,7 +96,7 @@ $tolak    = count(array_filter($list, fn($r)=>$r['status']==='TIDAK_DILULUSKAN')
                 <?php else: foreach(array_values($selesai) as $i=>$r): ?>
                 <tr>
                     <td style="padding-left:24px;color:#9ca3af;font-size:0.8rem"><?=$i+1?></td>
-                    <td style="font-weight:600;color:#831843;font-size:0.82rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
+                    <td style="font-weight:600;color:#1e4976;font-size:0.82rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
                     <td style="font-size:0.82rem"><?= tujuanLabel($r['tujuan']) ?></td>
                     <td style="font-size:0.82rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
                     <td><span class="badge-status <?= statusClass($r['status']) ?>"><?= statusLabel($r['status']) ?></span></td>
@@ -118,12 +109,5 @@ $tolak    = count(array_filter($list, fn($r)=>$r['status']==='TIDAK_DILULUSKAN')
         </div>
     </div>
 </div>
-<script>
-function switchTab(btn, id) {
-    document.querySelectorAll('.dash-tab').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.dash-tab-pane').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(id).classList.add('active');
-}
-</script>
+<?php sharedJS(); ?>
 </body></html>
