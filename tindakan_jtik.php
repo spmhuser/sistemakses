@@ -35,10 +35,10 @@ $sistemList = $sistems->fetchAll();
     <?php sharedCSS(); ?>
     <style>
         .keputusan-card{border:2px solid #e5e7eb;border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:12px;}
-        .keputusan-card:hover{border-color:#be185d;}
+        .keputusan-card:hover{border-color:#0d9488;}
         .keputusan-card.lulus{border-color:#16a34a;background:#f0fdf4;}
         .keputusan-card.tolak{border-color:#dc2626;background:#fef2f2;}
-        .keputusan-card input{accent-color:#be185d;}
+        .keputusan-card input{accent-color:#0d9488;}
     </style>
 </head>
 <body>
@@ -72,7 +72,7 @@ $sistemList = $sistems->fetchAll();
                     <tbody>
                     <?php foreach($sistemList as $s): ?>
                     <tr>
-                        <td style="font-weight:600;color:#831843"><?= htmlspecialchars($s['nama_sistem']) ?></td>
+                        <td style="font-weight:600;color:#115e59"><?= htmlspecialchars($s['nama_sistem']) ?></td>
                         <td>
                             <?php if(!empty($s['peranan_sistem'])): ?>
                             <span class="badge-status badge-primary" style="font-size:0.72rem"><?= htmlspecialchars(SENARAI_PERANAN[$s['peranan_sistem']] ?? strtoupper($s['peranan_sistem'])) ?></span>
@@ -80,10 +80,10 @@ $sistemList = $sistems->fetchAll();
                         </td>
                         <td>
                             <div style="display:flex;flex-wrap:wrap;gap:3px">
-                            <?php $anyHk=false; foreach(SENARAI_FUNGSI as $f): if($s[$f]??0): $anyHk=true; ?>
-                            <span style="display:inline-block;font-size:0.7rem;padding:1px 6px;border-radius:10px;background:#fce7f3;color:#831843;font-weight:600"><?= fungsiLabel($f) ?></span>
-                            <?php endif; endforeach; ?>
-                            <?php if(!$anyHk): ?><span style="color:#d1d5db;font-size:0.8rem">—</span><?php endif; ?>
+                            <?php $hk = json_decode($s['had_kuasa'] ?? '[]', true) ?: []; foreach($hk as $f): ?>
+                            <span style="display:inline-block;font-size:0.7rem;padding:1px 6px;border-radius:10px;background:#ccfbf1;color:#115e59;font-weight:600"><?= fungsiLabel($f) ?></span>
+                            <?php endforeach; ?>
+                            <?php if(empty($hk)): ?><span style="color:#d1d5db;font-size:0.8rem">—</span><?php endif; ?>
                             </div>
                         </td>
                         <td style="color:#6b7280"><?= htmlspecialchars($s['catatan']??'-') ?></td>
@@ -93,7 +93,7 @@ $sistemList = $sistems->fetchAll();
                 </table>
             </div>
             <?php endif; ?>
-            <div style="margin-top:12px"><a href="view_permohonan.php?id=<?=$r['id']?>" style="font-size:0.82rem;color:#831843;font-weight:600"><i class="bi bi-eye me-1"></i>Lihat permohonan penuh</a></div>
+            <div style="margin-top:12px"><a href="view_permohonan.php?id=<?=$r['id']?>" style="font-size:0.82rem;color:#115e59;font-weight:600"><i class="bi bi-eye me-1"></i>Lihat permohonan penuh</a></div>
         </div>
     </div>
 

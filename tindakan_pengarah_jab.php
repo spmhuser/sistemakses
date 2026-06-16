@@ -66,7 +66,7 @@ $sistemList = $sistems->fetchAll();
                     <tbody>
                     <?php foreach($sistemList as $s): ?>
                     <tr>
-                        <td style="font-weight:600;color:#831843"><?= htmlspecialchars($s['nama_sistem']) ?></td>
+                        <td style="font-weight:600;color:#115e59"><?= htmlspecialchars($s['nama_sistem']) ?></td>
                         <td>
                             <?php if(!empty($s['peranan_sistem'])): ?>
                             <span class="badge-status badge-primary" style="font-size:0.72rem"><?= htmlspecialchars(SENARAI_PERANAN[$s['peranan_sistem']] ?? strtoupper($s['peranan_sistem'])) ?></span>
@@ -74,10 +74,10 @@ $sistemList = $sistems->fetchAll();
                         </td>
                         <td>
                             <div style="display:flex;flex-wrap:wrap;gap:3px">
-                            <?php $anyHk=false; foreach(SENARAI_FUNGSI as $f): if($s[$f]??0): $anyHk=true; ?>
-                            <span style="display:inline-block;font-size:0.7rem;padding:1px 6px;border-radius:10px;background:#fce7f3;color:#831843;font-weight:600"><?= fungsiLabel($f) ?></span>
-                            <?php endif; endforeach; ?>
-                            <?php if(!$anyHk): ?><span style="color:#d1d5db;font-size:0.8rem">—</span><?php endif; ?>
+                            <?php $hk = json_decode($s['had_kuasa'] ?? '[]', true) ?: []; foreach($hk as $f): ?>
+                            <span style="display:inline-block;font-size:0.7rem;padding:1px 6px;border-radius:10px;background:#ccfbf1;color:#115e59;font-weight:600"><?= fungsiLabel($f) ?></span>
+                            <?php endforeach; ?>
+                            <?php if(empty($hk)): ?><span style="color:#d1d5db;font-size:0.8rem">—</span><?php endif; ?>
                             </div>
                         </td>
                         <td style="color:#6b7280"><?= htmlspecialchars($s['catatan']??'-') ?></td>
@@ -97,7 +97,7 @@ $sistemList = $sistems->fetchAll();
             <span class="sec-title">Perakuan Pengarah Jabatan Pemohon</span>
         </div>
         <div class="form-section-body">
-            <div style="background:#fdf2f8;border:1px solid #fce7f3;border-radius:10px;padding:16px;margin-bottom:20px;font-size:0.875rem;color:#374151">
+            <div style="background:#f0fdfa;border:1px solid #ccfbf1;border-radius:10px;padding:16px;margin-bottom:20px;font-size:0.875rem;color:#374151">
                 Saya dengan ini mengesahkan permohonan di atas dibuat selaras dengan kehendak dan keperluan pemohon untuk melaksanakan tugasan.
             </div>
             <form method="POST">

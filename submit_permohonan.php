@@ -34,10 +34,10 @@ foreach (SENARAI_SISTEM as $bil => $namaSistem) {
         $catatan       = trim($_POST["catatan_{$bil}"]       ?? '');
         $perananSistem = trim($_POST["peranan_sistem_{$bil}"] ?? '');
         $hk = $_POST["had_kuasa_{$bil}"] ?? [];
-        $hkVals = [];
-        foreach (SENARAI_FUNGSI as $f) $hkVals[$f] = isset($hk[$f]) ? 1 : 0;
-        $s = $db->prepare("INSERT INTO permohonan_sistem (permohonan_id,bil,nama_sistem,catatan,peranan_sistem,penyedia,pengemaskini,penyemak,pelapor,pengesah,pelulus,penghapus) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
-        $s->execute([$pid,$bil,$namaSistem,$catatan,$perananSistem,$hkVals['penyedia'],$hkVals['pengemaskini'],$hkVals['penyemak'],$hkVals['pelapor'],$hkVals['pengesah'],$hkVals['pelulus'],$hkVals['penghapus']]);
+        $hkKods = [];
+        foreach (SENARAI_FUNGSI as $f) if (isset($hk[$f])) $hkKods[] = $f;
+        $s = $db->prepare("INSERT INTO permohonan_sistem (permohonan_id,bil,nama_sistem,catatan,peranan_sistem,had_kuasa) VALUES (?,?,?,?,?,?)");
+        $s->execute([$pid,$bil,$namaSistem,$catatan,$perananSistem,json_encode(array_values($hkKods))]);
     }
 }
 

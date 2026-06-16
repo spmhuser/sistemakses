@@ -18,10 +18,10 @@ $tolak   = array_filter($all, fn($r)=>$r['status']==='TIDAK_DILULUSKAN');
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <?php sharedCSS(); ?>
     <style>
-        .dash-tabs{display:flex;gap:4px;border-bottom:2px solid #fce7f3;margin-bottom:0}
+        .dash-tabs{display:flex;gap:4px;border-bottom:2px solid #ccfbf1;margin-bottom:0}
         .dash-tab{background:none;border:none;border-bottom:3px solid transparent;padding:10px 20px;font-size:0.85rem;font-weight:600;color:#6b7280;cursor:pointer;margin-bottom:-2px;transition:all 0.15s}
-        .dash-tab:hover{color:#831843}
-        .dash-tab.active{color:#831843;border-bottom-color:#be185d}
+        .dash-tab:hover{color:#115e59}
+        .dash-tab.active{color:#115e59;border-bottom-color:#0d9488}
         .dash-tab-pane{display:none}
         .dash-tab-pane.active{display:block}
         .tab-badge{font-size:0.7rem;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:5px}
@@ -31,6 +31,7 @@ $tolak   = array_filter($all, fn($r)=>$r['status']==='TIDAK_DILULUSKAN');
 <?php if(isset($_GET['success'])) toastHTML('Akses berjaya diberikan.'); ?>
 <?php sidebarHTML($_SESSION['nama']??$_SESSION['username'],'Admin IT',[
     ['href'=>'dashboard_admin_it.php','icon'=>'bi-grid-1x2','label'=>'Dashboard','active'=>true],
+    ['href'=>'tetapan.php','icon'=>'bi-gear','label'=>'Tetapan Sistem','active'=>false],
 ]); ?>
 <div class="main-content">
     <div class="page-header"><h4>Dashboard Admin IT</h4><p>Urus pemberian akses sistem selepas kelulusan JTIK</p></div>
@@ -63,7 +64,7 @@ $tolak   = array_filter($all, fn($r)=>$r['status']==='TIDAK_DILULUSKAN');
                 <?php else: foreach(array_values($perlu) as $i=>$r): ?>
                 <tr>
                     <td style="padding-left:24px;color:#9ca3af;font-size:0.8rem"><?=$i+1?></td>
-                    <td style="font-weight:600;color:#831843;font-size:0.82rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
+                    <td style="font-weight:600;color:#115e59;font-size:0.82rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
                     <td style="font-weight:500"><?= htmlspecialchars($r['nama']) ?></td>
                     <td style="font-size:0.82rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
                     <td><span class="badge-status badge-info" style="font-size:0.72rem"><?= tujuanLabel($r['tujuan']) ?></span></td>
@@ -89,7 +90,7 @@ $tolak   = array_filter($all, fn($r)=>$r['status']==='TIDAK_DILULUSKAN');
                 <?php else: foreach(array_values($selesai) as $i=>$r): ?>
                 <tr>
                     <td style="padding-left:24px;color:#9ca3af;font-size:0.8rem"><?=$i+1?></td>
-                    <td style="font-weight:600;color:#831843;font-size:0.82rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
+                    <td style="font-weight:600;color:#115e59;font-size:0.82rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
                     <td style="font-weight:500"><?= htmlspecialchars($r['nama']) ?></td>
                     <td style="font-size:0.82rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
                     <td style="font-size:0.82rem"><?= tujuanLabel($r['tujuan']) ?></td>
