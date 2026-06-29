@@ -295,6 +295,11 @@ table.data-table tbody tr:hover td { background: #EFF4FC; }
     .page-header h4 { font-size: 1.45rem; }
     /* Jadual lain (tanpa .tbl-resp) boleh skrol mendatar, bukan terpotong */
     .table-card { overflow-x: auto; }
+    /* Maklumat dwi-lajur -> satu lajur pada telefon (view_permohonan dll.) */
+    .info-row { grid-template-columns: 1fr; gap: 12px; }
+    /* Baris butang borang -> penuh & senang ditekan */
+    .action-row { flex-wrap: wrap; padding: 16px; gap: 10px; }
+    .action-row > a, .action-row > button { flex: 1 1 auto; justify-content: center; text-align: center; }
     .stat-card { padding: 18px; gap: 13px; }
     .stat-icon { width: 50px; height: 50px; font-size: 23px; }
     .stat-num { font-size: 1.9rem; }
