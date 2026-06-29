@@ -22,6 +22,20 @@ $g = $gstmt->fetch();
 if (!$g)      { header('Location: borang_permohonan.php?error=gaji'); exit; }
 if (!$tujuan) { header('Location: borang_permohonan.php'); exit; }
 
+// Guard: tapis sistem yang permohonannya masih dalam proses (elak hantaran berganda)
+$inProc = [];
+$ipStmt = $db->prepare("
+    SELECT DISTINCT ps.bil
+    FROM permohonan_sistem ps
+    JOIN permohonan p ON p.id = ps.permohonan_id
+    WHERE p.user_id = ?
+      AND p.status IN ('MENUNGGU_PENGARAH_JAB','MENUNGGU_JTIK','DILULUSKAN')
+");
+$ipStmt->execute([$_SESSION['user_id']]);
+foreach ($ipStmt->fetchAll() as $r) { $inProc[(int)$r['bil']] = true; }
+$_POST['sistem'] = array_values(array_filter($_POST['sistem'] ?? [], fn($b) => !isset($inProc[(int)$b])));
+if (empty($_POST['sistem'])) { header('Location: borang_permohonan.php?error=inproc'); exit; }
+
 // Guna data rasmi dari Sistem Gaji (abai input yang dihantar)
 $nama          = $g['nama'];
 $no_kakitangan = $g['no_kakitangan'];

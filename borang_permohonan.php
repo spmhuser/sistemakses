@@ -12,6 +12,19 @@ $u = $user->fetch();
 $gs = $db->prepare("SELECT * FROM gaji WHERE no_kakitangan = ?");
 $gs->execute([$u['no_kakitangan'] ?? '']);
 $g = $gs->fetch();
+
+// Sistem yang permohonannya MASIH DALAM PROSES untuk pengguna ini.
+// (belum sampai status muktamad — tidak boleh dimohon semula sehingga selesai)
+$inProc = [];
+$ip = $db->prepare("
+    SELECT DISTINCT ps.bil, p.status
+    FROM permohonan_sistem ps
+    JOIN permohonan p ON p.id = ps.permohonan_id
+    WHERE p.user_id = ?
+      AND p.status IN ('MENUNGGU_PENGARAH_JAB','MENUNGGU_JTIK','DILULUSKAN')
+");
+$ip->execute([$_SESSION['user_id']]);
+foreach ($ip->fetchAll() as $r) { $inProc[(int)$r['bil']] = $r['status']; }
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -35,6 +48,23 @@ $g = $gs->fetch();
         .locked-note{font-size:0.84rem;color:#2862C0;background:#E6EFFA;border:1px solid #BFD2EC;border-radius:8px;padding:9px 13px;display:flex;align-items:center;gap:8px;margin-bottom:16px;font-weight:600;}
         .block-card{text-align:center;padding:46px 30px;}
         .block-icon{width:84px;height:84px;border-radius:50%;background:#FFE2E0;color:#E23B36;display:flex;align-items:center;justify-content:center;font-size:42px;margin:0 auto 18px;}
+        /* Baris sistem yang masih dalam proses */
+        tr.row-inproc{background:#FFF8EC !important;}
+        tr.row-inproc td{color:#9A8254;}
+        .btn-inproc{border:none;background:#FCE9C7;color:#B9791C;width:30px;height:30px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;transition:all .15s;}
+        .btn-inproc:hover{background:#F6D79A;color:#8A5A12;}
+        .badge-inproc{display:inline-flex;align-items:center;gap:5px;font-size:0.74rem;font-weight:700;color:#B9791C;background:#FCE9C7;border:1px solid #EFD3A0;border-radius:20px;padding:2px 10px;margin-left:8px;white-space:nowrap;vertical-align:middle;}
+        /* Pop up dalam proses */
+        .ip-overlay{position:fixed;inset:0;background:rgba(30,58,95,0.55);display:none;align-items:center;justify-content:center;z-index:1080;padding:18px;backdrop-filter:blur(2px);}
+        .ip-overlay.show{display:flex;}
+        .ip-box{background:#fff;border-radius:18px;max-width:430px;width:100%;padding:34px 30px 28px;text-align:center;box-shadow:0 20px 60px rgba(30,58,95,0.35);animation:ipPop .2s ease;}
+        @keyframes ipPop{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+        .ip-ic{width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,#F6C25B,#E89A2B);color:#fff;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 16px;box-shadow:0 8px 20px rgba(232,154,43,0.4);}
+        .ip-box h5{font-weight:800;color:#1E3A5F;margin-bottom:10px;}
+        .ip-box p{color:#5B6675;line-height:1.6;font-size:0.94rem;margin-bottom:22px;}
+        .ip-box .ip-sys{color:#B9791C;font-weight:700;}
+        .ip-box button{background:linear-gradient(135deg,#1E3A5F,#2C5488);color:#fff;border:none;border-radius:10px;padding:11px 30px;font-weight:700;cursor:pointer;transition:filter .15s;}
+        .ip-box button:hover{filter:brightness(1.12);}
     </style>
 </head>
 <body>
@@ -68,6 +98,11 @@ $g = $gs->fetch();
         </div>
     </div>
     <?php else: ?>
+    <?php if (($_GET['error'] ?? '') === 'inproc'): ?>
+    <div class="locked-note" style="color:#B9791C;background:#FFF8EC;border-color:#EFD3A0;margin-bottom:18px">
+        <i class="bi bi-hourglass-split"></i> Sistem yang dipohon masih dalam proses dan telah ditapis. Tiada permohonan baharu direkodkan.
+    </div>
+    <?php endif; ?>
     <form method="POST" action="submit_permohonan.php" id="mainForm">
 
     <!-- SECTION A -->
@@ -151,14 +186,23 @@ $g = $gs->fetch();
                         </tr>
                     </thead>
                     <tbody>
-                    <?php foreach (getSenaraiSistem(true) as $bil => $nama): ?>
-                        <tr id="row-<?=$bil?>">
+                    <?php foreach (getSenaraiSistem(true) as $bil => $nama): $proc = isset($inProc[$bil]); ?>
+                        <tr id="row-<?=$bil?>" class="<?= $proc ? 'row-inproc' : '' ?>">
                             <td class="check-col">
+                                <?php if ($proc): ?>
+                                <button type="button" class="btn-inproc" title="Masih dalam proses"
+                                        onclick="showInProc(<?= htmlspecialchars(json_encode($nama), ENT_QUOTES) ?>)">
+                                    <i class="bi bi-hourglass-split"></i>
+                                </button>
+                                <?php else: ?>
                                 <input type="checkbox" name="sistem[]" value="<?=$bil?>"
                                        onchange="toggleRow(this,<?=$bil?>)">
+                                <?php endif; ?>
                             </td>
                             <td style="color:#6E6470;font-size:0.9rem;text-align:center"><?=$bil?></td>
-                            <td><?= htmlspecialchars($nama) ?></td>
+                            <td><?= htmlspecialchars($nama) ?>
+                                <?php if ($proc): ?><span class="badge-inproc"><i class="bi bi-hourglass-split"></i> Dalam Proses</span><?php endif; ?>
+                            </td>
                             <td>
                                 <select name="peranan_sistem_<?=$bil?>" id="ps-<?=$bil?>"
                                         disabled onchange="updateHadKuasa(<?=$bil?>)"
@@ -211,6 +255,16 @@ $g = $gs->fetch();
     </div>
 
     </form>
+
+    <!-- Pop up: sistem masih dalam proses -->
+    <div class="ip-overlay" id="inProcModal" onclick="if(event.target===this)closeInProc()">
+        <div class="ip-box">
+            <div class="ip-ic"><i class="bi bi-hourglass-split"></i></div>
+            <h5>Permohonan Masih Dalam Proses</h5>
+            <p>Permohonan capaian bagi sistem <span class="ip-sys" id="ipSysName"></span> masih <b>dalam proses</b> untuk diberi akses. Anda tidak boleh memohon semula sistem ini sehingga proses permohonan terdahulu selesai.</p>
+            <button type="button" onclick="closeInProc()"><i class="bi bi-check-lg me-1"></i> Faham</button>
+        </div>
+    </div>
     <?php endif; ?>
 </div>
 
@@ -260,6 +314,15 @@ function toggleSistem(el) {
 }
 const _ct = document.querySelector('input[name="tujuan"]:checked');
 if (_ct) _ct.closest('.radio-card').classList.add('selected');
+
+function showInProc(nama) {
+    document.getElementById('ipSysName').textContent = nama;
+    document.getElementById('inProcModal').classList.add('show');
+}
+function closeInProc() {
+    document.getElementById('inProcModal').classList.remove('show');
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeInProc(); });
 
 function toggleRow(chk, bil) {
     const sel = document.getElementById('ps-' + bil);
