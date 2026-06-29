@@ -44,6 +44,12 @@ $tolak   = array_filter($all, fn($r)=>$r['status']==='TIDAK_DILULUSKAN');
         .dash-tab.active .tab-badge{background:#fff;color:#234B7A}
         .dash-tab-pane{display:none}
         .dash-tab-pane.active{display:block}
+        @media (max-width:768px){
+            .dash-tabs{display:flex;width:100%;gap:4px}
+            .dash-tab{flex:1;justify-content:center;padding:10px 8px}
+            .dash-tab .tab-txt{font-size:0.82rem}
+            .dash-tab .tab-ic{width:24px;height:24px;font-size:14px}
+        }
     </style>
 </head>
 <body>
@@ -78,21 +84,21 @@ $tolak   = array_filter($all, fn($r)=>$r['status']==='TIDAK_DILULUSKAN');
 
     <div id="tab-perlu" class="dash-tab-pane active">
         <div class="table-card">
-            <table class="data-table">
+            <table class="data-table tbl-resp">
                 <thead><tr><th style="padding-left:24px">#</th><th>No. Rujukan</th><th>Pemohon</th><th>Jabatan</th><th>Tujuan</th><th>Diluluskan JTIK</th><th>Tindakan</th></tr></thead>
                 <tbody>
                 <?php if(empty($perlu)): ?>
-                <tr><td colspan="7"><div class="empty-state"><i class="bi bi-check2-circle"></i>Tiada permohonan menunggu pemberian akses.</div></td></tr>
+                <tr><td colspan="7" class="cell-empty"><div class="empty-state"><i class="bi bi-check2-circle"></i>Tiada permohonan menunggu pemberian akses.</div></td></tr>
                 <?php else: foreach(array_values($perlu) as $i=>$r): ?>
                 <tr>
-                    <td style="padding-left:24px;color:#6E6470;font-size:0.9rem"><?=$i+1?></td>
-                    <td style="font-weight:600;color:#2C5488;font-size:0.92rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
-                    <td style="font-weight:500"><?= htmlspecialchars($r['nama']) ?></td>
-                    <td style="font-size:0.92rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
-                    <td><span class="badge-status badge-info" style="font-size:0.82rem"><?= tujuanLabel($r['tujuan']) ?></span></td>
-                    <td style="font-size:0.92rem;color:#6b7280"><?=$r['tarikh_jtik']??'-'?></td>
-                    <td style="display:flex;gap:6px">
-                        <a href="view_permohonan.php?id=<?=$r['id']?>" class="btn-success-soft" style="padding:5px 10px;font-size:0.88rem"><i class="bi bi-eye"></i></a>
+                    <td data-label="#" style="padding-left:24px;color:#6E6470;font-size:0.9rem"><?=$i+1?></td>
+                    <td data-label="No. Rujukan" style="font-weight:600;color:#2C5488;font-size:0.92rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
+                    <td data-label="Pemohon" style="font-weight:500"><?= htmlspecialchars($r['nama']) ?></td>
+                    <td data-label="Jabatan" style="font-size:0.92rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
+                    <td data-label="Tujuan"><span class="badge-status badge-info" style="font-size:0.82rem"><?= tujuanLabel($r['tujuan']) ?></span></td>
+                    <td data-label="Diluluskan JTIK" style="font-size:0.92rem;color:#6b7280"><?=$r['tarikh_jtik']??'-'?></td>
+                    <td class="cell-act" style="display:flex;gap:6px">
+                        <a href="view_permohonan.php?id=<?=$r['id']?>" class="btn-success-soft" style="padding:5px 10px;font-size:0.88rem"><i class="bi bi-eye"></i> Lihat</a>
                         <a href="tindakan_it.php?id=<?=$r['id']?>" class="btn-primary-dark" style="padding:5px 12px;font-size:0.88rem"><i class="bi bi-key"></i> Beri Akses</a>
                     </td>
                 </tr>
@@ -104,21 +110,21 @@ $tolak   = array_filter($all, fn($r)=>$r['status']==='TIDAK_DILULUSKAN');
 
     <div id="tab-selesai" class="dash-tab-pane">
         <div class="table-card">
-            <table class="data-table">
+            <table class="data-table tbl-resp">
                 <thead><tr><th style="padding-left:24px">#</th><th>No. Rujukan</th><th>Pemohon</th><th>Jabatan</th><th>Tujuan</th><th>Status</th><th>Tarikh</th><th>Lihat</th></tr></thead>
                 <tbody>
                 <?php if(empty($selesai)): ?>
-                <tr><td colspan="8"><div class="empty-state"><i class="bi bi-inbox"></i>Tiada rekod lagi.</div></td></tr>
+                <tr><td colspan="8" class="cell-empty"><div class="empty-state"><i class="bi bi-inbox"></i>Tiada rekod lagi.</div></td></tr>
                 <?php else: foreach(array_values($selesai) as $i=>$r): ?>
                 <tr>
-                    <td style="padding-left:24px;color:#6E6470;font-size:0.9rem"><?=$i+1?></td>
-                    <td style="font-weight:600;color:#2C5488;font-size:0.92rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
-                    <td style="font-weight:500"><?= htmlspecialchars($r['nama']) ?></td>
-                    <td style="font-size:0.92rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
-                    <td style="font-size:0.92rem"><?= tujuanLabel($r['tujuan']) ?></td>
-                    <td><span class="badge-status <?= statusClass($r['status']) ?>"><?= statusLabel($r['status']) ?></span></td>
-                    <td style="color:#6E6470;font-size:0.9rem"><?= $r['tarikh_it'] ?? $r['tarikh_jtik'] ?? '-' ?></td>
-                    <td><a href="view_permohonan.php?id=<?=$r['id']?>" class="btn-success-soft" style="padding:5px 12px;font-size:0.88rem"><i class="bi bi-eye"></i> Lihat</a></td>
+                    <td data-label="#" style="padding-left:24px;color:#6E6470;font-size:0.9rem"><?=$i+1?></td>
+                    <td data-label="No. Rujukan" style="font-weight:600;color:#2C5488;font-size:0.92rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
+                    <td data-label="Pemohon" style="font-weight:500"><?= htmlspecialchars($r['nama']) ?></td>
+                    <td data-label="Jabatan" style="font-size:0.92rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
+                    <td data-label="Tujuan" style="font-size:0.92rem"><?= tujuanLabel($r['tujuan']) ?></td>
+                    <td data-label="Status"><span class="badge-status <?= statusClass($r['status']) ?>"><?= statusLabel($r['status']) ?></span></td>
+                    <td data-label="Tarikh" style="color:#6E6470;font-size:0.9rem"><?= $r['tarikh_it'] ?? $r['tarikh_jtik'] ?? '-' ?></td>
+                    <td class="cell-act"><a href="view_permohonan.php?id=<?=$r['id']?>" class="btn-success-soft" style="padding:5px 12px;font-size:0.88rem"><i class="bi bi-eye"></i> Lihat</a></td>
                 </tr>
                 <?php endforeach; endif; ?>
                 </tbody>
