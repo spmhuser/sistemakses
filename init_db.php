@@ -111,6 +111,8 @@ $gaji = [
     ['MB000200','Razif bin Hamdan',                  'Pegawai Teknologi Maklumat',  'F41',   'JTIK',                  '04-5399030'],
     ['MB001300','Nurul Huda binti Salleh',           'Penolong Pegawai Tadbir',     'N29',   'Jabatan Kesihatan',     '04-5399040'],
     ['MB001301','Tan Wei Ming',                      'Juruteknik Komputer',         'FT19',  'Jabatan Perancangan',   '04-5399041'],
+    ['MB000201','Nurul Izzati binti Karim',          'Pegawai Teknologi Maklumat',  'F41',   'JTIK',                  '04-5399031'],
+    ['MB000202','Tan Chee Hong',                     'Pegawai Teknologi Maklumat',  'F41',   'JTIK',                  '04-5399032'],
 ];
 $gstmt = $db->prepare("INSERT OR IGNORE INTO gaji (no_kakitangan,nama,jawatan,gred_jawatan,jabatan,telefon) VALUES (?,?,?,?,?,?)");
 foreach ($gaji as $g) $gstmt->execute($g);
@@ -163,7 +165,14 @@ $db->exec("
     )
 ");
 $sa = $db->prepare("INSERT INTO sistem_admin (id_sistem,no_pekerja,nama_admin,status) VALUES (?,?,?,1)");
-foreach (array_keys(SENARAI_SISTEM) as $idS) { $sa->execute([$idS, 'MB000200', 'Razif bin Hamdan']); }
+$adminMap = [
+    'MB000200' => ['Razif bin Hamdan',         range(1, 9)],
+    'MB000201' => ['Nurul Izzati binti Karim', range(10, 18)],
+    'MB000202' => ['Tan Chee Hong',            range(19, 27)],
+];
+foreach ($adminMap as $noPek => $info) {
+    foreach ($info[1] as $idS) { $sa->execute([$idS, $noPek, $info[0]]); }
+}
 
 // Audit Trail — rekod setiap tindakan
 $db->exec("
@@ -181,9 +190,14 @@ $db->exec("
 $users = [
     ['pemohon1',       password_hash('user123',      PASSWORD_DEFAULT), 'pemohon',          'Ahmad Fadzil bin Ismail',           'MB001234', 'Pegawai Tadbir',              'N41', 'Jabatan Perbendaharaan',  '04-5399000'],
     ['pemohon2',       password_hash('user123',      PASSWORD_DEFAULT), 'pemohon',          'Siti Norzahra binti Rashid',        'MB001235', 'Pembantu Tadbir',             'N19', 'Jabatan Kejuruteraan',    '04-5399001'],
-    ['pengarah_jab',   password_hash('pengarah123',  PASSWORD_DEFAULT), 'pengarah_jab',     'Mohd Azhar bin Abdul Karim',        'MB000100', 'Pengarah Jabatan',            'JUSA C', 'Jabatan Perbendaharaan', '04-5399010'],
+    ['pengarah_jab',       password_hash('pengarah123',  PASSWORD_DEFAULT), 'pengarah_jab',     'Mohd Azhar bin Abdul Karim',        'MB000100', 'Pengarah Jabatan',            'JUSA C', 'Jabatan Perbendaharaan', '04-5399010'],
+    ['pengarah_kej',       password_hash('pengarah123',  PASSWORD_DEFAULT), 'pengarah_jab',     'Ir. Rosnah binti Yusof',            'MB000101', 'Pengarah Jabatan',            'JUSA C', 'Jabatan Kejuruteraan',   '04-5399011'],
+    ['pengarah_kesihatan', password_hash('pengarah123',  PASSWORD_DEFAULT), 'pengarah_jab',     'Dr. Lim Chee Kong',                 'MB000102', 'Pengarah Jabatan',            'JUSA C', 'Jabatan Kesihatan',      '04-5399012'],
+    ['pengarah_rancang',   password_hash('pengarah123',  PASSWORD_DEFAULT), 'pengarah_jab',     'Hjh Faridah binti Omar',            'MB000103', 'Pengarah Jabatan',            'JUSA C', 'Jabatan Perancangan',    '04-5399013'],
     ['pengarah_jtik',  password_hash('jtik123',      PASSWORD_DEFAULT), 'pengarah_jtik',    'Abdul Fikri Ridzauudin b Abdullah', 'MB000050', 'Pengarah JTIK',               'JUSA C', 'JTIK',                  '04-5399020'],
     ['admin_it',       password_hash('it123',        PASSWORD_DEFAULT), 'admin_it',         'Razif bin Hamdan',                  'MB000200', 'Pegawai Teknologi Maklumat',  'F41', 'JTIK',                   '04-5399030'],
+    ['admin_it2',      password_hash('it123',        PASSWORD_DEFAULT), 'admin_it',         'Nurul Izzati binti Karim',          'MB000201', 'Pegawai Teknologi Maklumat',  'F41', 'JTIK',                   '04-5399031'],
+    ['admin_it3',      password_hash('it123',        PASSWORD_DEFAULT), 'admin_it',         'Tan Chee Hong',                     'MB000202', 'Pegawai Teknologi Maklumat',  'F41', 'JTIK',                   '04-5399032'],
 ];
 
 $stmt = $db->prepare("INSERT OR IGNORE INTO users (username,password,role,nama,no_kakitangan,jawatan,gred_jawatan,jabatan,telefon) VALUES (?,?,?,?,?,?,?,?,?)");

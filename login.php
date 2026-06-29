@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         body{min-height:100vh;display:flex;align-items:center;justify-content:center;
             background:linear-gradient(120deg,#F1F6FD 0%,#FFFFFF 55%,#FFFFFF 100%);padding:24px;}
         .auth-card{position:relative;display:flex;width:100%;max-width:1050px;
-            height:min(90vh,660px);border-radius:30px;overflow:hidden;background:#FFFFFF;
+            min-height:min(90vh,660px);height:auto;border-radius:30px;overflow:hidden;background:#FFFFFF;
             box-shadow:0 30px 70px rgba(50,25,50,0.30);}
 
         /* LEFT - IT image with curved right edge */
@@ -71,8 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .form-side{flex:1;display:flex;flex-direction:column;justify-content:center;
             padding:48px clamp(28px,4vw,56px);}
         .welcome{font-size:1.85rem;font-weight:800;color:#1E3A5F;line-height:1.2;margin-bottom:6px;}
-        .welcome-sub{font-size:0.98rem;color:#5C5560;margin-bottom:30px;}
-        .field-group{margin-bottom:20px;}
+        .welcome-sub{font-size:0.98rem;color:#5C5560;margin-bottom:22px;}
+        .field-group{margin-bottom:16px;}
         .field-group label{display:block;font-size:0.95rem;font-weight:700;color:#3A2E40;margin-bottom:8px;}
         .input-pill{display:flex;align-items:center;gap:11px;background:#fff;
             border:1.5px solid #DCE6F2;border-radius:13px;padding:14px 16px;
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .btn-login:active{transform:translateY(1px) scale(0.99);}
         .login-alert{background:#FFE2E0;color:#B42318;border:1.5px solid #F7B9B5;border-radius:11px;
             padding:11px 15px;font-size:0.9rem;font-weight:600;margin-bottom:18px;display:flex;align-items:center;gap:8px;}
-        .demo-note{margin-top:24px;font-size:0.78rem;color:#7A7079;text-align:center;line-height:1.7;
+        .demo-note{margin-top:16px;font-size:0.78rem;color:#7A7079;text-align:center;line-height:1.7;
             border-top:1px solid #EADFD3;padding-top:16px;}
         .demo-note b{color:#1E3A5F;}
 
@@ -212,8 +212,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div class="demo-note">
-            <b>Demo:</b> pemohon1 / user123 &nbsp;|&nbsp; pengarah_jab / pengarah123<br>
-            pengarah_jtik / jtik123 &nbsp;|&nbsp; admin_it / it123<br>
+            <b>Akaun Demo</b><br>
+            <b>Pemohon:</b> pemohon1 &middot; pemohon2 <span style="opacity:0.7">(/ user123)</span><br>
+            <b>Pengarah Jab:</b> pengarah_jab &middot; pengarah_kej &middot; pengarah_kesihatan &middot; pengarah_rancang <span style="opacity:0.7">(/ pengarah123)</span><br>
+            <b>Pengarah JTIK:</b> pengarah_jtik <span style="opacity:0.7">(/ jtik123)</span><br>
+            <b>Admin IT:</b> admin_it (1-9) &middot; admin_it2 (10-18) &middot; admin_it3 (19-27) <span style="opacity:0.7">(/ it123)</span><br>
             <span style="opacity:0.75">&copy; <?= date('Y') ?> Majlis Bandaraya Seberang Perai</span>
         </div>
     </div>
