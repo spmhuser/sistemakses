@@ -140,7 +140,7 @@ $backUrl = match($_SESSION['role']) {
                 <li><div class="tl-dot active"></div><div class="tl-content"><div class="tl-title">Menunggu Kelulusan Pengarah JTIK</div></div></li>
                 <?php endif; ?>
                 <?php if ($r['tarikh_it']): ?>
-                <li><div class="tl-dot done"></div><div class="tl-content"><div class="tl-title">Akses Diberikan oleh IT</div><div class="tl-date"><?=$r['tarikh_it']?></div><?php if($r['it_pemberi_nama']): ?><div class="tl-note">Pemberi Akses: <?= htmlspecialchars($r['it_pemberi_nama']) ?></div><?php endif; ?></div></li>
+                <li><div class="tl-dot done"></div><div class="tl-content"><div class="tl-title">Akses Telah Diberikan oleh Admin IT</div><div class="tl-date"><?=$r['tarikh_it']?></div><?php if($r['it_pemberi_nama'] && $_SESSION['role'] !== 'pemohon'): ?><div class="tl-note">Pemberi Akses: <?= htmlspecialchars($r['it_pemberi_nama']) ?></div><?php endif; ?></div></li>
                 <?php endif; ?>
             </ul>
         </div>
@@ -175,6 +175,22 @@ $backUrl = match($_SESSION['role']) {
 
     <!-- Section G - IT -->
     <?php if ($r['tarikh_it']): ?>
+    <?php if ($_SESSION['role'] === 'pemohon'): ?>
+    <!-- Pemohon hanya nampak pengesahan akses diberikan. Penyemakan IT adalah proses dalaman. -->
+    <div class="view-card">
+        <div class="view-card-header"><span style="background:#2C5488;color:#fff;font-size:0.82rem;font-weight:700;padding:3px 9px;border-radius:6px">G</span><h6>Status Akses</h6></div>
+        <div class="view-card-body">
+            <div style="display:flex;align-items:center;gap:14px;background:#E9F7EF;border:1px solid #BFE6CD;border-radius:12px;padding:16px 18px">
+                <div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#2E9E5B,#23C16B);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0"><i class="bi bi-check-lg"></i></div>
+                <div>
+                    <div style="font-weight:700;color:#1E3A5F">Akses telah diberikan oleh Admin IT</div>
+                    <div style="color:#5B6675;font-size:0.9rem">Tarikh: <?=$r['tarikh_it']?></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php else: ?>
+    <!-- Paparan penuh (termasuk penyemak) hanya untuk peranan dalaman: Admin IT / Pengarah JTIK / Pengarah Jabatan -->
     <div class="view-card">
         <div class="view-card-header"><span style="background:#2C5488;color:#fff;font-size:0.82rem;font-weight:700;padding:3px 9px;border-radius:6px">G</span><h6>Kegunaan IT</h6></div>
         <div class="view-card-body">
@@ -187,6 +203,7 @@ $backUrl = match($_SESSION['role']) {
         </div>
     </div>
     <?php endif; ?>
+    <?php endif; ?>
 
     <?php if ($_SESSION['role'] === 'pengarah_jab' && $r['status'] === 'MENUNGGU_PENGARAH_JAB'): ?>
     <div style="margin-top:8px"><a href="tindakan_pengarah_jab.php?id=<?=$r['id']?>" class="btn-primary-dark"><i class="bi bi-pen"></i> Buat Perakuan</a></div>
@@ -198,7 +215,8 @@ $backUrl = match($_SESSION['role']) {
     <div style="margin-top:8px"><a href="tindakan_it.php?id=<?=$r['id']?>" class="btn-primary-dark"><i class="bi bi-key"></i> Berikan Akses</a></div>
     <?php endif; ?>
 
-    <!-- AUDIT TRAIL -->
+    <!-- AUDIT TRAIL — jejak dalaman untuk pegawai sahaja; disembunyikan daripada pemohon -->
+    <?php if ($_SESSION['role'] !== 'pemohon'): ?>
     <div class="view-card" style="margin-top:20px">
         <div class="view-card-header"><span style="background:#2C5488;color:#fff;font-size:0.82rem;font-weight:700;padding:3px 9px;border-radius:6px"><i class="bi bi-clock-history"></i></span><h6>Jejak Audit (Audit Trail)</h6></div>
         <div class="view-card-body" style="padding:0">
@@ -224,5 +242,6 @@ $backUrl = match($_SESSION['role']) {
             <?php endif; ?>
         </div>
     </div>
+    <?php endif; /* sembunyi audit trail dari pemohon */ ?>
 </div>
 </body></html>
