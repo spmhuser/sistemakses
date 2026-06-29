@@ -149,7 +149,7 @@ function statusLabel($status) {
     return match($status) {
         'MENUNGGU_PENGARAH_JAB' => 'Menunggu Pengarah Jabatan',
         'MENUNGGU_JTIK'         => 'Menunggu Kelulusan Pengarah JTIK',
-        'DILULUSKAN'            => 'Menunggu Akses IT',
+        'DILULUSKAN'            => 'Menunggu Akses JTIK',
         'TIDAK_DILULUSKAN'      => 'Tidak Diluluskan',
         'AKSES_DIBERIKAN'       => 'Akses Diberikan',
         default                 => $status,
