@@ -264,11 +264,83 @@ table.data-table tbody tr:hover td { background: #EFF4FC; }
 ::-webkit-scrollbar-track { background: #ECE8F2; }
 ::-webkit-scrollbar-thumb { background: #A9C6E8; border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: #1FBCD4; }
+
+/* ===================== MOBILE / RESPONSIVE ===================== */
+.mobile-topbar { display: none; }
+.sidebar-overlay { display: none; }
+
+@media (max-width: 992px) {
+    /* Top bar + off-canvas sidebar */
+    .mobile-topbar {
+        display: flex; align-items: center; gap: 12px;
+        position: sticky; top: 0; z-index: 95;
+        background: linear-gradient(135deg, #1E3A5F 0%, #2E73D8 100%);
+        padding: 11px 15px; box-shadow: 0 2px 12px rgba(40,70,120,0.3);
+    }
+    .mobile-topbar .mt-burger {
+        background: rgba(255,255,255,0.18); border: none; color: #fff;
+        width: 44px; height: 44px; border-radius: 11px; font-size: 23px;
+        display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+    }
+    .mobile-topbar .mt-burger:active { background: rgba(255,255,255,0.32); }
+    .mobile-topbar .mt-title { color: #fff; font-weight: 800; font-size: 0.96rem; letter-spacing: 0.3px; }
+    .sidebar { transform: translateX(-100%); transition: transform 0.28s ease; width: 270px; }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-overlay {
+        display: block; position: fixed; inset: 0; background: rgba(30,58,95,0.5);
+        z-index: 94; opacity: 0; visibility: hidden; transition: opacity 0.28s;
+    }
+    .sidebar-overlay.show { opacity: 1; visibility: visible; }
+    .main-content { margin-left: 0; padding: 18px 14px; }
+    .page-header h4 { font-size: 1.45rem; }
+    /* Jadual lain (tanpa .tbl-resp) boleh skrol mendatar, bukan terpotong */
+    .table-card { overflow-x: auto; }
+    .stat-card { padding: 18px; gap: 13px; }
+    .stat-icon { width: 50px; height: 50px; font-size: 23px; }
+    .stat-num { font-size: 1.9rem; }
+}
+
+/* Jadual -> kad pada telefon (guna kelas .tbl-resp + atribut data-label pada td) */
+@media (max-width: 768px) {
+    table.data-table.tbl-resp thead { display: none; }
+    table.data-table.tbl-resp,
+    table.data-table.tbl-resp tbody,
+    table.data-table.tbl-resp tr,
+    table.data-table.tbl-resp td { display: block; width: 100%; }
+    table.data-table.tbl-resp tr {
+        border: 1px solid #E2EAF5; border-radius: 14px; margin: 12px; padding: 6px 2px;
+        box-shadow: 0 2px 9px rgba(40,70,120,0.08); background: #fff;
+    }
+    table.data-table.tbl-resp tbody tr:hover td { background: transparent; }
+    table.data-table.tbl-resp td {
+        border: none !important; padding: 9px 16px !important;
+        display: flex; justify-content: space-between; align-items: center; gap: 14px; text-align: right;
+    }
+    table.data-table.tbl-resp td::before {
+        content: attr(data-label); font-weight: 700; color: #234B7A; font-size: 0.76rem;
+        text-transform: uppercase; letter-spacing: 0.3px; text-align: left; flex-shrink: 0; white-space: nowrap;
+    }
+    table.data-table.tbl-resp td.cell-act {
+        justify-content: flex-end; flex-wrap: wrap; gap: 8px;
+        border-top: 1px dashed #E2EAF5 !important; margin-top: 4px; padding-top: 12px !important;
+    }
+    table.data-table.tbl-resp td.cell-act::before { content: none; }
+    table.data-table.tbl-resp td.cell-act a { padding: 9px 16px !important; font-size: 0.92rem !important; }
+    table.data-table.tbl-resp td.cell-chk { justify-content: flex-start; }
+    table.data-table.tbl-resp td .empty-state { text-align: center; }
+    table.data-table.tbl-resp td.cell-empty::before { content: none; }
+    table.data-table.tbl-resp td.cell-empty { text-align: center; }
+}
 </style>
 <?php }
 
 function sidebarHTML($username, $roleLabel, $navItems) { ?>
-<div class="sidebar">
+<div class="mobile-topbar">
+    <button class="mt-burger" onclick="toggleSidebar()" aria-label="Buka menu"><i class="bi bi-list"></i></button>
+    <div class="mt-title">Borang Capaian Sistem</div>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="appSidebar">
     <div class="sidebar-brand">
         <div class="brand-icon"><i class="bi bi-shield-lock"></i></div>
         <div class="brand-title">BORANG CAPAIAN<br>SISTEM</div>
@@ -293,6 +365,15 @@ function sidebarHTML($username, $roleLabel, $navItems) { ?>
         <a href="logout.php" class="btn-logout"><i class="bi bi-box-arrow-left"></i> Log Keluar</a>
     </div>
 </div>
+<script>
+function toggleSidebar(){
+    var s = document.getElementById('appSidebar');
+    var o = document.getElementById('sidebarOverlay');
+    if(!s) return;
+    s.classList.toggle('open');
+    if(o) o.classList.toggle('show');
+}
+</script>
 <?php }
 
 function toastHTML($msg, $type = 'success') {
