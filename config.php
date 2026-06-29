@@ -148,7 +148,7 @@ function getAuditTrail($permohonan_id) {
 function statusLabel($status) {
     return match($status) {
         'MENUNGGU_PENGARAH_JAB' => 'Menunggu Pengarah Jabatan',
-        'MENUNGGU_JTIK'         => 'Menunggu Kelulusan JTIK',
+        'MENUNGGU_JTIK'         => 'Menunggu Kelulusan Pengarah JTIK',
         'DILULUSKAN'            => 'Diluluskan',
         'TIDAK_DILULUSKAN'      => 'Tidak Diluluskan',
         'AKSES_DIBERIKAN'       => 'Akses Diberikan',

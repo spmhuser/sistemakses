@@ -9,8 +9,10 @@ $stmt->execute([$_SESSION['user_id']]);
 $list = $stmt->fetchAll();
 
 $total    = count($list);
-$proses   = array_filter($list, fn($r)=>in_array($r['status'],['MENUNGGU_PENGARAH_JAB','MENUNGGU_JTIK']));
-$selesai  = array_filter($list, fn($r)=>in_array($r['status'],['DILULUSKAN','AKSES_DIBERIKAN','TIDAK_DILULUSKAN']));
+// Proses dianggap SELESAI hanya selepas Admin IT beri akses (AKSES_DIBERIKAN) atau ditolak (TIDAK_DILULUSKAN).
+// DILULUSKAN (lulus JTIK tetapi belum diberi akses oleh IT) masih dikira DALAM PROSES.
+$proses   = array_filter($list, fn($r)=>in_array($r['status'],['MENUNGGU_PENGARAH_JAB','MENUNGGU_JTIK','DILULUSKAN']));
+$selesai  = array_filter($list, fn($r)=>in_array($r['status'],['AKSES_DIBERIKAN','TIDAK_DILULUSKAN']));
 $defaultTab = count($proses) > 0 ? 'tab-proses' : 'tab-selesai';
 $lulus    = count(array_filter($list, fn($r)=>in_array($r['status'],['DILULUSKAN','AKSES_DIBERIKAN'])));
 $tolak    = count(array_filter($list, fn($r)=>$r['status']==='TIDAK_DILULUSKAN'));
