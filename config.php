@@ -149,7 +149,7 @@ function statusLabel($status) {
     return match($status) {
         'MENUNGGU_PENGARAH_JAB' => 'Menunggu Pengarah Jabatan',
         'MENUNGGU_JTIK'         => 'Menunggu Kelulusan Pengarah JTIK',
-        'DILULUSKAN'            => 'Diluluskan',
+        'DILULUSKAN'            => 'Menunggu Akses IT',
         'TIDAK_DILULUSKAN'      => 'Tidak Diluluskan',
         'AKSES_DIBERIKAN'       => 'Akses Diberikan',
         default                 => $status,
@@ -160,7 +160,7 @@ function statusClass($status) {
     return match($status) {
         'MENUNGGU_PENGARAH_JAB' => 'badge-warning',
         'MENUNGGU_JTIK'         => 'badge-info',
-        'DILULUSKAN'            => 'badge-success',
+        'DILULUSKAN'            => 'badge-warning',
         'TIDAK_DILULUSKAN'      => 'badge-danger',
         'AKSES_DIBERIKAN'       => 'badge-primary',
         default                 => 'badge-secondary',
