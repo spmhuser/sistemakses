@@ -110,6 +110,17 @@ function getJabatanList() {
     } catch (Throwable $e) { return []; }
 }
 
+// Senarai penyemak IT (boleh diurus melalui tetapan_penyemak.php). Pulangan: array baris penuh.
+function getPenyemakList($activeOnly = true) {
+    try {
+        $db  = getDB();
+        $sql = "SELECT * FROM penyemak";
+        if ($activeOnly) $sql .= " WHERE status = 1";
+        $sql .= " ORDER BY nama";
+        return $db->query($sql)->fetchAll();
+    } catch (Throwable $e) { return []; }
+}
+
 // Senarai id_sistem yang ditugaskan kepada seorang Admin IT (Option A — multi admin per sistem)
 function getSistemForAdmin($no_pekerja) {
     try {

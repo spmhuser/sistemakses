@@ -22,11 +22,29 @@ if ($mySys) {
     if ((int)$chk->fetch()['c'] === 0) { header('Location: dashboard_admin_it.php'); exit; }
 }
 
+// Pemberi akses = admin IT yang log masuk. Tarik nama & jawatan (cop) automatik dari Sistem Gaji.
+$mg = $db->prepare("SELECT nama, jawatan FROM gaji WHERE no_kakitangan = ?");
+$mg->execute([$noPek]);
+$myGaji      = $mg->fetch() ?: [];
+$pemberiNama = $myGaji['nama']    ?? ($_SESSION['nama'] ?? '');
+$pemberiCop  = $myGaji['jawatan'] ?? '';
+
+// Senarai penyemak aktif (auto-tarik dari tetapan_penyemak.php)
+$penyemakLs = getPenyemakList(true);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $pemberi_nama   = trim($_POST['pemberi_nama']   ?? '');
-    $pemberi_cop    = trim($_POST['pemberi_cop']    ?? '');
-    $penyemak_nama  = trim($_POST['penyemak_nama']  ?? '');
-    $penyemak_cop   = trim($_POST['penyemak_cop']   ?? '');
+    // Pemberi sentiasa diambil dari rekod gaji admin (autoritatif), bukan dari input
+    $pemberi_nama  = $pemberiNama;
+    $pemberi_cop   = $pemberiCop;
+    // Penyemak: ambil dari penyemak terpilih (tetapan_penyemak)
+    $penyemak_nama = '';
+    $penyemak_cop  = '';
+    $penyemak_id   = (int)($_POST['penyemak_id'] ?? 0);
+    if ($penyemak_id) {
+        $pn = $db->prepare("SELECT nama, jawatan FROM penyemak WHERE id = ? AND status = 1");
+        $pn->execute([$penyemak_id]);
+        if ($prow = $pn->fetch()) { $penyemak_nama = $prow['nama']; $penyemak_cop = $prow['jawatan']; }
+    }
     if ($pemberi_nama && $penyemak_nama) {
         $u = $db->prepare("UPDATE permohonan SET status='AKSES_DIBERIKAN',it_pemberi_nama=?,it_pemberi_cop=?,it_penyemak_nama=?,it_penyemak_cop=?,tarikh_it=datetime('now','+8 hours') WHERE id=?");
         $u->execute([$pemberi_nama,$pemberi_cop,$penyemak_nama,$penyemak_cop,$id]);
@@ -114,27 +132,40 @@ $sistemList = $sistems->fetchAll();
                     <div class="col-md-6">
                         <div style="border:1px solid #e5e7eb;border-radius:12px;padding:20px">
                             <div style="font-size:0.95rem;font-weight:700;color:#2C5488;margin-bottom:16px"><i class="bi bi-person-check me-2"></i>Pemberi Akses</div>
+                            <div class="locked-note" style="font-size:0.82rem;color:#2862C0;background:#E6EFFA;border:1px solid #BFD2EC;border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:8px;margin-bottom:14px;font-weight:600"><i class="bi bi-shield-lock"></i> Diambil automatik dari rekod anda (Sistem Gaji).</div>
                             <div class="mb-3">
-                                <label class="field-label">Nama <span class="req">*</span></label>
-                                <input type="text" name="pemberi_nama" class="form-control-custom" required value="<?= htmlspecialchars($_SESSION['nama']??'') ?>">
+                                <label class="field-label">Nama</label>
+                                <input type="text" class="form-control-custom" readonly value="<?= htmlspecialchars($pemberiNama) ?>" style="background:#EEF3FA;cursor:not-allowed">
                             </div>
                             <div class="mb-2">
                                 <label class="field-label">Cop Jawatan</label>
-                                <input type="text" name="pemberi_cop" class="form-control-custom" placeholder="Cth: Pegawai Teknologi Maklumat">
+                                <input type="text" class="form-control-custom" readonly value="<?= htmlspecialchars($pemberiCop ?: '-') ?>" style="background:#EEF3FA;cursor:not-allowed">
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div style="border:1px solid #e5e7eb;border-radius:12px;padding:20px">
                             <div style="font-size:0.95rem;font-weight:700;color:#2C5488;margin-bottom:16px"><i class="bi bi-person-badge me-2"></i>Penyemak</div>
+                            <?php if ($penyemakLs): ?>
                             <div class="mb-3">
-                                <label class="field-label">Nama <span class="req">*</span></label>
-                                <input type="text" name="penyemak_nama" class="form-control-custom" required placeholder="Nama penyemak">
+                                <label class="field-label">Pilih Penyemak <span class="req">*</span></label>
+                                <select name="penyemak_id" id="penyemak_id" class="form-control-custom" required onchange="showCop()">
+                                    <option value="" data-cop="">— Pilih Penyemak —</option>
+                                    <?php foreach ($penyemakLs as $p): ?>
+                                    <option value="<?= (int)$p['id'] ?>" data-cop="<?= htmlspecialchars($p['jawatan'] ?? '', ENT_QUOTES) ?>"<?= count($penyemakLs)===1?' selected':'' ?>><?= htmlspecialchars($p['nama']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
                             </div>
                             <div class="mb-2">
                                 <label class="field-label">Cop Jawatan</label>
-                                <input type="text" name="penyemak_cop" class="form-control-custom" placeholder="Cth: Ketua Unit IT">
+                                <input type="text" id="penyemak_cop_view" class="form-control-custom" readonly value="<?= htmlspecialchars(count($penyemakLs)===1 ? ($penyemakLs[0]['jawatan'] ?? '') : '') ?>" style="background:#EEF3FA;cursor:not-allowed" placeholder="Auto ikut penyemak">
                             </div>
+                            <?php else: ?>
+                            <div style="font-size:0.9rem;color:#92580B;background:#FFF3D2;border:1px solid #F0D79A;border-radius:8px;padding:12px 14px">
+                                <i class="bi bi-exclamation-triangle me-1"></i> Tiada penyemak aktif.
+                                Sila tambah di <a href="tetapan_penyemak.php" style="color:#92580B;font-weight:700;text-decoration:underline">Tetapan Penyemak</a> dahulu.
+                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -143,10 +174,18 @@ $sistemList = $sistems->fetchAll();
                 </div>
         </div>
         <div class="action-row">
-                <button type="submit" class="btn-primary-dark"><i class="bi bi-key"></i> Sahkan Pemberian Akses</button>
+                <button type="submit" class="btn-primary-dark" <?= $penyemakLs ? '' : 'disabled style="opacity:.55;cursor:not-allowed"' ?>><i class="bi bi-key"></i> Sahkan Pemberian Akses</button>
                 <a href="dashboard_admin_it.php" class="btn-secondary-soft">Batal</a>
         </div>
             </form>
+            <script>
+            function showCop(){
+                var s = document.getElementById('penyemak_id');
+                if(!s) return;
+                var cop = s.options[s.selectedIndex].getAttribute('data-cop') || '';
+                document.getElementById('penyemak_cop_view').value = cop;
+            }
+            </script>
     </div>
 </div>
 </body></html>

@@ -20,6 +20,7 @@ $db->exec("DROP TABLE IF EXISTS gaji");
 $db->exec("DROP TABLE IF EXISTS senarai_sistem");
 $db->exec("DROP TABLE IF EXISTS jabatan_pengarah");
 $db->exec("DROP TABLE IF EXISTS sistem_admin");
+$db->exec("DROP TABLE IF EXISTS penyemak");
 $db->exec("DROP TABLE IF EXISTS audit_trail");
 
 $db->exec("
@@ -173,6 +174,21 @@ $adminMap = [
 foreach ($adminMap as $noPek => $info) {
     foreach ($info[1] as $idS) { $sa->execute([$idS, $noPek, $info[0]]); }
 }
+
+// Penyemak IT (boleh diurus melalui tetapan_penyemak.php) — auto-tarik ke borang pemberian akses
+$db->exec("
+    CREATE TABLE penyemak (
+        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        nama        TEXT NOT NULL,
+        jawatan     TEXT,
+        no_pekerja  TEXT,
+        status      INTEGER NOT NULL DEFAULT 1,
+        created_at  DATETIME DEFAULT (datetime('now','+8 hours')),
+        updated_at  DATETIME
+    )
+");
+$ps = $db->prepare("INSERT INTO penyemak (nama,jawatan,no_pekerja,status) VALUES (?,?,?,1)");
+$ps->execute(['Nurul Izzati binti Karim', 'Ketua Unit Teknologi Maklumat', 'MB000201']);
 
 // Audit Trail — rekod setiap tindakan
 $db->exec("

@@ -69,6 +69,7 @@ if ($msg === 'toggle') toastHTML('Status sistem berjaya dikemas kini.');
     ['href'=>'tetapan_sistem.php',     'icon'=>'bi-hdd-stack',    'label'=>'Tetapan Sistem',  'active'=>true],
     ['href'=>'tetapan_pengarah.php',   'icon'=>'bi-person-badge', 'label'=>'Tetapan Pengarah','active'=>false],
     ['href'=>'tetapan_admin_sistem.php','icon'=>'bi-person-gear','label'=>'Tetapan Admin Sistem','active'=>false],
+    ['href'=>'tetapan_penyemak.php','icon'=>'bi-person-check','label'=>'Tetapan Penyemak','active'=>false],
 ]); ?>
 <div class="main-content">
     <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">

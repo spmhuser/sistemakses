@@ -8,6 +8,25 @@ $stmt = $db->prepare("SELECT * FROM permohonan WHERE user_id = ? ORDER BY create
 $stmt->execute([$_SESSION['user_id']]);
 $list = $stmt->fetchAll();
 
+// Senarai nama sistem bagi setiap permohonan (dikumpul ikut permohonan_id)
+$sysByPerm = [];
+$ids = array_column($list, 'id');
+if ($ids) {
+    $ph = implode(',', array_fill(0, count($ids), '?'));
+    $sq = $db->prepare("SELECT permohonan_id, nama_sistem FROM permohonan_sistem WHERE permohonan_id IN ($ph) ORDER BY bil");
+    $sq->execute($ids);
+    foreach ($sq->fetchAll() as $row) { $sysByPerm[$row['permohonan_id']][] = $row['nama_sistem']; }
+}
+// Helper paparan senarai sistem sebagai lencana kecil
+function renderSistemBadges($names) {
+    if (empty($names)) return '<span style="color:#c0c8d4;font-size:0.88rem">—</span>';
+    $out = '<div style="display:flex;flex-wrap:wrap;gap:4px">';
+    foreach ($names as $n) {
+        $out .= '<span style="display:inline-block;font-size:0.72rem;padding:2px 8px;border-radius:10px;background:#E6EFFA;color:#2C5488;font-weight:600">' . htmlspecialchars($n) . '</span>';
+    }
+    return $out . '</div>';
+}
+
 $total    = count($list);
 // Proses dianggap SELESAI hanya selepas Admin IT beri akses (AKSES_DIBERIKAN) atau ditolak (TIDAK_DILULUSKAN).
 // DILULUSKAN (lulus JTIK tetapi belum diberi akses oleh IT) masih dikira DALAM PROSES.
@@ -86,16 +105,17 @@ $tolak    = count(array_filter($list, fn($r)=>$r['status']==='TIDAK_DILULUSKAN')
             <table class="data-table tbl-resp">
                 <thead><tr>
                     <th style="padding-left:24px">#</th>
-                    <th>No. Rujukan</th><th>Tujuan</th><th>Jabatan</th><th>Status</th><th>Tarikh Hantar</th><th>Tindakan</th>
+                    <th>No. Rujukan</th><th>Tujuan</th><th>Sistem</th><th>Jabatan</th><th>Status</th><th>Tarikh Hantar</th><th>Tindakan</th>
                 </tr></thead>
                 <tbody>
                 <?php if(empty($proses)): ?>
-                <tr><td colspan="7" class="cell-empty"><div class="empty-state"><i class="bi bi-check2-circle"></i>Tiada permohonan dalam proses. <a href="borang_permohonan.php" style="color:#2C5488;font-weight:600">Buat sekarang</a>.</div></td></tr>
+                <tr><td colspan="8" class="cell-empty"><div class="empty-state"><i class="bi bi-check2-circle"></i>Tiada permohonan dalam proses. <a href="borang_permohonan.php" style="color:#2C5488;font-weight:600">Buat sekarang</a>.</div></td></tr>
                 <?php else: foreach(array_values($proses) as $i=>$r): ?>
                 <tr>
                     <td data-label="#" style="padding-left:24px;color:#6E6470;font-size:0.9rem"><?=$i+1?></td>
                     <td data-label="No. Rujukan" style="font-weight:600;color:#2C5488;font-size:0.92rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
                     <td data-label="Tujuan" style="font-size:0.92rem"><?= tujuanLabel($r['tujuan']) ?></td>
+                    <td data-label="Sistem" style="max-width:300px"><?= renderSistemBadges($sysByPerm[$r['id']] ?? []) ?></td>
                     <td data-label="Jabatan" style="font-size:0.92rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
                     <td data-label="Status"><span class="badge-status <?= statusClass($r['status']) ?>"><?= statusLabel($r['status']) ?></span></td>
                     <td data-label="Tarikh Hantar" style="color:#6E6470;font-size:0.9rem"><?= $r['created_at'] ?></td>
@@ -112,16 +132,17 @@ $tolak    = count(array_filter($list, fn($r)=>$r['status']==='TIDAK_DILULUSKAN')
             <table class="data-table tbl-resp">
                 <thead><tr>
                     <th style="padding-left:24px">#</th>
-                    <th>No. Rujukan</th><th>Tujuan</th><th>Jabatan</th><th>Status</th><th>Tarikh Hantar</th><th>Tindakan</th>
+                    <th>No. Rujukan</th><th>Tujuan</th><th>Sistem</th><th>Jabatan</th><th>Status</th><th>Tarikh Hantar</th><th>Tindakan</th>
                 </tr></thead>
                 <tbody>
                 <?php if(empty($selesai)): ?>
-                <tr><td colspan="7" class="cell-empty"><div class="empty-state"><i class="bi bi-inbox"></i>Tiada permohonan selesai lagi.</div></td></tr>
+                <tr><td colspan="8" class="cell-empty"><div class="empty-state"><i class="bi bi-inbox"></i>Tiada permohonan selesai lagi.</div></td></tr>
                 <?php else: foreach(array_values($selesai) as $i=>$r): ?>
                 <tr>
                     <td data-label="#" style="padding-left:24px;color:#6E6470;font-size:0.9rem"><?=$i+1?></td>
                     <td data-label="No. Rujukan" style="font-weight:600;color:#2C5488;font-size:0.92rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
                     <td data-label="Tujuan" style="font-size:0.92rem"><?= tujuanLabel($r['tujuan']) ?></td>
+                    <td data-label="Sistem" style="max-width:300px"><?= renderSistemBadges($sysByPerm[$r['id']] ?? []) ?></td>
                     <td data-label="Jabatan" style="font-size:0.92rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
                     <td data-label="Status"><span class="badge-status <?= statusClass($r['status']) ?>"><?= statusLabel($r['status']) ?></span></td>
                     <td data-label="Tarikh Hantar" style="color:#6E6470;font-size:0.9rem"><?= $r['created_at'] ?></td>

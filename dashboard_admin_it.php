@@ -53,6 +53,7 @@ $tolak   = array_filter($all, fn($r)=>$r['status']==='TIDAK_DILULUSKAN');
     ['href'=>'tetapan_sistem.php','icon'=>'bi-hdd-stack','label'=>'Tetapan Sistem','active'=>false],
     ['href'=>'tetapan_pengarah.php','icon'=>'bi-person-badge','label'=>'Tetapan Pengarah','active'=>false],
     ['href'=>'tetapan_admin_sistem.php','icon'=>'bi-person-gear','label'=>'Tetapan Admin Sistem','active'=>false],
+    ['href'=>'tetapan_penyemak.php','icon'=>'bi-person-check','label'=>'Tetapan Penyemak','active'=>false],
 ]); ?>
 <div class="main-content">
     <div class="page-header"><h4>Dashboard Admin IT</h4><p>Urus pemberian akses sistem selepas kelulusan JTIK</p></div>
