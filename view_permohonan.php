@@ -25,13 +25,14 @@ $roleNav = match($_SESSION['role']) {
     'pengarah_jab'  => [['href'=>'dashboard_pengarah_jab.php','icon'=>'bi-grid-1x2','label'=>'Dashboard','active'=>false]],
     'pengarah_jtik' => [['href'=>'dashboard_pengarah_jtik.php','icon'=>'bi-grid-1x2','label'=>'Dashboard','active'=>false]],
     'admin_it'      => [['href'=>'dashboard_admin_it.php','icon'=>'bi-grid-1x2','label'=>'Dashboard','active'=>false]],
+    'penyemak_it'   => [['href'=>'dashboard_penyemak.php','icon'=>'bi-grid-1x2','label'=>'Dashboard','active'=>false]],
     default         => [],
 };
 $roleLabel = match($_SESSION['role']) {
-    'pemohon'=>'Pemohon','pengarah_jab'=>'Pengarah Jabatan','pengarah_jtik'=>'Pengarah JTIK','admin_it'=>'Admin IT', default=>''
+    'pemohon'=>'Pemohon','pengarah_jab'=>'Pengarah Jabatan','pengarah_jtik'=>'Pengarah JTIK','admin_it'=>'Admin IT','penyemak_it'=>'Penyemak IT', default=>''
 };
 $backUrl = match($_SESSION['role']) {
-    'pengarah_jab'=>'dashboard_pengarah_jab.php','pengarah_jtik'=>'dashboard_pengarah_jtik.php','admin_it'=>'dashboard_admin_it.php',default=>'dashboard_pemohon.php'
+    'pengarah_jab'=>'dashboard_pengarah_jab.php','pengarah_jtik'=>'dashboard_pengarah_jtik.php','admin_it'=>'dashboard_admin_it.php','penyemak_it'=>'dashboard_penyemak.php',default=>'dashboard_pemohon.php'
 };
 ?>
 <!DOCTYPE html>
@@ -196,9 +197,13 @@ $backUrl = match($_SESSION['role']) {
         <div class="view-card-body">
             <div class="info-row">
                 <div class="info-item"><label>Pemberi Akses</label><div class="val"><?= htmlspecialchars($r['it_pemberi_nama']) ?></div></div>
-                <div class="info-item"><label>Penyemak</label><div class="val"><?= htmlspecialchars($r['it_penyemak_nama']) ?></div></div>
-                <div class="info-item"><label>Cop Jawatan (Pemberi)</label><div class="val"><?= htmlspecialchars($r['it_pemberi_cop']) ?></div></div>
-                <div class="info-item"><label>Tarikh</label><div class="val"><?=$r['tarikh_it']?></div></div>
+                <div class="info-item"><label>Cop Jawatan (Pemberi)</label><div class="val"><?= htmlspecialchars($r['it_pemberi_cop'] ?: '-') ?></div></div>
+                <div class="info-item"><label>Tarikh Akses</label><div class="val"><?=$r['tarikh_it']?></div></div>
+                <div class="info-item"><label>Penyemak IT</label><div class="val"><?= $r['it_penyemak_nama'] ? htmlspecialchars($r['it_penyemak_nama']) : '<span class="badge-status badge-warning">Belum disemak</span>' ?></div></div>
+                <?php if (!empty($r['it_penyemak_nama'])): ?>
+                <div class="info-item"><label>Cop Jawatan (Penyemak)</label><div class="val"><?= htmlspecialchars($r['it_penyemak_cop'] ?: '-') ?></div></div>
+                <div class="info-item"><label>Tarikh Semakan</label><div class="val"><?= $r['tarikh_semakan'] ?? '-' ?></div></div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -213,6 +218,9 @@ $backUrl = match($_SESSION['role']) {
     <?php endif; ?>
     <?php if ($_SESSION['role'] === 'admin_it' && $r['status'] === 'DILULUSKAN'): ?>
     <div style="margin-top:8px"><a href="tindakan_it.php?id=<?=$r['id']?>" class="btn-primary-dark"><i class="bi bi-key"></i> Berikan Akses</a></div>
+    <?php endif; ?>
+    <?php if ($_SESSION['role'] === 'penyemak_it' && $r['status'] === 'AKSES_DIBERIKAN' && empty($r['it_penyemak_nama'])): ?>
+    <div style="margin-top:8px"><a href="tindakan_semakan.php?id=<?=$r['id']?>" class="btn-primary-dark"><i class="bi bi-patch-check"></i> Sahkan Semakan</a></div>
     <?php endif; ?>
 
     <!-- AUDIT TRAIL — jejak dalaman untuk pegawai sahaja; disembunyikan daripada pemohon -->

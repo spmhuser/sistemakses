@@ -65,6 +65,7 @@ $db->exec("
         it_penyemak_nama      TEXT,
         it_penyemak_cop       TEXT,
         tarikh_it             DATETIME,
+        tarikh_semakan        DATETIME,
         created_at            DATETIME DEFAULT (datetime('now','+8 hours')),
         FOREIGN KEY (user_id) REFERENCES users(id)
     )
@@ -114,6 +115,7 @@ $gaji = [
     ['MB001301','Tan Wei Ming',                      'Juruteknik Komputer',         'FT19',  'Jabatan Perancangan',   '04-5399041'],
     ['MB000201','Nurul Izzati binti Karim',          'Pegawai Teknologi Maklumat',  'F41',   'JTIK',                  '04-5399031'],
     ['MB000202','Tan Chee Hong',                     'Pegawai Teknologi Maklumat',  'F41',   'JTIK',                  '04-5399032'],
+    ['MB000055','Kamarul Bahrin bin Idris',          'Ketua Penolong Pengarah (IT)','F48',   'JTIK',                  '04-5399025'],
 ];
 $gstmt = $db->prepare("INSERT OR IGNORE INTO gaji (no_kakitangan,nama,jawatan,gred_jawatan,jabatan,telefon) VALUES (?,?,?,?,?,?)");
 foreach ($gaji as $g) $gstmt->execute($g);
@@ -188,7 +190,7 @@ $db->exec("
     )
 ");
 $ps = $db->prepare("INSERT INTO penyemak (nama,jawatan,no_pekerja,status) VALUES (?,?,?,1)");
-$ps->execute(['Nurul Izzati binti Karim', 'Ketua Unit Teknologi Maklumat', 'MB000201']);
+$ps->execute(['Kamarul Bahrin bin Idris', 'Ketua Penolong Pengarah (IT)', 'MB000055']);
 
 // Audit Trail — rekod setiap tindakan
 $db->exec("
@@ -214,6 +216,7 @@ $users = [
     ['admin_it',       password_hash('it123',        PASSWORD_DEFAULT), 'admin_it',         'Razif bin Hamdan',                  'MB000200', 'Pegawai Teknologi Maklumat',  'F41', 'JTIK',                   '04-5399030'],
     ['admin_it2',      password_hash('it123',        PASSWORD_DEFAULT), 'admin_it',         'Nurul Izzati binti Karim',          'MB000201', 'Pegawai Teknologi Maklumat',  'F41', 'JTIK',                   '04-5399031'],
     ['admin_it3',      password_hash('it123',        PASSWORD_DEFAULT), 'admin_it',         'Tan Chee Hong',                     'MB000202', 'Pegawai Teknologi Maklumat',  'F41', 'JTIK',                   '04-5399032'],
+    ['penyemak_it',    password_hash('semak123',     PASSWORD_DEFAULT), 'penyemak_it',      'Kamarul Bahrin bin Idris',          'MB000055', 'Ketua Penolong Pengarah (IT)','F48', 'JTIK',                   '04-5399025'],
 ];
 
 $stmt = $db->prepare("INSERT OR IGNORE INTO users (username,password,role,nama,no_kakitangan,jawatan,gred_jawatan,jabatan,telefon) VALUES (?,?,?,?,?,?,?,?,?)");

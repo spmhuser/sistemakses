@@ -27,6 +27,7 @@ function redirectByRole() {
         'pengarah_jab'     => 'dashboard_pengarah_jab.php',
         'pengarah_jtik'    => 'dashboard_pengarah_jtik.php',
         'admin_it'         => 'dashboard_admin_it.php',
+        'penyemak_it'      => 'dashboard_penyemak.php',
     ];
     $dest = $map[$_SESSION['role']] ?? 'login.php';
     header("Location: $dest");

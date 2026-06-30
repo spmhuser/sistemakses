@@ -217,6 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <b>Pengarah Jab:</b> pengarah_jab &middot; pengarah_kej &middot; pengarah_kesihatan &middot; pengarah_rancang <span style="opacity:0.7">(/ pengarah123)</span><br>
             <b>Pengarah JTIK:</b> pengarah_jtik <span style="opacity:0.7">(/ jtik123)</span><br>
             <b>Admin IT:</b> admin_it (1-9) &middot; admin_it2 (10-18) &middot; admin_it3 (19-27) <span style="opacity:0.7">(/ it123)</span><br>
+            <b>Penyemak IT:</b> penyemak_it <span style="opacity:0.7">(/ semak123)</span><br>
             <span style="opacity:0.75">&copy; <?= date('Y') ?> Majlis Bandaraya Seberang Perai</span>
         </div>
     </div>
