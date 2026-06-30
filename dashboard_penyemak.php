@@ -10,7 +10,12 @@ $all = $db->query("SELECT p.*,u.username FROM permohonan p JOIN users u ON p.use
 
 $belum  = array_filter($all, fn($r)=>empty($r['it_penyemak_nama']));
 $selesai= array_filter($all, fn($r)=>!empty($r['it_penyemak_nama']));
-$defaultTab = count($belum) > 0 ? 'tab-belum' : 'tab-selesai';
+
+// Pemantauan: permohonan yang masih dalam proses (Admin IT belum beri akses)
+$proses = $db->query("SELECT p.*,u.username FROM permohonan p JOIN users u ON p.user_id=u.id
+    WHERE p.status IN ('MENUNGGU_PENGARAH_JAB','MENUNGGU_JTIK','DILULUSKAN') ORDER BY p.created_at DESC")->fetchAll();
+
+$defaultTab = count($belum) > 0 ? 'tab-belum' : (count($proses) > 0 ? 'tab-proses' : 'tab-selesai');
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -51,15 +56,20 @@ $defaultTab = count($belum) > 0 ? 'tab-belum' : 'tab-selesai';
     <div class="page-header"><h4>Dashboard Penyemak IT</h4><p>Semak dan sahkan pemberian akses yang dilaksanakan oleh Admin IT</p></div>
 
     <div class="row g-3 mb-4">
-        <div class="col-6 col-xl-4"><div class="stat-card"><div class="stat-icon icon-total"><i class="bi bi-collection"></i></div><div><div class="stat-num num-total"><?=count($all)?></div><div class="stat-lbl lbl-total">Jumlah Akses</div></div></div></div>
-        <div class="col-6 col-xl-4"><div class="stat-card"><div class="stat-icon icon-warning"><i class="bi bi-hourglass-split"></i></div><div><div class="stat-num num-warning"><?=count($belum)?></div><div class="stat-lbl lbl-warning">Belum Disemak</div></div></div></div>
-        <div class="col-6 col-xl-4"><div class="stat-card"><div class="stat-icon icon-success"><i class="bi bi-patch-check"></i></div><div><div class="stat-num num-success"><?=count($selesai)?></div><div class="stat-lbl lbl-success">Telah Disemak</div></div></div></div>
+        <div class="col-6 col-xl-3"><div class="stat-card"><div class="stat-icon icon-info"><i class="bi bi-hourglass-split"></i></div><div><div class="stat-num num-info"><?=count($proses)?></div><div class="stat-lbl lbl-info">Dalam Proses</div></div></div></div>
+        <div class="col-6 col-xl-3"><div class="stat-card"><div class="stat-icon icon-warning"><i class="bi bi-clipboard-check"></i></div><div><div class="stat-num num-warning"><?=count($belum)?></div><div class="stat-lbl lbl-warning">Belum Disemak</div></div></div></div>
+        <div class="col-6 col-xl-3"><div class="stat-card"><div class="stat-icon icon-success"><i class="bi bi-patch-check"></i></div><div><div class="stat-num num-success"><?=count($selesai)?></div><div class="stat-lbl lbl-success">Telah Disemak</div></div></div></div>
+        <div class="col-6 col-xl-3"><div class="stat-card"><div class="stat-icon icon-primary"><i class="bi bi-key"></i></div><div><div class="stat-num num-primary"><?=count($all)?></div><div class="stat-lbl lbl-primary">Jumlah Akses</div></div></div></div>
     </div>
 
     <div class="dash-tabs">
         <button class="dash-tab <?= $defaultTab==='tab-belum'?'active':'' ?>" onclick="switchTab(this,'tab-belum')">
-            <span class="tab-ic"><i class="bi bi-hourglass-split"></i></span><span class="tab-txt">Belum Disemak</span>
+            <span class="tab-ic"><i class="bi bi-clipboard-check"></i></span><span class="tab-txt">Belum Disemak</span>
             <?php if(count($belum)>0): ?><span class="tab-badge"><?=count($belum)?></span><?php endif; ?>
+        </button>
+        <button class="dash-tab <?= $defaultTab==='tab-proses'?'active':'' ?>" onclick="switchTab(this,'tab-proses')">
+            <span class="tab-ic"><i class="bi bi-hourglass-split"></i></span><span class="tab-txt">Dalam Proses</span>
+            <?php if(count($proses)>0): ?><span class="tab-badge"><?=count($proses)?></span><?php endif; ?>
         </button>
         <button class="dash-tab <?= $defaultTab==='tab-selesai'?'active':'' ?>" onclick="switchTab(this,'tab-selesai')">
             <span class="tab-ic"><i class="bi bi-check2-all"></i></span><span class="tab-txt">Telah Disemak</span>
@@ -86,6 +96,31 @@ $defaultTab = count($belum) > 0 ? 'tab-belum' : 'tab-selesai';
                         <a href="view_permohonan.php?id=<?=$r['id']?>" class="btn-success-soft" style="padding:5px 10px;font-size:0.88rem"><i class="bi bi-eye"></i> Lihat</a>
                         <a href="tindakan_semakan.php?id=<?=$r['id']?>" class="btn-primary-dark" style="padding:5px 12px;font-size:0.88rem"><i class="bi bi-patch-check"></i> Semak</a>
                     </td>
+                </tr>
+                <?php endforeach; endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="tab-proses" class="dash-tab-pane <?= $defaultTab==='tab-proses'?'active':'' ?>">
+        <p style="font-size:0.9rem;color:#6b7280;margin-bottom:12px"><i class="bi bi-info-circle me-1 text-primary"></i>Pemantauan sahaja — permohonan ini masih dalam proses dan belum diberikan akses oleh Admin IT.</p>
+        <div class="table-card">
+            <table class="data-table tbl-resp">
+                <thead><tr><th style="padding-left:24px">#</th><th>No. Rujukan</th><th>Pemohon</th><th>Jabatan</th><th>Tujuan</th><th>Status Semasa</th><th>Tarikh Mohon</th><th>Lihat</th></tr></thead>
+                <tbody>
+                <?php if(empty($proses)): ?>
+                <tr><td colspan="8" class="cell-empty"><div class="empty-state"><i class="bi bi-check2-circle"></i>Tiada permohonan dalam proses.</div></td></tr>
+                <?php else: foreach(array_values($proses) as $i=>$r): ?>
+                <tr>
+                    <td data-label="#" style="padding-left:24px;color:#6E6470;font-size:0.9rem"><?=$i+1?></td>
+                    <td data-label="No. Rujukan" style="font-weight:600;color:#2C5488;font-size:0.92rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
+                    <td data-label="Pemohon" style="font-weight:500"><?= htmlspecialchars($r['nama']) ?></td>
+                    <td data-label="Jabatan" style="font-size:0.92rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
+                    <td data-label="Tujuan" style="font-size:0.92rem"><?= tujuanLabel($r['tujuan']) ?></td>
+                    <td data-label="Status Semasa"><span class="badge-status <?= statusClass($r['status']) ?>"><?= statusLabel($r['status']) ?></span></td>
+                    <td data-label="Tarikh Mohon" style="color:#6E6470;font-size:0.9rem"><?= $r['created_at'] ?></td>
+                    <td class="cell-act"><a href="view_permohonan.php?id=<?=$r['id']?>" class="btn-success-soft" style="padding:5px 12px;font-size:0.88rem"><i class="bi bi-eye"></i> Lihat</a></td>
                 </tr>
                 <?php endforeach; endif; ?>
                 </tbody>
