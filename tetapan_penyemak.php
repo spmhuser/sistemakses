@@ -12,6 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $jawatan = trim($_POST['jawatan']    ?? '');
         $noPek   = trim($_POST['no_pekerja'] ?? '');
         if ($act === 'add' && $nama !== '') {
+            // Had: sistem hanya membenarkan SEORANG penyemak sahaja
+            $existing = (int)$db->query("SELECT COUNT(*) c FROM penyemak")->fetch()['c'];
+            if ($existing > 0) { header('Location: tetapan_penyemak.php?msg=limit'); exit; }
             $st = $db->prepare("INSERT INTO penyemak (nama,jawatan,no_pekerja,status) VALUES (?,?,?,1)");
             $st->execute([$nama, $jawatan, $noPek]);
         }
@@ -58,6 +61,7 @@ $msg = $_GET['msg'] ?? '';
 if ($msg === 'add')    toastHTML('Penyemak berjaya ditambah.');
 if ($msg === 'edit')   toastHTML('Maklumat penyemak berjaya dikemas kini.');
 if ($msg === 'toggle') toastHTML('Status penyemak berjaya dikemas kini.');
+if ($msg === 'limit')  toastHTML('Sistem hanya membenarkan seorang penyemak sahaja.', 'error');
 ?>
 <?php sidebarHTML($_SESSION['nama'] ?? $_SESSION['username'], 'Admin IT', [
     ['href'=>'dashboard_admin_it.php',  'icon'=>'bi-grid-1x2',     'label'=>'Dashboard',            'active'=>false],
@@ -70,9 +74,11 @@ if ($msg === 'toggle') toastHTML('Status penyemak berjaya dikemas kini.');
     <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
         <div>
             <h4>Tetapan Penyemak</h4>
-            <p>Senarai penyemak akan ditarik secara automatik ke borang Pemberian Akses (Kegunaan IT).</p>
+            <p>Sistem membenarkan <b>seorang penyemak sahaja</b>. Penyemak ini menyemak kerja Admin IT melalui akaun log masuk sendiri.</p>
         </div>
+        <?php if (count($list) === 0): ?>
         <button class="btn-primary-dark" onclick="openAdd()"><i class="bi bi-plus-lg"></i> Tambah Penyemak</button>
+        <?php endif; ?>
     </div>
 
     <div class="row g-3 mb-4">
