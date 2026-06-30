@@ -1,6 +1,8 @@
 <?php
 date_default_timezone_set('Asia/Kuala_Lumpur');
-define('DB_PATH', __DIR__ . '/database.db');
+
+// Tetapan sambungan pangkalan data (DSN) diasingkan ke fail sendiri.
+require_once __DIR__ . '/db_config.php';
 
 define('SENARAI_SISTEM', [
     1  => 'Sistem Kehadiran',
@@ -56,9 +58,8 @@ define('HAD_KUASA', [
 function getDB() {
     static $pdo = null;
     if ($pdo === null) {
-        $pdo = new PDO('sqlite:' . DB_PATH);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        // Sambungan dibina mengikut tetapan dalam db_config.php (SQLite / Oracle)
+        $pdo = dbConnect();
     }
     return $pdo;
 }
