@@ -15,6 +15,28 @@ $selesai= array_filter($all, fn($r)=>!empty($r['it_penyemak_nama']));
 $proses = $db->query("SELECT p.*,u.username FROM permohonan p JOIN users u ON p.user_id=u.id
     WHERE p.status IN ('MENUNGGU_PENGARAH_JAB','MENUNGGU_JTIK','DILULUSKAN') ORDER BY p.created_at DESC")->fetchAll();
 
+// Admin IT yang bertanggungjawab bagi sistem dalam setiap permohonan (peta id sistem -> admin)
+$adminByPerm = [];
+$pids = array_column($proses, 'id');
+if ($pids) {
+    $ph = implode(',', array_fill(0, count($pids), '?'));
+    $aq = $db->prepare("SELECT DISTINCT ps.permohonan_id, sa.nama_admin
+        FROM permohonan_sistem ps
+        JOIN sistem_admin sa ON sa.id_sistem = ps.bil AND sa.status = 1
+        WHERE ps.permohonan_id IN ($ph) AND sa.nama_admin IS NOT NULL AND sa.nama_admin <> ''
+        ORDER BY sa.nama_admin");
+    $aq->execute($pids);
+    foreach ($aq->fetchAll() as $row) { $adminByPerm[$row['permohonan_id']][] = $row['nama_admin']; }
+}
+function renderAdminBadges($names) {
+    if (empty($names)) return '<span style="color:#c0c8d4;font-size:0.88rem">— belum ditetapkan —</span>';
+    $out = '<div style="display:flex;flex-wrap:wrap;gap:4px">';
+    foreach ($names as $n) {
+        $out .= '<span style="display:inline-flex;align-items:center;gap:4px;font-size:0.74rem;padding:2px 9px;border-radius:20px;background:#E6EFFA;color:#234B7A;font-weight:600"><i class="bi bi-person-gear"></i>' . htmlspecialchars($n) . '</span>';
+    }
+    return $out . '</div>';
+}
+
 $defaultTab = count($belum) > 0 ? 'tab-belum' : (count($proses) > 0 ? 'tab-proses' : 'tab-selesai');
 ?>
 <!DOCTYPE html>
@@ -107,10 +129,10 @@ $defaultTab = count($belum) > 0 ? 'tab-belum' : (count($proses) > 0 ? 'tab-prose
         <p style="font-size:0.9rem;color:#6b7280;margin-bottom:12px"><i class="bi bi-info-circle me-1 text-primary"></i>Pemantauan sahaja — permohonan ini masih dalam proses dan belum diberikan akses oleh Admin IT.</p>
         <div class="table-card">
             <table class="data-table tbl-resp">
-                <thead><tr><th style="padding-left:24px">#</th><th>No. Rujukan</th><th>Pemohon</th><th>Jabatan</th><th>Tujuan</th><th>Status Semasa</th><th>Tarikh Mohon</th><th>Lihat</th></tr></thead>
+                <thead><tr><th style="padding-left:24px">#</th><th>No. Rujukan</th><th>Pemohon</th><th>Jabatan</th><th>Tujuan</th><th>Admin IT Bertanggungjawab</th><th>Status Semasa</th><th>Tarikh Mohon</th><th>Lihat</th></tr></thead>
                 <tbody>
                 <?php if(empty($proses)): ?>
-                <tr><td colspan="8" class="cell-empty"><div class="empty-state"><i class="bi bi-check2-circle"></i>Tiada permohonan dalam proses.</div></td></tr>
+                <tr><td colspan="9" class="cell-empty"><div class="empty-state"><i class="bi bi-check2-circle"></i>Tiada permohonan dalam proses.</div></td></tr>
                 <?php else: foreach(array_values($proses) as $i=>$r): ?>
                 <tr>
                     <td data-label="#" style="padding-left:24px;color:#6E6470;font-size:0.9rem"><?=$i+1?></td>
@@ -118,6 +140,7 @@ $defaultTab = count($belum) > 0 ? 'tab-belum' : (count($proses) > 0 ? 'tab-prose
                     <td data-label="Pemohon" style="font-weight:500"><?= htmlspecialchars($r['nama']) ?></td>
                     <td data-label="Jabatan" style="font-size:0.92rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
                     <td data-label="Tujuan" style="font-size:0.92rem"><?= tujuanLabel($r['tujuan']) ?></td>
+                    <td data-label="Admin IT Bertanggungjawab" style="max-width:240px"><?= renderAdminBadges($adminByPerm[$r['id']] ?? []) ?></td>
                     <td data-label="Status Semasa"><span class="badge-status <?= statusClass($r['status']) ?>"><?= statusLabel($r['status']) ?></span></td>
                     <td data-label="Tarikh Mohon" style="color:#6E6470;font-size:0.9rem"><?= $r['created_at'] ?></td>
                     <td class="cell-act"><a href="view_permohonan.php?id=<?=$r['id']?>" class="btn-success-soft" style="padding:5px 12px;font-size:0.88rem"><i class="bi bi-eye"></i> Lihat</a></td>
