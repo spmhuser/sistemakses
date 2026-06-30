@@ -115,7 +115,7 @@ $tolak    = count(array_filter($list, fn($r)=>$r['status']==='TIDAK_DILULUSKAN')
                     <td data-label="#" style="padding-left:24px;color:#6E6470;font-size:0.9rem"><?=$i+1?></td>
                     <td data-label="No. Rujukan" style="font-weight:600;color:#2C5488;font-size:0.92rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
                     <td data-label="Tujuan" style="font-size:0.92rem"><?= tujuanLabel($r['tujuan']) ?></td>
-                    <td data-label="Sistem" style="max-width:300px"><?= renderSistemBadges($sysByPerm[$r['id']] ?? []) ?></td>
+                    <td class="cell-stack" data-label="Sistem" style="max-width:300px"><?= renderSistemBadges($sysByPerm[$r['id']] ?? []) ?></td>
                     <td data-label="Jabatan" style="font-size:0.92rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
                     <td data-label="Status"><span class="badge-status <?= statusClass($r['status']) ?>"><?= statusLabel($r['status']) ?></span></td>
                     <td data-label="Tarikh Hantar" style="color:#6E6470;font-size:0.9rem"><?= $r['created_at'] ?></td>
@@ -142,7 +142,7 @@ $tolak    = count(array_filter($list, fn($r)=>$r['status']==='TIDAK_DILULUSKAN')
                     <td data-label="#" style="padding-left:24px;color:#6E6470;font-size:0.9rem"><?=$i+1?></td>
                     <td data-label="No. Rujukan" style="font-weight:600;color:#2C5488;font-size:0.92rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
                     <td data-label="Tujuan" style="font-size:0.92rem"><?= tujuanLabel($r['tujuan']) ?></td>
-                    <td data-label="Sistem" style="max-width:300px"><?= renderSistemBadges($sysByPerm[$r['id']] ?? []) ?></td>
+                    <td class="cell-stack" data-label="Sistem" style="max-width:300px"><?= renderSistemBadges($sysByPerm[$r['id']] ?? []) ?></td>
                     <td data-label="Jabatan" style="font-size:0.92rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
                     <td data-label="Status"><span class="badge-status <?= statusClass($r['status']) ?>"><?= statusLabel($r['status']) ?></span></td>
                     <td data-label="Tarikh Hantar" style="color:#6E6470;font-size:0.9rem"><?= $r['created_at'] ?></td>

@@ -332,6 +332,9 @@ table.data-table tbody tr:hover td { background: #EFF4FC; }
     table.data-table.tbl-resp td.cell-act::before { content: none; }
     table.data-table.tbl-resp td.cell-act a { padding: 9px 16px !important; font-size: 0.92rem !important; }
     table.data-table.tbl-resp td.cell-chk { justify-content: flex-start; }
+    /* Sel kandungan kaya (senarai lencana: sistem, admin IT) — susun label atas, kandungan penuh di bawah */
+    table.data-table.tbl-resp td.cell-stack { flex-direction: column; align-items: flex-start; text-align: left; gap: 7px; }
+    table.data-table.tbl-resp td.cell-stack > div { width: 100%; }
     table.data-table.tbl-resp td .empty-state { text-align: center; }
     table.data-table.tbl-resp td.cell-empty::before { content: none; }
     table.data-table.tbl-resp td.cell-empty { text-align: center; }
