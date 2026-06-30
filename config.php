@@ -131,6 +131,31 @@ function getSistemForAdmin($no_pekerja) {
     } catch (Throwable $e) { return []; }
 }
 
+// Senarai nama sistem bagi setiap permohonan. Pulangan: [permohonan_id => [nama_sistem, ...]]
+function getSistemNamaByPermohonan($ids) {
+    $out = [];
+    $ids = array_values(array_filter(array_map('intval', (array)$ids)));
+    if (!$ids) return $out;
+    try {
+        $db = getDB();
+        $ph = implode(',', array_fill(0, count($ids), '?'));
+        $st = $db->prepare("SELECT permohonan_id, nama_sistem FROM permohonan_sistem WHERE permohonan_id IN ($ph) ORDER BY bil");
+        $st->execute($ids);
+        foreach ($st->fetchAll() as $row) { $out[$row['permohonan_id']][] = $row['nama_sistem']; }
+    } catch (Throwable $e) { /* ignore */ }
+    return $out;
+}
+
+// Render senarai nama sistem sebagai lencana kecil (untuk jadual dashboard)
+function renderSistemBadges($names) {
+    if (empty($names)) return '<span style="color:#c0c8d4;font-size:0.88rem">—</span>';
+    $out = '<div style="display:flex;flex-wrap:wrap;gap:4px">';
+    foreach ($names as $n) {
+        $out .= '<span style="display:inline-block;font-size:0.72rem;padding:2px 8px;border-radius:10px;background:#E6EFFA;color:#2C5488;font-weight:600">' . htmlspecialchars($n) . '</span>';
+    }
+    return $out . '</div>';
+}
+
 // AUDIT TRAIL — rekod setiap tindakan
 function logAudit($permohonan_id, $action, $catatan = '') {
     try {

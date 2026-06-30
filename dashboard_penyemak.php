@@ -15,6 +15,9 @@ $selesai= array_filter($all, fn($r)=>!empty($r['it_penyemak_nama']));
 $proses = $db->query("SELECT p.*,u.username FROM permohonan p JOIN users u ON p.user_id=u.id
     WHERE p.status IN ('MENUNGGU_PENGARAH_JAB','MENUNGGU_JTIK','DILULUSKAN') ORDER BY p.created_at DESC")->fetchAll();
 
+// Nama sistem bagi setiap permohonan (semua set)
+$sysByPerm = getSistemNamaByPermohonan(array_merge(array_column($all,'id'), array_column($proses,'id')));
+
 // Admin IT yang bertanggungjawab bagi sistem dalam setiap permohonan (peta id sistem -> admin)
 $adminByPerm = [];
 $pids = array_column($proses, 'id');
@@ -102,16 +105,17 @@ $defaultTab = count($belum) > 0 ? 'tab-belum' : (count($proses) > 0 ? 'tab-prose
     <div id="tab-belum" class="dash-tab-pane <?= $defaultTab==='tab-belum'?'active':'' ?>">
         <div class="table-card">
             <table class="data-table tbl-resp">
-                <thead><tr><th style="padding-left:24px">#</th><th>No. Rujukan</th><th>Pemohon</th><th>Jabatan</th><th>Pemberi Akses</th><th>Tarikh Akses</th><th>Tindakan</th></tr></thead>
+                <thead><tr><th style="padding-left:24px">#</th><th>No. Rujukan</th><th>Pemohon</th><th>Jabatan</th><th>Sistem</th><th>Pemberi Akses</th><th>Tarikh Akses</th><th>Tindakan</th></tr></thead>
                 <tbody>
                 <?php if(empty($belum)): ?>
-                <tr><td colspan="7" class="cell-empty"><div class="empty-state"><i class="bi bi-check2-circle"></i>Tiada akses menunggu semakan.</div></td></tr>
+                <tr><td colspan="8" class="cell-empty"><div class="empty-state"><i class="bi bi-check2-circle"></i>Tiada akses menunggu semakan.</div></td></tr>
                 <?php else: foreach(array_values($belum) as $i=>$r): ?>
                 <tr>
                     <td data-label="#" style="padding-left:24px;color:#6E6470;font-size:0.9rem"><?=$i+1?></td>
                     <td data-label="No. Rujukan" style="font-weight:600;color:#2C5488;font-size:0.92rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
                     <td data-label="Pemohon" style="font-weight:500"><?= htmlspecialchars($r['nama']) ?></td>
                     <td data-label="Jabatan" style="font-size:0.92rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
+                    <td class="cell-stack" data-label="Sistem" style="max-width:240px"><?= renderSistemBadges($sysByPerm[$r['id']] ?? []) ?></td>
                     <td data-label="Pemberi Akses" style="font-size:0.92rem"><?= htmlspecialchars($r['it_pemberi_nama'] ?? '-') ?></td>
                     <td data-label="Tarikh Akses" style="color:#6E6470;font-size:0.9rem"><?= $r['tarikh_it'] ?? '-' ?></td>
                     <td class="cell-act" style="display:flex;gap:6px">
@@ -129,16 +133,17 @@ $defaultTab = count($belum) > 0 ? 'tab-belum' : (count($proses) > 0 ? 'tab-prose
         <p style="font-size:0.9rem;color:#6b7280;margin-bottom:12px"><i class="bi bi-info-circle me-1 text-primary"></i>Pemantauan sahaja — permohonan ini masih dalam proses dan belum diberikan akses oleh Admin IT.</p>
         <div class="table-card">
             <table class="data-table tbl-resp">
-                <thead><tr><th style="padding-left:24px">#</th><th>No. Rujukan</th><th>Pemohon</th><th>Jabatan</th><th>Tujuan</th><th>Admin IT Bertanggungjawab</th><th>Status Semasa</th><th>Tarikh Mohon</th><th>Lihat</th></tr></thead>
+                <thead><tr><th style="padding-left:24px">#</th><th>No. Rujukan</th><th>Pemohon</th><th>Jabatan</th><th>Sistem</th><th>Tujuan</th><th>Admin IT Bertanggungjawab</th><th>Status Semasa</th><th>Tarikh Mohon</th><th>Lihat</th></tr></thead>
                 <tbody>
                 <?php if(empty($proses)): ?>
-                <tr><td colspan="9" class="cell-empty"><div class="empty-state"><i class="bi bi-check2-circle"></i>Tiada permohonan dalam proses.</div></td></tr>
+                <tr><td colspan="10" class="cell-empty"><div class="empty-state"><i class="bi bi-check2-circle"></i>Tiada permohonan dalam proses.</div></td></tr>
                 <?php else: foreach(array_values($proses) as $i=>$r): ?>
                 <tr>
                     <td data-label="#" style="padding-left:24px;color:#6E6470;font-size:0.9rem"><?=$i+1?></td>
                     <td data-label="No. Rujukan" style="font-weight:600;color:#2C5488;font-size:0.92rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
                     <td data-label="Pemohon" style="font-weight:500"><?= htmlspecialchars($r['nama']) ?></td>
                     <td data-label="Jabatan" style="font-size:0.92rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
+                    <td class="cell-stack" data-label="Sistem" style="max-width:240px"><?= renderSistemBadges($sysByPerm[$r['id']] ?? []) ?></td>
                     <td data-label="Tujuan" style="font-size:0.92rem"><?= tujuanLabel($r['tujuan']) ?></td>
                     <td class="cell-stack" data-label="Admin IT Bertanggungjawab" style="max-width:240px"><?= renderAdminBadges($adminByPerm[$r['id']] ?? []) ?></td>
                     <td data-label="Status Semasa"><span class="badge-status <?= statusClass($r['status']) ?>"><?= statusLabel($r['status']) ?></span></td>
@@ -154,16 +159,17 @@ $defaultTab = count($belum) > 0 ? 'tab-belum' : (count($proses) > 0 ? 'tab-prose
     <div id="tab-selesai" class="dash-tab-pane <?= $defaultTab==='tab-selesai'?'active':'' ?>">
         <div class="table-card">
             <table class="data-table tbl-resp">
-                <thead><tr><th style="padding-left:24px">#</th><th>No. Rujukan</th><th>Pemohon</th><th>Jabatan</th><th>Disemak Oleh</th><th>Tarikh Semakan</th><th>Lihat</th></tr></thead>
+                <thead><tr><th style="padding-left:24px">#</th><th>No. Rujukan</th><th>Pemohon</th><th>Jabatan</th><th>Sistem</th><th>Disemak Oleh</th><th>Tarikh Semakan</th><th>Lihat</th></tr></thead>
                 <tbody>
                 <?php if(empty($selesai)): ?>
-                <tr><td colspan="7" class="cell-empty"><div class="empty-state"><i class="bi bi-inbox"></i>Tiada rekod disemak lagi.</div></td></tr>
+                <tr><td colspan="8" class="cell-empty"><div class="empty-state"><i class="bi bi-inbox"></i>Tiada rekod disemak lagi.</div></td></tr>
                 <?php else: foreach(array_values($selesai) as $i=>$r): ?>
                 <tr>
                     <td data-label="#" style="padding-left:24px;color:#6E6470;font-size:0.9rem"><?=$i+1?></td>
                     <td data-label="No. Rujukan" style="font-weight:600;color:#2C5488;font-size:0.92rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
                     <td data-label="Pemohon" style="font-weight:500"><?= htmlspecialchars($r['nama']) ?></td>
                     <td data-label="Jabatan" style="font-size:0.92rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
+                    <td class="cell-stack" data-label="Sistem" style="max-width:240px"><?= renderSistemBadges($sysByPerm[$r['id']] ?? []) ?></td>
                     <td data-label="Disemak Oleh" style="font-size:0.92rem"><?= htmlspecialchars($r['it_penyemak_nama'] ?? '-') ?></td>
                     <td data-label="Tarikh Semakan" style="color:#6E6470;font-size:0.9rem"><?= $r['tarikh_semakan'] ?? '-' ?></td>
                     <td class="cell-act"><a href="view_permohonan.php?id=<?=$r['id']?>" class="btn-success-soft" style="padding:5px 12px;font-size:0.88rem"><i class="bi bi-eye"></i> Lihat</a></td>

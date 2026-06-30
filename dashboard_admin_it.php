@@ -21,6 +21,7 @@ if ($mySys) {
 $perlu   = array_filter($all, fn($r)=>$r['status']==='DILULUSKAN');
 $selesai = array_filter($all, fn($r)=>in_array($r['status'],['AKSES_DIBERIKAN','TIDAK_DILULUSKAN']));
 $tolak   = array_filter($all, fn($r)=>$r['status']==='TIDAK_DILULUSKAN');
+$sysByPerm = getSistemNamaByPermohonan(array_column($all,'id'));
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -85,16 +86,17 @@ $tolak   = array_filter($all, fn($r)=>$r['status']==='TIDAK_DILULUSKAN');
     <div id="tab-perlu" class="dash-tab-pane active">
         <div class="table-card">
             <table class="data-table tbl-resp">
-                <thead><tr><th style="padding-left:24px">#</th><th>No. Rujukan</th><th>Pemohon</th><th>Jabatan</th><th>Tujuan</th><th>Diluluskan JTIK</th><th>Tindakan</th></tr></thead>
+                <thead><tr><th style="padding-left:24px">#</th><th>No. Rujukan</th><th>Pemohon</th><th>Jabatan</th><th>Sistem</th><th>Tujuan</th><th>Diluluskan JTIK</th><th>Tindakan</th></tr></thead>
                 <tbody>
                 <?php if(empty($perlu)): ?>
-                <tr><td colspan="7" class="cell-empty"><div class="empty-state"><i class="bi bi-check2-circle"></i>Tiada permohonan menunggu pemberian akses.</div></td></tr>
+                <tr><td colspan="8" class="cell-empty"><div class="empty-state"><i class="bi bi-check2-circle"></i>Tiada permohonan menunggu pemberian akses.</div></td></tr>
                 <?php else: foreach(array_values($perlu) as $i=>$r): ?>
                 <tr>
                     <td data-label="#" style="padding-left:24px;color:#6E6470;font-size:0.9rem"><?=$i+1?></td>
                     <td data-label="No. Rujukan" style="font-weight:600;color:#2C5488;font-size:0.92rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
                     <td data-label="Pemohon" style="font-weight:500"><?= htmlspecialchars($r['nama']) ?></td>
                     <td data-label="Jabatan" style="font-size:0.92rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
+                    <td class="cell-stack" data-label="Sistem" style="max-width:240px"><?= renderSistemBadges($sysByPerm[$r['id']] ?? []) ?></td>
                     <td data-label="Tujuan"><span class="badge-status badge-info" style="font-size:0.82rem"><?= tujuanLabel($r['tujuan']) ?></span></td>
                     <td data-label="Diluluskan JTIK" style="font-size:0.92rem;color:#6b7280"><?=$r['tarikh_jtik']??'-'?></td>
                     <td class="cell-act" style="display:flex;gap:6px">
@@ -111,16 +113,17 @@ $tolak   = array_filter($all, fn($r)=>$r['status']==='TIDAK_DILULUSKAN');
     <div id="tab-selesai" class="dash-tab-pane">
         <div class="table-card">
             <table class="data-table tbl-resp">
-                <thead><tr><th style="padding-left:24px">#</th><th>No. Rujukan</th><th>Pemohon</th><th>Jabatan</th><th>Tujuan</th><th>Status</th><th>Tarikh</th><th>Lihat</th></tr></thead>
+                <thead><tr><th style="padding-left:24px">#</th><th>No. Rujukan</th><th>Pemohon</th><th>Jabatan</th><th>Sistem</th><th>Tujuan</th><th>Status</th><th>Tarikh</th><th>Lihat</th></tr></thead>
                 <tbody>
                 <?php if(empty($selesai)): ?>
-                <tr><td colspan="8" class="cell-empty"><div class="empty-state"><i class="bi bi-inbox"></i>Tiada rekod lagi.</div></td></tr>
+                <tr><td colspan="9" class="cell-empty"><div class="empty-state"><i class="bi bi-inbox"></i>Tiada rekod lagi.</div></td></tr>
                 <?php else: foreach(array_values($selesai) as $i=>$r): ?>
                 <tr>
                     <td data-label="#" style="padding-left:24px;color:#6E6470;font-size:0.9rem"><?=$i+1?></td>
                     <td data-label="No. Rujukan" style="font-weight:600;color:#2C5488;font-size:0.92rem"><?= htmlspecialchars($r['no_rujukan']??'-') ?></td>
                     <td data-label="Pemohon" style="font-weight:500"><?= htmlspecialchars($r['nama']) ?></td>
                     <td data-label="Jabatan" style="font-size:0.92rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
+                    <td class="cell-stack" data-label="Sistem" style="max-width:240px"><?= renderSistemBadges($sysByPerm[$r['id']] ?? []) ?></td>
                     <td data-label="Tujuan" style="font-size:0.92rem"><?= tujuanLabel($r['tujuan']) ?></td>
                     <td data-label="Status"><span class="badge-status <?= statusClass($r['status']) ?>"><?= statusLabel($r['status']) ?></span></td>
                     <td data-label="Tarikh" style="color:#6E6470;font-size:0.9rem"><?= $r['tarikh_it'] ?? $r['tarikh_jtik'] ?? '-' ?></td>

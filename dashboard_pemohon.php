@@ -9,23 +9,7 @@ $stmt->execute([$_SESSION['user_id']]);
 $list = $stmt->fetchAll();
 
 // Senarai nama sistem bagi setiap permohonan (dikumpul ikut permohonan_id)
-$sysByPerm = [];
-$ids = array_column($list, 'id');
-if ($ids) {
-    $ph = implode(',', array_fill(0, count($ids), '?'));
-    $sq = $db->prepare("SELECT permohonan_id, nama_sistem FROM permohonan_sistem WHERE permohonan_id IN ($ph) ORDER BY bil");
-    $sq->execute($ids);
-    foreach ($sq->fetchAll() as $row) { $sysByPerm[$row['permohonan_id']][] = $row['nama_sistem']; }
-}
-// Helper paparan senarai sistem sebagai lencana kecil
-function renderSistemBadges($names) {
-    if (empty($names)) return '<span style="color:#c0c8d4;font-size:0.88rem">—</span>';
-    $out = '<div style="display:flex;flex-wrap:wrap;gap:4px">';
-    foreach ($names as $n) {
-        $out .= '<span style="display:inline-block;font-size:0.72rem;padding:2px 8px;border-radius:10px;background:#E6EFFA;color:#2C5488;font-weight:600">' . htmlspecialchars($n) . '</span>';
-    }
-    return $out . '</div>';
-}
+$sysByPerm = getSistemNamaByPermohonan(array_column($list, 'id'));
 
 $total    = count($list);
 // Proses dianggap SELESAI hanya selepas Admin IT beri akses (AKSES_DIBERIKAN) atau ditolak (TIDAK_DILULUSKAN).
