@@ -89,7 +89,7 @@ $sistemList = $sistems->fetchAll();
                         <td style="font-weight:600;color:#2C5488"><?= htmlspecialchars($s['nama_sistem']) ?></td>
                         <td>
                             <?php if(!empty($s['peranan_sistem'])): ?>
-                            <span class="badge-status badge-primary" style="font-size:0.82rem"><?= htmlspecialchars(SENARAI_PERANAN[$s['peranan_sistem']] ?? strtoupper($s['peranan_sistem'])) ?></span>
+                            <span class="badge-status badge-primary" style="font-size:0.82rem"><?= htmlspecialchars(perananLabel($s['peranan_sistem'])) ?></span>
                             <?php else: ?><span style="color:#d1d5db">—</span><?php endif; ?>
                         </td>
                         <td>

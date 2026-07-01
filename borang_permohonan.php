@@ -208,8 +208,8 @@ foreach ($ip->fetchAll() as $r) { $inProc[(int)$r['bil']] = $r['status']; }
                                         disabled onchange="updateHadKuasa(<?=$bil?>)"
                                         style="border:1px solid #E6EFFA;border-radius:6px;padding:5px 8px;font-size:0.9rem;width:100%;outline:none;background:#f9f9f9;color:#6E6470;cursor:not-allowed">
                                     <option value="">-- Pilih Peranan --</option>
-                                    <?php foreach(SENARAI_PERANAN as $key=>$label): ?>
-                                    <option value="<?=$key?>"><?= $label ?></option>
+                                    <?php foreach(getSenaraiPeranan(true) as $key=>$label): ?>
+                                    <option value="<?=$key?>"><?= htmlspecialchars($label) ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </td>
@@ -270,8 +270,8 @@ foreach ($ip->fetchAll() as $r) { $inProc[(int)$r['bil']] = $r['status']; }
 
 <?php if ($g): ?>
 <script>
-// Had kuasa preset dari config.php
-const hadKuasa = <?= json_encode(HAD_KUASA) ?>;
+// Had kuasa preset (dari jadual peranan / tetapan_peranan.php)
+const hadKuasa = <?= json_encode(getHadKuasa()) ?>;
 const senaraiFungsi = <?= json_encode(SENARAI_FUNGSI) ?>;
 
 function enableHadKuasa(bil) {

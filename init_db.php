@@ -21,6 +21,7 @@ $db->exec("DROP TABLE IF EXISTS senarai_sistem");
 $db->exec("DROP TABLE IF EXISTS jabatan_pengarah");
 $db->exec("DROP TABLE IF EXISTS sistem_admin");
 $db->exec("DROP TABLE IF EXISTS penyemak");
+$db->exec("DROP TABLE IF EXISTS peranan");
 $db->exec("DROP TABLE IF EXISTS audit_trail");
 
 $db->exec("
@@ -175,6 +176,32 @@ $adminMap = [
 ];
 foreach ($adminMap as $noPek => $info) {
     foreach ($info[1] as $idS) { $sa->execute([$idS, $noPek, $info[0]]); }
+}
+
+// Peranan + Had Kuasa (boleh diurus melalui tetapan_peranan.php)
+$db->exec("
+    CREATE TABLE peranan (
+        id           INTEGER PRIMARY KEY AUTOINCREMENT,
+        kod          TEXT UNIQUE NOT NULL,
+        nama         TEXT NOT NULL,
+        penyedia     INTEGER DEFAULT 0,
+        pengemaskini INTEGER DEFAULT 0,
+        penyemak     INTEGER DEFAULT 0,
+        pelapor      INTEGER DEFAULT 0,
+        pengesah     INTEGER DEFAULT 0,
+        pelulus      INTEGER DEFAULT 0,
+        penghapus    INTEGER DEFAULT 0,
+        status       INTEGER NOT NULL DEFAULT 1,
+        created_at   DATETIME DEFAULT (datetime('now','+8 hours')),
+        updated_at   DATETIME
+    )
+");
+$pr = $db->prepare("INSERT INTO peranan (kod,nama,penyedia,pengemaskini,penyemak,pelapor,pengesah,pelulus,penghapus,status) VALUES (?,?,?,?,?,?,?,?,?,1)");
+foreach (SENARAI_PERANAN as $kodP => $namaP) {
+    $hk = HAD_KUASA[$kodP] ?? [];
+    $pr->execute([$kodP, $namaP,
+        $hk['penyedia']??0, $hk['pengemaskini']??0, $hk['penyemak']??0, $hk['pelapor']??0,
+        $hk['pengesah']??0, $hk['pelulus']??0, $hk['penghapus']??0]);
 }
 
 // Penyemak IT (boleh diurus melalui tetapan_penyemak.php) — auto-tarik ke borang pemberian akses

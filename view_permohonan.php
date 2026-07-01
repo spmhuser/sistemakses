@@ -92,7 +92,7 @@ $backUrl = match($_SESSION['role']) {
                     <td><?= htmlspecialchars($s['nama_sistem']) ?></td>
                     <td>
                         <?php if (!empty($s['peranan_sistem'])): ?>
-                        <?php $pLabel = SENARAI_PERANAN[$s['peranan_sistem']] ?? strtoupper($s['peranan_sistem']); ?>
+                        <?php $pLabel = perananLabel($s['peranan_sistem']); ?>
                         <span class="badge-status badge-primary"><?= htmlspecialchars($pLabel) ?></span>
                         <?php else: ?>
                         <span style="color:#d1d5db;font-size:0.9rem">—</span>

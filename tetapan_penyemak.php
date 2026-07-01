@@ -66,6 +66,7 @@ if ($msg === 'limit')  toastHTML('Sistem hanya membenarkan seorang penyemak saha
 <?php sidebarHTML($_SESSION['nama'] ?? $_SESSION['username'], 'Admin IT', [
     ['href'=>'dashboard_admin_it.php',  'icon'=>'bi-grid-1x2',     'label'=>'Dashboard',            'active'=>false],
     ['href'=>'tetapan_sistem.php',      'icon'=>'bi-hdd-stack',    'label'=>'Tetapan Sistem',       'active'=>false],
+    ['href'=>'tetapan_peranan.php',     'icon'=>'bi-diagram-3',    'label'=>'Tetapan Peranan',      'active'=>false],
     ['href'=>'tetapan_pengarah.php',    'icon'=>'bi-person-badge', 'label'=>'Tetapan Pengarah',     'active'=>false],
     ['href'=>'tetapan_admin_sistem.php','icon'=>'bi-person-gear',  'label'=>'Tetapan Admin Sistem', 'active'=>false],
     ['href'=>'tetapan_penyemak.php',    'icon'=>'bi-person-check', 'label'=>'Tetapan Penyemak',     'active'=>true],

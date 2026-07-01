@@ -82,6 +82,49 @@ function getSenaraiSistem($activeOnly = true) {
     return SENARAI_SISTEM;
 }
 
+// Senarai peranan dari DB (jadual peranan). Fallback ke pemalar SENARAI_PERANAN.
+// Pulangan: [kod => nama]
+function getSenaraiPeranan($activeOnly = true) {
+    try {
+        $db  = getDB();
+        $sql = "SELECT kod, nama FROM peranan";
+        if ($activeOnly) $sql .= " WHERE status = 1";
+        $sql .= " ORDER BY id";
+        $rows = $db->query($sql)->fetchAll();
+        if ($rows) {
+            $out = [];
+            foreach ($rows as $r) $out[$r['kod']] = $r['nama'];
+            return $out;
+        }
+    } catch (Throwable $e) { /* fallback */ }
+    return SENARAI_PERANAN;
+}
+
+// Had kuasa preset per peranan dari DB. Fallback ke pemalar HAD_KUASA.
+// Pulangan: [kod => [fungsi => 0/1]]
+function getHadKuasa() {
+    try {
+        $db   = getDB();
+        $rows = $db->query("SELECT * FROM peranan WHERE status = 1 ORDER BY id")->fetchAll();
+        if ($rows) {
+            $out = [];
+            foreach ($rows as $r) {
+                $k = [];
+                foreach (SENARAI_FUNGSI as $f) $k[$f] = (int)($r[$f] ?? 0);
+                $out[$r['kod']] = $k;
+            }
+            return $out;
+        }
+    } catch (Throwable $e) { /* fallback */ }
+    return HAD_KUASA;
+}
+
+// Label bagi satu kod peranan (untuk paparan)
+function perananLabel($kod) {
+    $list = getSenaraiPeranan(false);
+    return $list[$kod] ?? strtoupper($kod);
+}
+
 // Pengarah yang bertanggungjawab bagi sesuatu jabatan (auto-assign workflow)
 function getPengarahByJabatan($jabatan) {
     try {
