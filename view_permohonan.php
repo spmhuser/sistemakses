@@ -216,7 +216,7 @@ $backUrl = match($_SESSION['role']) {
     <?php if ($_SESSION['role'] === 'pengarah_jtik' && $r['status'] === 'MENUNGGU_JTIK'): ?>
     <div style="margin-top:8px"><a href="tindakan_jtik.php?id=<?=$r['id']?>" class="btn-primary-dark"><i class="bi bi-check2-square"></i> Buat Kelulusan</a></div>
     <?php endif; ?>
-    <?php if ($_SESSION['role'] === 'admin_it' && $r['status'] === 'DILULUSKAN'): ?>
+    <?php if (in_array($_SESSION['role'], ['admin_it','penyemak_it']) && $r['status'] === 'DILULUSKAN'): ?>
     <div style="margin-top:8px"><a href="tindakan_it.php?id=<?=$r['id']?>" class="btn-primary-dark"><i class="bi bi-key"></i> Berikan Akses</a></div>
     <?php endif; ?>
     <?php if ($_SESSION['role'] === 'penyemak_it' && $r['status'] === 'AKSES_DIBERIKAN' && empty($r['it_penyemak_nama'])): ?>

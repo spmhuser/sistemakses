@@ -148,7 +148,12 @@ $defaultTab = count($belum) > 0 ? 'tab-belum' : (count($proses) > 0 ? 'tab-prose
                     <td class="cell-stack" data-label="Admin IT Bertanggungjawab" style="max-width:240px"><?= renderAdminBadges($adminByPerm[$r['id']] ?? []) ?></td>
                     <td data-label="Status Semasa"><span class="badge-status <?= statusClass($r['status']) ?>"><?= statusLabel($r['status']) ?></span></td>
                     <td data-label="Tarikh Mohon" style="color:#6E6470;font-size:0.9rem"><?= $r['created_at'] ?></td>
-                    <td class="cell-act"><a href="view_permohonan.php?id=<?=$r['id']?>" class="btn-success-soft" style="padding:5px 12px;font-size:0.88rem"><i class="bi bi-eye"></i> Lihat</a></td>
+                    <td class="cell-act" style="display:flex;gap:6px;flex-wrap:wrap">
+                        <a href="view_permohonan.php?id=<?=$r['id']?>" class="btn-success-soft" style="padding:5px 10px;font-size:0.88rem"><i class="bi bi-eye"></i> Lihat</a>
+                        <?php if($r['status']==='DILULUSKAN'): ?>
+                        <a href="tindakan_it.php?id=<?=$r['id']?>" class="btn-primary-dark" style="padding:5px 12px;font-size:0.88rem"><i class="bi bi-key"></i> Beri Akses</a>
+                        <?php endif; ?>
+                    </td>
                 </tr>
                 <?php endforeach; endif; ?>
                 </tbody>

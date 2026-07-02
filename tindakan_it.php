@@ -1,28 +1,36 @@
 <?php
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/_includes.php';
-requireRole('admin_it');
+requireRole(['admin_it','penyemak_it']);
+
+// Penyemak IT boleh beri akses untuk SEMUA sistem (tiada had). Admin IT terhad ikut sistem ditugaskan.
+$isPenyemak = ($_SESSION['role'] === 'penyemak_it');
+$backDash   = $isPenyemak ? 'dashboard_penyemak.php' : 'dashboard_admin_it.php';
+$roleLabel  = $isPenyemak ? 'Penyemak IT' : 'Admin IT';
 
 $id = (int)($_GET['id'] ?? 0);
 $db = getDB();
 $stmt = $db->prepare("SELECT * FROM permohonan WHERE id=? AND status='DILULUSKAN'");
 $stmt->execute([$id]);
 $r = $stmt->fetch();
-if (!$r) { header('Location: dashboard_admin_it.php'); exit; }
+if (!$r) { header("Location: $backDash"); exit; }
 
-// Multi Admin IT: pastikan permohonan ini mengandungi sekurang-kurangnya satu sistem milik admin
 $meRow = $db->prepare("SELECT no_kakitangan FROM users WHERE id=?");
 $meRow->execute([$_SESSION['user_id']]);
 $noPek = ($meRow->fetch())['no_kakitangan'] ?? '';
-$mySys = getSistemForAdmin($noPek);
-if ($mySys) {
-    $ph  = implode(',', array_fill(0, count($mySys), '?'));
-    $chk = $db->prepare("SELECT COUNT(*) c FROM permohonan_sistem WHERE permohonan_id=? AND bil IN ($ph)");
-    $chk->execute(array_merge([$id], $mySys));
-    if ((int)$chk->fetch()['c'] === 0) { header('Location: dashboard_admin_it.php'); exit; }
+
+// Had milik sistem hanya dikuatkuasakan untuk Admin IT (bukan Penyemak IT)
+if (!$isPenyemak) {
+    $mySys = getSistemForAdmin($noPek);
+    if ($mySys) {
+        $ph  = implode(',', array_fill(0, count($mySys), '?'));
+        $chk = $db->prepare("SELECT COUNT(*) c FROM permohonan_sistem WHERE permohonan_id=? AND bil IN ($ph)");
+        $chk->execute(array_merge([$id], $mySys));
+        if ((int)$chk->fetch()['c'] === 0) { header("Location: $backDash"); exit; }
+    }
 }
 
-// Pemberi akses = admin IT yang log masuk. Tarik nama & jawatan (cop) automatik dari Sistem Gaji.
+// Pemberi akses = pengguna yang log masuk. Tarik nama & jawatan (cop) automatik dari Sistem Gaji.
 $mg = $db->prepare("SELECT nama, jawatan FROM gaji WHERE no_kakitangan = ?");
 $mg->execute([$noPek]);
 $myGaji      = $mg->fetch() ?: [];
@@ -37,8 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($pemberi_nama) {
         $u = $db->prepare("UPDATE permohonan SET status='AKSES_DIBERIKAN',it_pemberi_nama=?,it_pemberi_cop=?,tarikh_it=datetime('now','+8 hours') WHERE id=?");
         $u->execute([$pemberi_nama,$pemberi_cop,$id]);
-        logAudit($id, 'AKSES_DIBERIKAN', "Pemberi: {$pemberi_nama}");
-        header('Location: dashboard_admin_it.php?success=1'); exit;
+        logAudit($id, 'AKSES_DIBERIKAN', "Pemberi: {$pemberi_nama}" . ($isPenyemak ? ' (Penyemak IT)' : ''));
+        header("Location: $backDash?success=1"); exit;
     }
 }
 
@@ -56,13 +64,13 @@ $sistemList = $sistems->fetchAll();
     <?php sharedCSS(); ?>
 </head>
 <body>
-<?php sidebarHTML($_SESSION['nama']??$_SESSION['username'],'Admin IT',[
-    ['href'=>'dashboard_admin_it.php','icon'=>'bi-grid-1x2','label'=>'Dashboard','active'=>false],
+<?php sidebarHTML($_SESSION['nama']??$_SESSION['username'],$roleLabel,[
+    ['href'=>$backDash,'icon'=>'bi-grid-1x2','label'=>'Dashboard','active'=>false],
 ]); ?>
 <div class="main-content">
     <div class="page-header">
         <nav aria-label="breadcrumb"><ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="dashboard_admin_it.php">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="<?=$backDash?>">Dashboard</a></li>
             <li class="breadcrumb-item active">Pemberian Akses</li>
         </ol></nav>
         <h4>Pemberian Akses Sistem</h4>
@@ -143,7 +151,7 @@ $sistemList = $sistems->fetchAll();
         </div>
         <div class="action-row">
                 <button type="submit" class="btn-primary-dark"><i class="bi bi-key"></i> Sahkan Pemberian Akses</button>
-                <a href="dashboard_admin_it.php" class="btn-secondary-soft">Batal</a>
+                <a href="<?=$backDash?>" class="btn-secondary-soft">Batal</a>
         </div>
             </form>
     </div>
