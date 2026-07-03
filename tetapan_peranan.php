@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = (int)($_POST['id'] ?? 0);
             if ($id && $nama !== '') {
                 // kod tidak diubah (kunci rujukan) — hanya nama & had kuasa
-                $st = $db->prepare("UPDATE peranan SET nama=?, penyedia=?, pengemaskini=?, penyemak=?, pelapor=?, pengesah=?, pelulus=?, penghapus=?, updated_at=datetime('now','+8 hours') WHERE id=?");
+                $st = $db->prepare("UPDATE peranan SET nama=?, penyedia=?, pengemaskini=?, penyemak=?, pelapor=?, pengesah=?, pelulus=?, penghapus=?, tkh_kemaskini=datetime('now','+8 hours') WHERE id=?");
                 $st->execute([$nama, $vals['penyedia'], $vals['pengemaskini'], $vals['penyemak'], $vals['pelapor'], $vals['pengesah'], $vals['pelulus'], $vals['penghapus'], $id]);
             }
         }
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     if ($act === 'toggle') {
         $id = (int)($_POST['id'] ?? 0);
-        if ($id) $db->prepare("UPDATE peranan SET status = 1 - status, updated_at=datetime('now','+8 hours') WHERE id=?")->execute([$id]);
+        if ($id) $db->prepare("UPDATE peranan SET status = 1 - status, tkh_kemaskini=datetime('now','+8 hours') WHERE id=?")->execute([$id]);
         header('Location: tetapan_peranan.php?msg=toggle'); exit;
     }
 }

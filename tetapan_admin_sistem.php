@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($act === 'edit') {
             $id = (int)($_POST['id'] ?? 0);
             if ($id && $idSistem && $nama !== '') {
-                $st = $db->prepare("UPDATE sistem_admin SET id_sistem=?, no_pekerja=?, nama_admin=?, updated_at=datetime('now','+8 hours') WHERE id=?");
+                $st = $db->prepare("UPDATE sistem_admin SET id_sistem=?, no_pekerja=?, nama_admin=?, tkh_kemaskini=datetime('now','+8 hours') WHERE id=?");
                 $st->execute([$idSistem, $noPek, $nama, $id]);
             }
         }
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     if ($act === 'toggle') {
         $id = (int)($_POST['id'] ?? 0);
-        if ($id) $db->prepare("UPDATE sistem_admin SET status = 1 - status, updated_at=datetime('now','+8 hours') WHERE id=?")->execute([$id]);
+        if ($id) $db->prepare("UPDATE sistem_admin SET status = 1 - status, tkh_kemaskini=datetime('now','+8 hours') WHERE id=?")->execute([$id]);
         header('Location: tetapan_admin_sistem.php?msg=toggle'); exit;
     }
 }

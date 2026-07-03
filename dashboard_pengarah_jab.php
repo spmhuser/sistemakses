@@ -12,7 +12,7 @@ $myJab = getJabatanForPengarah($noPek);
 if (!$myJab) $myJab = [$_SESSION['jabatan'] ?? '']; // fallback ke jabatan sendiri
 
 $ph   = implode(',', array_fill(0, count($myJab), '?'));
-$stmt = $db->prepare("SELECT p.*,u.username FROM permohonan p JOIN users u ON p.user_id=u.id WHERE p.jabatan IN ($ph) ORDER BY p.created_at DESC");
+$stmt = $db->prepare("SELECT p.*,u.username FROM permohonan p JOIN users u ON p.user_id=u.id WHERE p.jabatan IN ($ph) ORDER BY p.tkh_keyin DESC");
 $stmt->execute($myJab);
 $all     = $stmt->fetchAll();
 $perlu   = array_filter($all, fn($r)=>$r['status']==='MENUNGGU_PENGARAH_JAB');
@@ -113,7 +113,7 @@ $sysByPerm = getSistemNamaByPermohonan(array_column($all,'id'));
                     <td data-label="Jabatan" style="font-size:0.92rem;color:#6b7280"><?= htmlspecialchars($r['jabatan']) ?></td>
                     <td class="cell-stack" data-label="Sistem" style="max-width:240px"><?= renderSistemBadges($sysByPerm[$r['id']] ?? []) ?></td>
                     <td data-label="Tujuan"><span class="badge-status badge-info" style="font-size:0.82rem"><?= tujuanLabel($r['tujuan']) ?></span></td>
-                    <td data-label="Tarikh Mohon" style="color:#6E6470;font-size:0.9rem"><?=$r['created_at']?></td>
+                    <td data-label="Tarikh Mohon" style="color:#6E6470;font-size:0.9rem"><?=$r['tkh_keyin']?></td>
                     <td class="cell-act" style="display:flex;gap:6px">
                         <a href="view_permohonan.php?id=<?=$r['id']?>" class="btn-success-soft" style="padding:5px 10px;font-size:0.88rem"><i class="bi bi-eye"></i> Lihat</a>
                         <a href="tindakan_pengarah_jab.php?id=<?=$r['id']?>" class="btn-primary-dark" style="padding:5px 12px;font-size:0.88rem"><i class="bi bi-pen"></i> Perakuan</a>

@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nama = trim($_POST['nama_sistem'] ?? '');
         $kod  = trim($_POST['kod_sistem']  ?? '');
         if ($id && $nama !== '') {
-            $st = $db->prepare("UPDATE senarai_sistem SET nama_sistem=?, kod_sistem=?, updated_at=datetime('now','+8 hours') WHERE id_sistem=?");
+            $st = $db->prepare("UPDATE senarai_sistem SET nama_sistem=?, kod_sistem=?, tkh_kemaskini=datetime('now','+8 hours') WHERE id_sistem=?");
             $st->execute([$nama, $kod, $id]);
         }
         header('Location: tetapan_sistem.php?msg=edit'); exit;
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($act === 'toggle') {
         $id = (int)($_POST['id_sistem'] ?? 0);
         if ($id) {
-            $db->prepare("UPDATE senarai_sistem SET status = 1 - status, updated_at=datetime('now','+8 hours') WHERE id_sistem=?")->execute([$id]);
+            $db->prepare("UPDATE senarai_sistem SET status = 1 - status, tkh_kemaskini=datetime('now','+8 hours') WHERE id_sistem=?")->execute([$id]);
         }
         header('Location: tetapan_sistem.php?msg=toggle'); exit;
     }

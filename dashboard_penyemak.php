@@ -13,7 +13,7 @@ $selesai= array_filter($all, fn($r)=>!empty($r['it_penyemak_nama']));
 
 // Pemantauan: permohonan yang masih dalam proses (Admin IT belum beri akses)
 $proses = $db->query("SELECT p.*,u.username FROM permohonan p JOIN users u ON p.user_id=u.id
-    WHERE p.status IN ('MENUNGGU_PENGARAH_JAB','MENUNGGU_JTIK','DILULUSKAN') ORDER BY p.created_at DESC")->fetchAll();
+    WHERE p.status IN ('MENUNGGU_PENGARAH_JAB','MENUNGGU_JTIK','DILULUSKAN') ORDER BY p.tkh_keyin DESC")->fetchAll();
 
 // Nama sistem bagi setiap permohonan (semua set)
 $sysByPerm = getSistemNamaByPermohonan(array_merge(array_column($all,'id'), array_column($proses,'id')));
@@ -147,7 +147,7 @@ $defaultTab = count($belum) > 0 ? 'tab-belum' : (count($proses) > 0 ? 'tab-prose
                     <td data-label="Tujuan" style="font-size:0.92rem"><?= tujuanLabel($r['tujuan']) ?></td>
                     <td class="cell-stack" data-label="Admin IT Bertanggungjawab" style="max-width:240px"><?= renderAdminBadges($adminByPerm[$r['id']] ?? []) ?></td>
                     <td data-label="Status Semasa"><span class="badge-status <?= statusClass($r['status']) ?>"><?= statusLabel($r['status']) ?></span></td>
-                    <td data-label="Tarikh Mohon" style="color:#6E6470;font-size:0.9rem"><?= $r['created_at'] ?></td>
+                    <td data-label="Tarikh Mohon" style="color:#6E6470;font-size:0.9rem"><?= $r['tkh_keyin'] ?></td>
                     <td class="cell-act" style="display:flex;gap:6px;flex-wrap:wrap">
                         <a href="view_permohonan.php?id=<?=$r['id']?>" class="btn-success-soft" style="padding:5px 10px;font-size:0.88rem"><i class="bi bi-eye"></i> Lihat</a>
                         <?php if($r['status']==='DILULUSKAN'): ?>

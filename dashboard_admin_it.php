@@ -12,11 +12,11 @@ $mySys = getSistemForAdmin($noPek);
 if ($mySys) {
     $ph   = implode(',', array_fill(0, count($mySys), '?'));
     $stmt = $db->prepare("SELECT p.*,u.username FROM permohonan p JOIN users u ON p.user_id=u.id
-        WHERE p.id IN (SELECT permohonan_id FROM permohonan_sistem WHERE bil IN ($ph)) ORDER BY p.created_at DESC");
+        WHERE p.id IN (SELECT permohonan_id FROM permohonan_sistem WHERE bil IN ($ph)) ORDER BY p.tkh_keyin DESC");
     $stmt->execute($mySys);
     $all = $stmt->fetchAll();
 } else {
-    $all = $db->query("SELECT p.*,u.username FROM permohonan p JOIN users u ON p.user_id=u.id ORDER BY p.created_at DESC")->fetchAll();
+    $all = $db->query("SELECT p.*,u.username FROM permohonan p JOIN users u ON p.user_id=u.id ORDER BY p.tkh_keyin DESC")->fetchAll();
 }
 $perlu   = array_filter($all, fn($r)=>$r['status']==='DILULUSKAN');
 $selesai = array_filter($all, fn($r)=>in_array($r['status'],['AKSES_DIBERIKAN','TIDAK_DILULUSKAN']));

@@ -36,7 +36,7 @@ $db->exec("
         gred_jawatan  TEXT,
         jabatan       TEXT,
         telefon       TEXT,
-        created_at    DATETIME DEFAULT (datetime('now','+8 hours'))
+        tkh_keyin    DATETIME DEFAULT (datetime('now','+8 hours'))
     )
 ");
 
@@ -67,7 +67,7 @@ $db->exec("
         it_penyemak_cop       TEXT,
         tarikh_it             DATETIME,
         tarikh_semakan        DATETIME,
-        created_at            DATETIME DEFAULT (datetime('now','+8 hours')),
+        tkh_keyin            DATETIME DEFAULT (datetime('now','+8 hours')),
         FOREIGN KEY (user_id) REFERENCES users(id)
     )
 ");
@@ -102,7 +102,7 @@ $db->exec("
         jabatan       TEXT,
         telefon       TEXT,
         status        TEXT DEFAULT 'AKTIF',
-        created_at    DATETIME DEFAULT (datetime('now','+8 hours'))
+        tkh_keyin    DATETIME DEFAULT (datetime('now','+8 hours'))
     )
 ");
 
@@ -128,8 +128,8 @@ $db->exec("
         nama_sistem TEXT NOT NULL,
         kod_sistem  TEXT,
         status      INTEGER NOT NULL DEFAULT 1,
-        created_at  DATETIME DEFAULT (datetime('now','+8 hours')),
-        updated_at  DATETIME
+        tkh_keyin  DATETIME DEFAULT (datetime('now','+8 hours')),
+        tkh_kemaskini  DATETIME
     )
 ");
 $ss = $db->prepare("INSERT OR IGNORE INTO senarai_sistem (id_sistem,nama_sistem,kod_sistem,status) VALUES (?,?,?,1)");
@@ -143,8 +143,8 @@ $db->exec("
         nama_pengarah TEXT,
         no_pekerja    TEXT,
         status        INTEGER NOT NULL DEFAULT 1,
-        created_at    DATETIME DEFAULT (datetime('now','+8 hours')),
-        updated_at    DATETIME
+        tkh_keyin    DATETIME DEFAULT (datetime('now','+8 hours')),
+        tkh_kemaskini    DATETIME
     )
 ");
 $jp = [
@@ -164,8 +164,8 @@ $db->exec("
         no_pekerja  TEXT,
         nama_admin  TEXT,
         status      INTEGER NOT NULL DEFAULT 1,
-        created_at  DATETIME DEFAULT (datetime('now','+8 hours')),
-        updated_at  DATETIME
+        tkh_keyin  DATETIME DEFAULT (datetime('now','+8 hours')),
+        tkh_kemaskini  DATETIME
     )
 ");
 $sa = $db->prepare("INSERT INTO sistem_admin (id_sistem,no_pekerja,nama_admin,status) VALUES (?,?,?,1)");
@@ -192,8 +192,8 @@ $db->exec("
         pelulus      INTEGER DEFAULT 0,
         penghapus    INTEGER DEFAULT 0,
         status       INTEGER NOT NULL DEFAULT 1,
-        created_at   DATETIME DEFAULT (datetime('now','+8 hours')),
-        updated_at   DATETIME
+        tkh_keyin   DATETIME DEFAULT (datetime('now','+8 hours')),
+        tkh_kemaskini   DATETIME
     )
 ");
 $pr = $db->prepare("INSERT INTO peranan (kod,nama,penyedia,pengemaskini,penyemak,pelapor,pengesah,pelulus,penghapus,status) VALUES (?,?,?,?,?,?,?,?,?,1)");
@@ -212,8 +212,8 @@ $db->exec("
         jawatan     TEXT,
         no_pekerja  TEXT,
         status      INTEGER NOT NULL DEFAULT 1,
-        created_at  DATETIME DEFAULT (datetime('now','+8 hours')),
-        updated_at  DATETIME
+        tkh_keyin  DATETIME DEFAULT (datetime('now','+8 hours')),
+        tkh_kemaskini  DATETIME
     )
 ");
 $ps = $db->prepare("INSERT INTO penyemak (nama,jawatan,no_pekerja,status) VALUES (?,?,?,1)");

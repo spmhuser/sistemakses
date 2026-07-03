@@ -4,7 +4,7 @@ require_once __DIR__ . '/_includes.php';
 requireRole('pengarah_jtik');
 
 $db  = getDB();
-$all     = $db->query("SELECT p.*,u.username FROM permohonan p JOIN users u ON p.user_id=u.id ORDER BY p.created_at DESC")->fetchAll();
+$all     = $db->query("SELECT p.*,u.username FROM permohonan p JOIN users u ON p.user_id=u.id ORDER BY p.tkh_keyin DESC")->fetchAll();
 $perlu   = array_filter($all, fn($r)=>$r['status']==='MENUNGGU_JTIK');
 $selesai = array_filter($all, fn($r)=>in_array($r['status'],['DILULUSKAN','TIDAK_DILULUSKAN','AKSES_DIBERIKAN']));
 $lulus   = array_filter($selesai, fn($r)=>in_array($r['status'],['DILULUSKAN','AKSES_DIBERIKAN']));

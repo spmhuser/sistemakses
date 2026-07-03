@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($act === 'edit') {
             $id = (int)($_POST['id'] ?? 0);
             if ($id && $kod !== '' && $nama !== '') {
-                $st = $db->prepare("UPDATE jabatan_pengarah SET kod_jabatan=?, nama_pengarah=?, no_pekerja=?, updated_at=datetime('now','+8 hours') WHERE id=?");
+                $st = $db->prepare("UPDATE jabatan_pengarah SET kod_jabatan=?, nama_pengarah=?, no_pekerja=?, tkh_kemaskini=datetime('now','+8 hours') WHERE id=?");
                 $st->execute([$kod, $nama, $noPek, $id]);
             }
         }
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     if ($act === 'toggle') {
         $id = (int)($_POST['id'] ?? 0);
-        if ($id) $db->prepare("UPDATE jabatan_pengarah SET status = 1 - status, updated_at=datetime('now','+8 hours') WHERE id=?")->execute([$id]);
+        if ($id) $db->prepare("UPDATE jabatan_pengarah SET status = 1 - status, tkh_kemaskini=datetime('now','+8 hours') WHERE id=?")->execute([$id]);
         header('Location: tetapan_pengarah.php?msg=toggle'); exit;
     }
 }

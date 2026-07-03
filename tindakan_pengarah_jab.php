@@ -65,7 +65,7 @@ $sistemList = $sistems->fetchAll();
                 <div class="info-item"><label>Jawatan</label><div class="val"><?= htmlspecialchars($r['jawatan']) ?></div></div>
                 <div class="info-item"><label>Jabatan</label><div class="val"><?= htmlspecialchars($r['jabatan']) ?></div></div>
                 <div class="info-item"><label>Tujuan</label><div class="val"><span class="badge-status badge-info"><?= tujuanLabel($r['tujuan']) ?></span></div></div>
-                <div class="info-item"><label>Tarikh Permohonan</label><div class="val"><?=$r['created_at']?></div></div>
+                <div class="info-item"><label>Tarikh Permohonan</label><div class="val"><?=$r['tkh_keyin']?></div></div>
             </div>
             <?php if(!empty($sistemList)): ?>
             <div style="margin-top:16px;overflow-x:auto">

@@ -46,7 +46,7 @@ CREATE TABLE users (
     gred_jawatan   VARCHAR2(20),
     jabatan        VARCHAR2(120),
     telefon        VARCHAR2(30),
-    created_at     TIMESTAMP DEFAULT SYSTIMESTAMP,
+    tkh_keyin     TIMESTAMP DEFAULT SYSTIMESTAMP,
     CONSTRAINT pk_users        PRIMARY KEY (id),
     CONSTRAINT uq_users_username UNIQUE (username)
 );
@@ -63,7 +63,7 @@ CREATE TABLE gaji (
     jabatan        VARCHAR2(120),
     telefon        VARCHAR2(30),
     status         VARCHAR2(20) DEFAULT 'AKTIF',
-    created_at     TIMESTAMP DEFAULT SYSTIMESTAMP,
+    tkh_keyin     TIMESTAMP DEFAULT SYSTIMESTAMP,
     CONSTRAINT pk_gaji            PRIMARY KEY (id),
     CONSTRAINT uq_gaji_nokakitangan UNIQUE (no_kakitangan)
 );
@@ -77,8 +77,8 @@ CREATE TABLE senarai_sistem (
     nama_sistem  VARCHAR2(200) NOT NULL,
     kod_sistem   VARCHAR2(40),
     status       NUMBER(1) DEFAULT 1 NOT NULL,
-    created_at   TIMESTAMP DEFAULT SYSTIMESTAMP,
-    updated_at   TIMESTAMP,
+    tkh_keyin   TIMESTAMP DEFAULT SYSTIMESTAMP,
+    tkh_kemaskini   TIMESTAMP,
     CONSTRAINT pk_senarai_sistem PRIMARY KEY (id_sistem),
     CONSTRAINT ck_sistem_status  CHECK (status IN (0,1))
 );
@@ -92,8 +92,8 @@ CREATE TABLE jabatan_pengarah (
     nama_pengarah  VARCHAR2(150),
     no_pekerja     VARCHAR2(30),
     status         NUMBER(1) DEFAULT 1 NOT NULL,
-    created_at     TIMESTAMP DEFAULT SYSTIMESTAMP,
-    updated_at     TIMESTAMP,
+    tkh_keyin     TIMESTAMP DEFAULT SYSTIMESTAMP,
+    tkh_kemaskini     TIMESTAMP,
     CONSTRAINT pk_jabatan_pengarah PRIMARY KEY (id),
     CONSTRAINT ck_jabpeng_status   CHECK (status IN (0,1))
 );
@@ -107,8 +107,8 @@ CREATE TABLE sistem_admin (
     no_pekerja   VARCHAR2(30),
     nama_admin   VARCHAR2(150),
     status       NUMBER(1) DEFAULT 1 NOT NULL,
-    created_at   TIMESTAMP DEFAULT SYSTIMESTAMP,
-    updated_at   TIMESTAMP,
+    tkh_keyin   TIMESTAMP DEFAULT SYSTIMESTAMP,
+    tkh_kemaskini   TIMESTAMP,
     CONSTRAINT pk_sistem_admin   PRIMARY KEY (id),
     CONSTRAINT ck_sisadmin_status CHECK (status IN (0,1)),
     CONSTRAINT fk_sisadmin_sistem FOREIGN KEY (id_sistem)
@@ -124,8 +124,8 @@ CREATE TABLE penyemak (
     jawatan      VARCHAR2(120),
     no_pekerja   VARCHAR2(30),
     status       NUMBER(1) DEFAULT 1 NOT NULL,
-    created_at   TIMESTAMP DEFAULT SYSTIMESTAMP,
-    updated_at   TIMESTAMP,
+    tkh_keyin   TIMESTAMP DEFAULT SYSTIMESTAMP,
+    tkh_kemaskini   TIMESTAMP,
     CONSTRAINT pk_penyemak       PRIMARY KEY (id),
     CONSTRAINT ck_penyemak_status CHECK (status IN (0,1))
 );
@@ -145,8 +145,8 @@ CREATE TABLE peranan (
     pelulus      NUMBER(1) DEFAULT 0,
     penghapus    NUMBER(1) DEFAULT 0,
     status       NUMBER(1) DEFAULT 1 NOT NULL,
-    created_at   TIMESTAMP DEFAULT SYSTIMESTAMP,
-    updated_at   TIMESTAMP,
+    tkh_keyin   TIMESTAMP DEFAULT SYSTIMESTAMP,
+    tkh_kemaskini   TIMESTAMP,
     CONSTRAINT pk_peranan      PRIMARY KEY (id),
     CONSTRAINT uq_peranan_kod  UNIQUE (kod),
     CONSTRAINT ck_peranan_status CHECK (status IN (0,1))
@@ -181,7 +181,7 @@ CREATE TABLE permohonan (
     it_penyemak_cop      VARCHAR2(150),
     tarikh_it            TIMESTAMP,
     tarikh_semakan       TIMESTAMP,
-    created_at           TIMESTAMP DEFAULT SYSTIMESTAMP,
+    tkh_keyin           TIMESTAMP DEFAULT SYSTIMESTAMP,
     CONSTRAINT pk_permohonan       PRIMARY KEY (id),
     CONSTRAINT uq_permohonan_rujuk UNIQUE (no_rujukan),
     CONSTRAINT fk_permohonan_user  FOREIGN KEY (user_id) REFERENCES users (id)

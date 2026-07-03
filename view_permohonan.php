@@ -123,7 +123,7 @@ $backUrl = match($_SESSION['role']) {
         <div class="view-card-header"><i class="bi bi-activity me-2" style="color:#2C5488"></i><h6>Status Permohonan</h6></div>
         <div class="view-card-body">
             <ul class="timeline">
-                <li><div class="tl-dot done"></div><div class="tl-content"><div class="tl-title">Permohonan Dihantar</div><div class="tl-date"><?=$r['created_at']?></div></div></li>
+                <li><div class="tl-dot done"></div><div class="tl-content"><div class="tl-title">Permohonan Dihantar</div><div class="tl-date"><?=$r['tkh_keyin']?></div></div></li>
                 <?php if ($r['tarikh_pengarah_jab']): ?>
                 <li><div class="tl-dot done"></div><div class="tl-content"><div class="tl-title">Disahkan Pengarah Jabatan</div><div class="tl-date"><?=$r['tarikh_pengarah_jab']?></div><?php if($r['nama_pengarah_jab']): ?><div class="tl-note">oleh <?= htmlspecialchars($r['nama_pengarah_jab']) ?></div><?php endif; ?></div></li>
                 <?php elseif(in_array($r['status'],['MENUNGGU_PENGARAH_JAB'])): ?>
