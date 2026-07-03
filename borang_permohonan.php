@@ -65,6 +65,27 @@ foreach ($ip->fetchAll() as $r) { $inProc[(int)$r['bil']] = $r['status']; }
         .ip-box .ip-sys{color:#B9791C;font-weight:700;}
         .ip-box button{background:linear-gradient(135deg,#1E3A5F,#2C5488);color:#fff;border:none;border-radius:10px;padding:11px 30px;font-weight:700;cursor:pointer;transition:filter .15s;}
         .ip-box button:hover{filter:brightness(1.12);}
+        /* ===== JADUAL SISTEM -> KAD PADA TELEFON ===== */
+        @media (max-width:768px){
+            #sistemSection > div[style*="overflow-x"]{overflow-x:visible;}
+            .sistem-table thead{display:none;}
+            .sistem-table, .sistem-table tbody, .sistem-table tr, .sistem-table td{display:block;width:100%;}
+            .sistem-table tr{border:1.5px solid #DCE6F2;border-radius:14px;margin-bottom:12px;padding:6px 4px;background:#fff;box-shadow:0 2px 8px rgba(40,70,120,0.07);}
+            .sistem-table tr.row-inproc{background:#FFF8EC;border-color:#EFD3A0;}
+            .sistem-table td{border:none !important;padding:9px 14px !important;display:flex;flex-direction:column;gap:6px;}
+            .sistem-table td::before{content:attr(data-label);font-weight:700;color:#234B7A;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.3px;}
+            .sistem-table td.check-col{flex-direction:row;align-items:center;gap:10px;}
+            .sistem-table td.check-col::before{order:2;font-size:0.9rem;color:#3A4658;text-transform:none;letter-spacing:0;font-weight:600;}
+            .sistem-table td.check-col input[type=checkbox]{order:1;}
+            .sistem-table td.cell-bil{display:none;}
+            .sistem-table td.cell-nama{font-weight:800;color:#1E3A5F;font-size:1.02rem;border-top:1px dashed #E2EAF5 !important;padding-top:11px !important;}
+            .sistem-table td.cell-nama::before{content:none;}
+            /* Sembunyi butiran sehingga sistem ditanda (jimat skrol utk 26 sistem) */
+            .sistem-table td.cell-peranan, .sistem-table td.cell-hk, .sistem-table td.cell-catatan{display:none;}
+            .sistem-table tr.picked td.cell-peranan, .sistem-table tr.picked td.cell-hk, .sistem-table tr.picked td.cell-catatan{display:flex;}
+            .sistem-table select{width:100% !important;}
+            .sistem-table input[type=text]{width:100%;}
+        }
     </style>
 </head>
 <body>
@@ -188,7 +209,7 @@ foreach ($ip->fetchAll() as $r) { $inProc[(int)$r['bil']] = $r['status']; }
                     <tbody>
                     <?php foreach (getSenaraiSistem(true) as $bil => $nama): $proc = isset($inProc[$bil]); ?>
                         <tr id="row-<?=$bil?>" class="<?= $proc ? 'row-inproc' : '' ?>">
-                            <td class="check-col">
+                            <td class="check-col" data-label="<?= $proc ? '' : 'Pilih sistem ini' ?>">
                                 <?php if ($proc): ?>
                                 <button type="button" class="btn-inproc" title="Masih dalam proses"
                                         onclick="showInProc(<?= htmlspecialchars(json_encode($nama), ENT_QUOTES) ?>)">
@@ -199,11 +220,11 @@ foreach ($ip->fetchAll() as $r) { $inProc[(int)$r['bil']] = $r['status']; }
                                        onchange="toggleRow(this,<?=$bil?>)">
                                 <?php endif; ?>
                             </td>
-                            <td style="color:#6E6470;font-size:0.9rem;text-align:center"><?=$bil?></td>
-                            <td><?= htmlspecialchars($nama) ?>
+                            <td class="cell-bil" style="color:#6E6470;font-size:0.9rem;text-align:center"><?=$bil?></td>
+                            <td class="cell-nama"><?= htmlspecialchars($nama) ?>
                                 <?php if ($proc): ?><span class="badge-inproc"><i class="bi bi-hourglass-split"></i> Dalam Proses</span><?php endif; ?>
                             </td>
-                            <td>
+                            <td class="cell-peranan" data-label="Peranan">
                                 <select name="peranan_sistem_<?=$bil?>" id="ps-<?=$bil?>"
                                         disabled onchange="updateHadKuasa(<?=$bil?>)"
                                         style="border:1px solid #E6EFFA;border-radius:6px;padding:5px 8px;font-size:0.9rem;width:100%;outline:none;background:#f9f9f9;color:#6E6470;cursor:not-allowed">
@@ -213,7 +234,7 @@ foreach ($ip->fetchAll() as $r) { $inProc[(int)$r['bil']] = $r['status']; }
                                     <?php endforeach; ?>
                                 </select>
                             </td>
-                            <td id="hk-cell-<?=$bil?>">
+                            <td id="hk-cell-<?=$bil?>" class="cell-hk" data-label="Had Kuasa">
                                 <div style="display:flex;flex-wrap:wrap;gap:4px">
                                 <?php foreach(SENARAI_FUNGSI as $f): ?>
                                     <label id="hklbl-<?=$bil?>-<?=$f?>"
@@ -225,7 +246,7 @@ foreach ($ip->fetchAll() as $r) { $inProc[(int)$r['bil']] = $r['status']; }
                                 <?php endforeach; ?>
                                 </div>
                             </td>
-                            <td><input type="text" name="catatan_<?=$bil?>" id="cat-<?=$bil?>"
+                            <td class="cell-catatan" data-label="Catatan"><input type="text" name="catatan_<?=$bil?>" id="cat-<?=$bil?>"
                                        placeholder="Catatan (jika ada)" disabled
                                        style="background:#f9f9f9;color:#6E6470;cursor:not-allowed"></td>
                         </tr>
@@ -328,6 +349,7 @@ function toggleRow(chk, bil) {
     const sel = document.getElementById('ps-' + bil);
     const cat = document.getElementById('cat-' + bil);
     const row = document.getElementById('row-' + bil);
+    row.classList.toggle('picked', chk.checked);
     if (chk.checked) {
         sel.disabled = false;
         sel.required = true;
