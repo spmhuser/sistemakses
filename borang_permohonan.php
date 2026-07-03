@@ -25,6 +25,12 @@ $ip = $db->prepare("
 ");
 $ip->execute([$_SESSION['user_id']]);
 foreach ($ip->fetchAll() as $r) { $inProc[(int)$r['bil']] = $r['status']; }
+
+// Admin IT (pemberi akses) yang bertanggungjawab bagi setiap sistem (peta id_sistem -> nama admin)
+$adminBySistem = [];
+foreach ($db->query("SELECT id_sistem, nama_admin FROM sistem_admin WHERE status = 1 AND nama_admin IS NOT NULL AND nama_admin <> '' ORDER BY nama_admin")->fetchAll() as $row) {
+    $adminBySistem[(int)$row['id_sistem']][] = $row['nama_admin'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -223,6 +229,15 @@ foreach ($ip->fetchAll() as $r) { $inProc[(int)$r['bil']] = $r['status']; }
                             <td class="cell-bil" style="color:#6E6470;font-size:0.9rem;text-align:center"><?=$bil?></td>
                             <td class="cell-nama"><?= htmlspecialchars($nama) ?>
                                 <?php if ($proc): ?><span class="badge-inproc"><i class="bi bi-hourglass-split"></i> Dalam Proses</span><?php endif; ?>
+                                <div style="font-size:0.78rem;color:#6b7280;font-weight:500;margin-top:3px">
+                                    <i class="bi bi-person-gear" style="color:#2E73D8"></i>
+                                    Pemberi Akses:
+                                    <?php if (!empty($adminBySistem[$bil])): ?>
+                                        <span style="color:#234B7A;font-weight:600"><?= htmlspecialchars(implode(', ', $adminBySistem[$bil])) ?></span>
+                                    <?php else: ?>
+                                        <span style="color:#b0b8c4">— belum ditetapkan —</span>
+                                    <?php endif; ?>
+                                </div>
                             </td>
                             <td class="cell-peranan" data-label="Peranan">
                                 <select name="peranan_sistem_<?=$bil?>" id="ps-<?=$bil?>"
