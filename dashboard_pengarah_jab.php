@@ -75,6 +75,12 @@ $sysByPerm = getSistemNamaByPermohonan(array_column($all,'id'));
         <div class="col-6 col-xl-3"><div class="stat-card"><div class="stat-icon icon-danger"><i class="bi bi-x-circle"></i></div><div><div class="stat-num num-danger"><?=count($tolak)?></div><div class="stat-lbl lbl-danger">Tidak Lulus</div></div></div></div>
     </div>
 
+    <div class="filter-bar" data-target=".data-table">
+        <div class="flt-search-wrap"><i class="bi bi-search"></i>
+            <input type="text" class="flt-q" placeholder="Cari No. Rujukan, pemohon, jabatan, sistem, tujuan...">
+        </div>
+    </div>
+
     <div class="dash-tabs">
         <button class="dash-tab active" onclick="switchTab(this,'tab-proses')">
             <span class="tab-ic"><i class="bi bi-hourglass-split"></i></span><span class="tab-txt">Masih Dalam Proses</span>

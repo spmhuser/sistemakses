@@ -73,6 +73,20 @@ $tolak    = count(array_filter($list, fn($r)=>$r['status']==='TIDAK_DILULUSKAN')
         <div class="col-6 col-xl"><div class="stat-card"><div class="stat-icon icon-danger"><i class="bi bi-x-circle"></i></div><div><div class="stat-num num-danger"><?=$tolak?></div><div class="stat-lbl lbl-danger">Tidak Lulus</div></div></div></div>
     </div>
 
+    <div class="filter-bar" data-target=".data-table">
+        <div class="flt-search-wrap"><i class="bi bi-search"></i>
+            <input type="text" class="flt-q" placeholder="Cari No. Rujukan, sistem, jabatan, tujuan...">
+        </div>
+        <select class="flt-sel" title="Tapis ikut status">
+            <option value="">Semua Status</option>
+            <option value="Menunggu Pengarah Jabatan">Menunggu Pengarah Jabatan</option>
+            <option value="Menunggu Kelulusan Pengarah JTIK">Menunggu Kelulusan JTIK</option>
+            <option value="Menunggu Akses JTIK">Menunggu Akses JTIK</option>
+            <option value="Akses Diberikan">Akses Diberikan</option>
+            <option value="Tidak Diluluskan">Tidak Diluluskan</option>
+        </select>
+    </div>
+
     <div class="dash-tabs">
         <button class="dash-tab <?= $defaultTab==='tab-proses'?'active':'' ?>" onclick="switchTab(this,'tab-proses')">
             <span class="tab-ic"><i class="bi bi-hourglass-split"></i></span><span class="tab-txt">Dalam Proses</span>

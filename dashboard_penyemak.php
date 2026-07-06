@@ -87,6 +87,12 @@ $defaultTab = count($belum) > 0 ? 'tab-belum' : (count($proses) > 0 ? 'tab-prose
         <div class="col-6 col-xl-3"><div class="stat-card"><div class="stat-icon icon-primary"><i class="bi bi-key"></i></div><div><div class="stat-num num-primary"><?=count($all)?></div><div class="stat-lbl lbl-primary">Jumlah Akses</div></div></div></div>
     </div>
 
+    <div class="filter-bar" data-target=".data-table">
+        <div class="flt-search-wrap"><i class="bi bi-search"></i>
+            <input type="text" class="flt-q" placeholder="Cari No. Rujukan, pemohon, jabatan, sistem, admin IT...">
+        </div>
+    </div>
+
     <div class="dash-tabs">
         <button class="dash-tab <?= $defaultTab==='tab-belum'?'active':'' ?>" onclick="switchTab(this,'tab-belum')">
             <span class="tab-ic"><i class="bi bi-clipboard-check"></i></span><span class="tab-txt">Belum Disemak</span>

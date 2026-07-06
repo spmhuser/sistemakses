@@ -265,6 +265,18 @@ table.data-table tbody tr:hover td { background: #EFF4FC; }
 ::-webkit-scrollbar-thumb { background: #A9C6E8; border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: #1FBCD4; }
 
+/* ===================== BAR CARIAN & PENAPIS ===================== */
+.filter-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px; }
+.filter-bar .flt-search-wrap { position: relative; flex: 1 1 260px; min-width: 200px; }
+.filter-bar .flt-search-wrap i { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #8AA0BE; font-size: 1rem; }
+.filter-bar .flt-q { width: 100%; border: 1.5px solid #DCE6F2; border-radius: 11px; padding: 10px 14px 10px 38px; font-size: 0.94rem; color: #2D2433; outline: none; background: #fff; transition: border-color .15s, box-shadow .15s; }
+.filter-bar .flt-q:focus { border-color: #2E73D8; box-shadow: 0 0 0 3px rgba(46,115,216,0.13); }
+.filter-bar .flt-sel { border: 1.5px solid #DCE6F2; border-radius: 11px; padding: 10px 14px; font-size: 0.92rem; color: #2D2433; background: #fff; font-weight: 600; outline: none; cursor: pointer; }
+.filter-bar .flt-sel:focus { border-color: #2E73D8; }
+.filter-bar .flt-count { font-size: 0.85rem; color: #6E7787; font-weight: 600; white-space: nowrap; }
+.filter-bar .flt-empty { display: none; padding: 30px; text-align: center; color: #8A93A0; }
+@media (max-width: 600px) { .filter-bar .flt-sel { flex: 1 1 auto; } }
+
 /* ===================== MOBILE / RESPONSIVE ===================== */
 .mobile-topbar { display: none; }
 .sidebar-overlay { display: none; }
@@ -381,6 +393,36 @@ function toggleSidebar(){
     s.classList.toggle('open');
     if(o) o.classList.toggle('show');
 }
+// Auto-wire bar carian & penapis (.filter-bar). Menapis baris jadual mengikut teks + nilai penapis.
+function initFilters(){
+    document.querySelectorAll('.filter-bar').forEach(function(bar){
+        var q     = bar.querySelector('.flt-q');
+        var sels  = bar.querySelectorAll('.flt-sel');
+        var count = bar.querySelector('.flt-count');
+        var sel   = bar.getAttribute('data-target') || '.data-table';
+        var tables = document.querySelectorAll(sel);
+        function apply(){
+            var term = (q ? q.value : '').trim().toLowerCase();
+            var picks = [];
+            sels.forEach(function(s){ if(s.value) picks.push(s.value.toLowerCase()); });
+            var shown = 0;
+            tables.forEach(function(tbl){
+                tbl.querySelectorAll('tbody tr').forEach(function(tr){
+                    if(tr.querySelector('.cell-empty')) return;
+                    var txt = (tr.innerText || tr.textContent || '').toLowerCase();
+                    var ok = (!term || txt.indexOf(term) >= 0) && picks.every(function(v){ return txt.indexOf(v) >= 0; });
+                    tr.style.display = ok ? '' : 'none';
+                    if(ok) shown++;
+                });
+            });
+            if(count) count.textContent = shown + ' rekod';
+        }
+        if(q) q.addEventListener('input', apply);
+        sels.forEach(function(s){ s.addEventListener('change', apply); });
+        apply();
+    });
+}
+document.addEventListener('DOMContentLoaded', initFilters);
 </script>
 <?php }
 
