@@ -46,25 +46,39 @@ $telefon       = $g['telefon'];
 
 $no_rujukan = 'BCS-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
 
-$stmt = $db->prepare("
-    INSERT INTO permohonan (no_rujukan,user_id,nama,no_kakitangan,jawatan,gred_jawatan,jabatan,telefon,tujuan)
-    VALUES (?,?,?,?,?,?,?,?,?)
-");
-$stmt->execute([$no_rujukan, $_SESSION['user_id'], $nama, $no_kakitangan, $jawatan, $gred_jawatan, $jabatan, $telefon, $tujuan]);
-$pid = $db->lastInsertId();
+$namaMap    = getSenaraiSistem(true);       // id_sistem => nama (sekali sahaja)
+$sistemList = $_POST['sistem'];
 
-// Insert sistem
-$sistemList = $_POST['sistem'] ?? [];
-foreach (getSenaraiSistem(true) as $bil => $namaSistem) {
-    if (in_array((string)$bil, $sistemList)) {
-        $catatan       = trim($_POST["catatan_{$bil}"]       ?? '');
-        $perananSistem = trim($_POST["peranan_sistem_{$bil}"] ?? '');
+try {
+    $db->beginTransaction();
+
+    // 1) Rekod permohonan induk
+    $stmt = $db->prepare("
+        INSERT INTO permohonan (no_rujukan,user_id,nama,no_kakitangan,jawatan,gred_jawatan,jabatan,telefon,tujuan)
+        VALUES (?,?,?,?,?,?,?,?,?)
+    ");
+    $stmt->execute([$no_rujukan, $_SESSION['user_id'], $nama, $no_kakitangan, $jawatan, $gred_jawatan, $jabatan, $telefon, $tujuan]);
+    $pid = $db->lastInsertId();
+
+    // 2) Rekod sistem — statement disediakan SEKALI, dilaksana berulang dalam transaksi
+    $s = $db->prepare("INSERT INTO permohonan_sistem (permohonan_id,bil,nama_sistem,catatan,peranan_sistem,penyedia,pengemaskini,penyemak,pelapor,pengesah,pelulus,penghapus) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+    foreach ($sistemList as $bilRaw) {
+        $bil = (int)$bilRaw;
+        if (!isset($namaMap[$bil])) continue;   // langkau sistem tidak sah/tidak aktif
         $hk = $_POST["had_kuasa_{$bil}"] ?? [];
-        $hkVals = [];
-        foreach (SENARAI_FUNGSI as $f) $hkVals[$f] = isset($hk[$f]) ? 1 : 0;
-        $s = $db->prepare("INSERT INTO permohonan_sistem (permohonan_id,bil,nama_sistem,catatan,peranan_sistem,penyedia,pengemaskini,penyemak,pelapor,pengesah,pelulus,penghapus) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
-        $s->execute([$pid,$bil,$namaSistem,$catatan,$perananSistem,$hkVals['penyedia'],$hkVals['pengemaskini'],$hkVals['penyemak'],$hkVals['pelapor'],$hkVals['pengesah'],$hkVals['pelulus'],$hkVals['penghapus']]);
+        $s->execute([
+            $pid, $bil, $namaMap[$bil],
+            trim($_POST["catatan_{$bil}"] ?? ''),
+            trim($_POST["peranan_sistem_{$bil}"] ?? ''),
+            isset($hk['penyedia'])?1:0, isset($hk['pengemaskini'])?1:0, isset($hk['penyemak'])?1:0,
+            isset($hk['pelapor'])?1:0, isset($hk['pengesah'])?1:0, isset($hk['pelulus'])?1:0, isset($hk['penghapus'])?1:0,
+        ]);
     }
+
+    $db->commit();
+} catch (Throwable $e) {
+    if ($db->inTransaction()) $db->rollBack();
+    header('Location: borang_permohonan.php?error=simpan'); exit;
 }
 
 logAudit($pid, 'PERMOHONAN_BARU', 'Permohonan dihantar (' . $tujuan . ')');

@@ -130,6 +130,11 @@ foreach ($db->query("SELECT id_sistem, nama_admin FROM sistem_admin WHERE status
         <i class="bi bi-hourglass-split"></i> Sistem yang dipohon masih dalam proses dan telah ditapis. Tiada permohonan baharu direkodkan.
     </div>
     <?php endif; ?>
+    <?php if (($_GET['error'] ?? '') === 'simpan'): ?>
+    <div class="locked-note" style="color:#B42318;background:#FFE2E0;border-color:#F3B4B0;margin-bottom:18px">
+        <i class="bi bi-exclamation-triangle"></i> Permohonan gagal disimpan. Sila cuba semula. Tiada data separa direkodkan.
+    </div>
+    <?php endif; ?>
     <form method="POST" action="submit_permohonan.php" id="mainForm">
 
     <!-- SECTION A -->
