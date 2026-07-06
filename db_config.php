@@ -45,5 +45,15 @@ function dbConnect() {
     }
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
+    if (DB_DRIVER === 'sqlite') {
+        // Elak "hang" 120s bila DB dikunci program lain (cth: DB Browser dibuka).
+        // busy_timeout: tunggu maksimum 5 saat sahaja, kemudian gagal cepat.
+        $pdo->exec('PRAGMA busy_timeout = 5000');
+        $pdo->exec('PRAGMA foreign_keys = ON');
+        // WAL: benarkan pembaca (cth DB Browser) tanpa menyekat penulis.
+        // Dibalut try/catch — jika DB sedang dikunci, biar mod lalai digunakan.
+        try { $pdo->exec('PRAGMA journal_mode = WAL'); } catch (Throwable $e) { /* abai */ }
+    }
     return $pdo;
 }
