@@ -17,6 +17,33 @@ $sistemList = $db->prepare("SELECT * FROM permohonan_sistem WHERE permohonan_id=
 $sistemList->execute([$id]);
 $sistems = $sistemList->fetchAll();
 
+// Admin IT (pemberi akses) bertanggungjawab bagi setiap sistem (peta id_sistem -> nama admin)
+$adminBySistem = [];
+foreach ($db->query("SELECT id_sistem, nama_admin FROM sistem_admin WHERE status = 1 AND nama_admin IS NOT NULL AND nama_admin <> '' ORDER BY nama_admin")->fetchAll() as $row) {
+    $adminBySistem[(int)$row['id_sistem']][] = $row['nama_admin'];
+}
+
+// Jika ditolak — kenal pasti peringkat, nama penolak & alasan
+$ditolak = ($r['status'] === 'TIDAK_DILULUSKAN');
+$tolakOleh = $tolakPeringkat = $tolakAlasan = $tolakTarikh = '';
+if ($ditolak) {
+    if (($r['kelulusan_jtik'] ?? '') === 'TIDAK_DILULUSKAN') {
+        $tolakPeringkat = 'Pengarah JTIK';
+        $tolakAlasan    = $r['alasan_jtik'] ?? '';
+        $tolakTarikh    = $r['tarikh_jtik'] ?? '';
+        if (!empty($r['pengarah_jtik_id'])) {
+            $jn = $db->prepare("SELECT nama FROM users WHERE id=?");
+            $jn->execute([$r['pengarah_jtik_id']]);
+            $tolakOleh = ($jn->fetch()['nama'] ?? '');
+        }
+    } else {
+        $tolakPeringkat = 'Pengarah Jabatan';
+        $tolakOleh      = $r['nama_pengarah_jab'] ?? '';
+        $tolakAlasan    = $r['alasan_pengarah_jab'] ?? '';
+        $tolakTarikh    = $r['tarikh_pengarah_jab'] ?? '';
+    }
+}
+
 $audit = getAuditTrail($id);
 
 
@@ -61,6 +88,26 @@ $backUrl = match($_SESSION['role']) {
         </div>
     </div>
 
+    <?php if ($ditolak): ?>
+    <!-- Notis Permohonan Tidak Diluluskan -->
+    <div class="view-card" style="border:1px solid #F3B4B0;background:#FFF6F5">
+        <div class="view-card-body" style="display:flex;gap:16px;align-items:flex-start">
+            <div style="width:48px;height:48px;border-radius:50%;background:#FFE2E0;color:#E23B36;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0"><i class="bi bi-x-octagon-fill"></i></div>
+            <div style="flex:1">
+                <div style="font-weight:800;color:#B42318;font-size:1.05rem;margin-bottom:6px">Permohonan Tidak Diluluskan</div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px 22px;color:#5B6675;font-size:0.92rem;margin-bottom:10px">
+                    <div><b style="color:#1E3A5F">Ditolak oleh:</b> <?= htmlspecialchars($tolakOleh ?: '-') ?> <span style="color:#8A7E86">(<?= htmlspecialchars($tolakPeringkat) ?>)</span></div>
+                    <?php if ($tolakTarikh): ?><div><b style="color:#1E3A5F">Tarikh:</b> <?= htmlspecialchars($tolakTarikh) ?></div><?php endif; ?>
+                </div>
+                <div style="background:#fff;border:1px solid #F3B4B0;border-radius:10px;padding:11px 14px">
+                    <div style="font-size:0.76rem;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;color:#B42318;margin-bottom:3px">Catatan / Alasan Tidak Diluluskan</div>
+                    <div style="color:#374151;font-size:0.95rem"><?= $tolakAlasan !== '' ? nl2br(htmlspecialchars($tolakAlasan)) : '<span style="color:#9aa3b0">Tiada catatan dinyatakan.</span>' ?></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <!-- Section A -->
     <div class="view-card">
         <div class="view-card-header"><span style="background:#2C5488;color:#fff;font-size:0.82rem;font-weight:700;padding:3px 9px;border-radius:6px">A</span><h6>Maklumat Kakitangan</h6></div>
@@ -84,12 +131,20 @@ $backUrl = match($_SESSION['role']) {
             <?php if (!empty($sistems)): ?>
             <div style="overflow-x:auto">
             <table class="sistem-table">
-                <thead><tr><th>Bil</th><th>Nama Sistem</th><th>Peranan</th><th>Had Kuasa</th><th>Catatan</th></tr></thead>
+                <thead><tr><th>Bil</th><th>Nama Sistem</th><th>Pemberi Akses (Admin IT)</th><th>Peranan</th><th>Had Kuasa</th><th>Catatan</th></tr></thead>
                 <tbody>
                 <?php foreach($sistems as $s): ?>
                 <tr>
                     <td style="text-align:center;color:#6E6470;font-size:0.9rem"><?=$s['bil']?></td>
                     <td><?= htmlspecialchars($s['nama_sistem']) ?></td>
+                    <td style="font-size:0.9rem">
+                        <?php $pa = $adminBySistem[(int)$s['bil']] ?? []; ?>
+                        <?php if ($pa): ?>
+                            <span style="color:#234B7A;font-weight:600"><i class="bi bi-person-gear" style="color:#2E73D8"></i> <?= htmlspecialchars(implode(', ', $pa)) ?></span>
+                        <?php else: ?>
+                            <span style="color:#b0b8c4">— belum ditetapkan —</span>
+                        <?php endif; ?>
+                    </td>
                     <td>
                         <?php if (!empty($s['peranan_sistem'])): ?>
                         <?php $pLabel = perananLabel($s['peranan_sistem']); ?>

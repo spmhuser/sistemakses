@@ -56,6 +56,7 @@ $db->exec("
         tarikh_pemohon        DATETIME DEFAULT (datetime('now','+8 hours')),
         pengarah_jab_id       INTEGER,
         nama_pengarah_jab     TEXT,
+        alasan_pengarah_jab   TEXT,
         tarikh_pengarah_jab   DATETIME,
         pengarah_jtik_id      INTEGER,
         kelulusan_jtik        TEXT,

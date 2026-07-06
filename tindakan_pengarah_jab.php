@@ -20,10 +20,18 @@ if (!in_array($r['jabatan'], $myJab)) { header('Location: dashboard_pengarah_jab
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama_pengarah = trim($_POST['nama_pengarah'] ?? '');
+    $keputusan     = $_POST['keputusan'] ?? 'LULUS';
+    $alasan        = trim($_POST['alasan'] ?? '');
     if ($nama_pengarah) {
-        $u = $db->prepare("UPDATE permohonan SET status='MENUNGGU_JTIK', pengarah_jab_id=?, nama_pengarah_jab=?, tarikh_pengarah_jab=datetime('now','+8 hours') WHERE id=?");
-        $u->execute([$_SESSION['user_id'], $nama_pengarah, $id]);
-        logAudit($id, 'PERAKUAN_JABATAN', 'Diperakukan oleh ' . $nama_pengarah);
+        if ($keputusan === 'TOLAK') {
+            $u = $db->prepare("UPDATE permohonan SET status='TIDAK_DILULUSKAN', pengarah_jab_id=?, nama_pengarah_jab=?, alasan_pengarah_jab=?, tarikh_pengarah_jab=datetime('now','+8 hours') WHERE id=?");
+            $u->execute([$_SESSION['user_id'], $nama_pengarah, $alasan, $id]);
+            logAudit($id, 'TOLAK_JABATAN', 'Ditolak oleh ' . $nama_pengarah . ($alasan !== '' ? '; Alasan: ' . $alasan : ''));
+        } else {
+            $u = $db->prepare("UPDATE permohonan SET status='MENUNGGU_JTIK', pengarah_jab_id=?, nama_pengarah_jab=?, tarikh_pengarah_jab=datetime('now','+8 hours') WHERE id=?");
+            $u->execute([$_SESSION['user_id'], $nama_pengarah, $id]);
+            logAudit($id, 'PERAKUAN_JABATAN', 'Diperakukan oleh ' . $nama_pengarah);
+        }
         header('Location: dashboard_pengarah_jab.php?success=1'); exit;
     }
 }
@@ -40,6 +48,13 @@ $sistemList = $sistems->fetchAll();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <?php sharedCSS(); ?>
+    <style>
+        .keputusan-card{border:2px solid #e5e7eb;border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:12px;}
+        .keputusan-card:hover{border-color:#3A86D0;}
+        .keputusan-card.lulus{border-color:#16a34a;background:#f0fdf4;}
+        .keputusan-card.tolak{border-color:#dc2626;background:#fef2f2;}
+        .keputusan-card input{accent-color:#3A86D0;}
+    </style>
 </head>
 <body>
 <?php sidebarHTML($_SESSION['nama']??$_SESSION['username'],'Pengarah Jabatan',[
@@ -107,24 +122,60 @@ $sistemList = $sistems->fetchAll();
         </div>
         <div class="form-section-body">
             <div style="background:#FFFFFF;border:1px solid #E6EFFA;border-radius:10px;padding:16px;margin-bottom:20px;font-size:0.875rem;color:#374151">
-                Saya dengan ini mengesahkan permohonan di atas dibuat selaras dengan kehendak dan keperluan pemohon untuk melaksanakan tugasan.
+                Saya dengan ini membuat keputusan terhadap permohonan di atas berdasarkan kehendak dan keperluan tugasan pemohon.
             </div>
-            <form method="POST">
+            <form method="POST" id="perakuanForm">
+                <label class="field-label mb-3">Keputusan <span class="req">*</span></label>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-5">
+                        <label class="keputusan-card" id="cardLulus">
+                            <input type="radio" name="keputusan" value="LULUS" required onchange="toggleKpt(this)">
+                            <i class="bi bi-check-circle-fill" style="color:#16a34a;font-size:1.3rem"></i>
+                            <div><div style="font-weight:700;color:#166534">PERAKUKAN</div><div style="font-size:0.88rem;color:#6b7280">Perakukan &amp; hantar ke JTIK</div></div>
+                        </label>
+                    </div>
+                    <div class="col-md-5">
+                        <label class="keputusan-card" id="cardTolak">
+                            <input type="radio" name="keputusan" value="TOLAK" onchange="toggleKpt(this)">
+                            <i class="bi bi-x-circle-fill" style="color:#dc2626;font-size:1.3rem"></i>
+                            <div><div style="font-weight:700;color:#991b1b">TOLAK</div><div style="font-size:0.88rem;color:#6b7280">Permohonan tidak diluluskan</div></div>
+                        </label>
+                    </div>
+                </div>
+                <div class="mb-3" id="alasanBox" style="display:none">
+                    <label class="field-label">Alasan / Catatan Tolakan <span class="req">*</span></label>
+                    <textarea name="alasan" id="alasan" class="form-control-custom" rows="3" placeholder="Nyatakan sebab permohonan ditolak..." style="resize:vertical;max-width:500px"></textarea>
+                </div>
                 <div class="mb-3">
                     <label class="field-label">Nama Penuh Pengarah <span class="req">*</span></label>
                     <input type="text" name="nama_pengarah" class="form-control-custom" required
                            value="<?= htmlspecialchars($_SESSION['nama'] ?? '') ?>" style="max-width:400px">
                 </div>
                 <div class="mb-3">
-                    <label class="field-label">Tarikh Perakuan</label>
+                    <label class="field-label">Tarikh</label>
                     <div style="font-size:0.875rem;color:#374151;padding:10px 0"><?= date('d/m/Y') ?></div>
                 </div>
         </div>
         <div class="action-row">
-                <button type="submit" class="btn-primary-dark"><i class="bi bi-check-lg"></i> Sahkan Perakuan</button>
+                <button type="submit" class="btn-primary-dark" id="btnSubmit"><i class="bi bi-check-lg"></i> Sahkan Keputusan</button>
                 <a href="dashboard_pengarah_jab.php" class="btn-secondary-soft"><i class="bi bi-x-lg"></i> Batal</a>
         </div>
             </form>
+            <script>
+            function toggleKpt(el){
+                document.getElementById('cardLulus').classList.remove('lulus');
+                document.getElementById('cardTolak').classList.remove('tolak');
+                var box = document.getElementById('alasanBox');
+                var alasan = document.getElementById('alasan');
+                if (el.value === 'TOLAK') {
+                    document.getElementById('cardTolak').classList.add('tolak');
+                    box.style.display = 'block'; alasan.required = true;
+                } else {
+                    document.getElementById('cardLulus').classList.add('lulus');
+                    box.style.display = 'none'; alasan.required = false;
+                }
+            }
+            </script>
     </div>
 </div>
 </body></html>

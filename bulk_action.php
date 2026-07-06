@@ -24,7 +24,7 @@ if ($role === 'pengarah_jab') {
     // Statement disediakan SEKALI, dilaksana berulang dalam satu transaksi
     $sel      = $db->prepare("SELECT jabatan FROM permohonan WHERE id=? AND status='MENUNGGU_PENGARAH_JAB'");
     $updLulus = $db->prepare("UPDATE permohonan SET status='MENUNGGU_JTIK', pengarah_jab_id=?, nama_pengarah_jab=?, tarikh_pengarah_jab=datetime('now','+8 hours') WHERE id=?");
-    $updTolak = $db->prepare("UPDATE permohonan SET status='TIDAK_DILULUSKAN', pengarah_jab_id=?, nama_pengarah_jab=?, tarikh_pengarah_jab=datetime('now','+8 hours') WHERE id=?");
+    $updTolak = $db->prepare("UPDATE permohonan SET status='TIDAK_DILULUSKAN', pengarah_jab_id=?, nama_pengarah_jab=?, alasan_pengarah_jab=?, tarikh_pengarah_jab=datetime('now','+8 hours') WHERE id=?");
 
     $db->beginTransaction();
     foreach ($ids as $id) {
@@ -35,7 +35,7 @@ if ($role === 'pengarah_jab') {
             $updLulus->execute([$_SESSION['user_id'], $_SESSION['nama'] ?? '', $id]);
             logAudit($id, 'PERAKUAN_JABATAN', 'Perakuan pukal');
         } else {
-            $updTolak->execute([$_SESSION['user_id'], $_SESSION['nama'] ?? '', $id]);
+            $updTolak->execute([$_SESSION['user_id'], $_SESSION['nama'] ?? '', 'Tolak pukal oleh Pengarah Jabatan', $id]);
             logAudit($id, 'TOLAK_JABATAN', 'Tolak pukal oleh Pengarah Jabatan');
         }
         $done++;

@@ -170,6 +170,7 @@ CREATE TABLE permohonan (
     tarikh_pemohon       TIMESTAMP DEFAULT SYSTIMESTAMP,
     pengarah_jab_id      NUMBER,
     nama_pengarah_jab    VARCHAR2(150),
+    alasan_pengarah_jab  VARCHAR2(1000),
     tarikh_pengarah_jab  TIMESTAMP,
     pengarah_jtik_id     NUMBER,
     kelulusan_jtik       VARCHAR2(30),                  -- DILULUSKAN / TIDAK_DILULUSKAN
