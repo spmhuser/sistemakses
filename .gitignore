@@ -6,3 +6,9 @@ desktop.ini
 
 # Temp / migration scratch files
 _migrate_*.php
+_*.php
+
+# Fail sementara SQLite (mod WAL)
+database.db-wal
+database.db-shm
+database.db-journal
