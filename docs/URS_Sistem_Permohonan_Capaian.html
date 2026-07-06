@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<title>Spesifikasi Keperluan Pengguna (URS) - Sistem Permohonan Capaian Sistem MBSP</title>
+<style>
+    @page { size: A4; margin: 20mm 18mm 18mm 18mm; }
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', 'Calibri', sans-serif; color: #222; font-size: 11pt; line-height: 1.5; margin: 0; }
+    h1,h2,h3,h4 { color: #1E3A5F; margin: 0 0 8px; }
+    h2 { font-size: 15pt; border-bottom: 2px solid #2E73D8; padding-bottom: 5px; margin-top: 26px; }
+    h3 { font-size: 12.5pt; color: #2C5488; margin-top: 18px; }
+    p { margin: 6px 0; text-align: justify; }
+    ul, ol { margin: 6px 0 6px 0; padding-left: 22px; }
+    li { margin: 3px 0; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 10pt; }
+    th, td { border: 1px solid #BFD2EC; padding: 6px 9px; text-align: left; vertical-align: top; }
+    th { background: #E6EFFA; color: #1E3A5F; font-weight: 700; }
+    tr:nth-child(even) td { background: #F6F9FD; }
+    .req-id { font-weight: 700; color: #2862C0; white-space: nowrap; }
+    code { background: #EEF3FA; padding: 1px 5px; border-radius: 4px; font-size: 9.5pt; color: #234B7A; }
+    .no-break { page-break-inside: avoid; }
+    .page-break { page-break-before: always; }
+
+    /* Muka depan */
+    .cover { height: 250mm; display: flex; flex-direction: column; justify-content: center; text-align: center; page-break-after: always; }
+    .cover .brand-badge { width: 90px; height: 90px; margin: 0 auto 26px; border-radius: 22px;
+        background: linear-gradient(135deg, #1E3A5F, #2E73D8 55%, #1FBCD4); color: #fff;
+        display: flex; align-items: center; justify-content: center; font-size: 46px; font-weight: 800; }
+    .cover .doc-type { letter-spacing: 4px; color: #2E73D8; font-weight: 700; font-size: 12pt; margin-bottom: 10px; }
+    .cover h1 { font-size: 26pt; line-height: 1.25; margin-bottom: 8px; }
+    .cover .sub { color: #5B6675; font-size: 13pt; margin-bottom: 40px; }
+    .cover .meta { display: inline-block; text-align: left; border-top: 2px solid #2E73D8; padding-top: 18px; margin-top: 10px; font-size: 11pt; }
+    .cover .meta b { color: #1E3A5F; display: inline-block; width: 130px; }
+    .muted { color: #6b7280; }
+</style>
+</head>
+<body>
+
+<!-- ============ MUKA DEPAN ============ -->
+<div class="cover">
+    <div class="brand-badge"><span>&#128274;</span></div>
+    <div class="doc-type">SPESIFIKASI KEPERLUAN PENGGUNA</div>
+    <h1>Sistem Permohonan Capaian Sistem</h1>
+    <div class="sub">Majlis Bandaraya Seberang Perai (MBSP)</div>
+    <div class="meta">
+        <div><b>Dokumen</b> : User Requirement Specification (URS)</div>
+        <div><b>Versi</b> : 1.0</div>
+        <div><b>Tarikh</b> : 6 Julai 2026</div>
+        <div><b>Kod Borang</b> : 119/D35</div>
+        <div><b>Status</b> : Draf untuk Semakan</div>
+    </div>
+</div>
+
+<!-- ============ 1. PENGENALAN ============ -->
+<h2>1. Pengenalan</h2>
+
+<h3>1.1 Tujuan Dokumen</h3>
+<p>Dokumen Spesifikasi Keperluan Pengguna (URS) ini menerangkan keperluan fungsian dan bukan fungsian bagi <b>Sistem Permohonan Capaian Sistem</b> Majlis Bandaraya Seberang Perai (MBSP). Ia bertujuan menjadi rujukan rasmi antara pihak pengguna dan pihak pembangun bagi memastikan sistem yang dibangunkan memenuhi keperluan sebenar organisasi.</p>
+
+<h3>1.2 Skop Sistem</h3>
+<p>Sistem ini menguruskan permohonan capaian (akses) kakitangan kepada sistem-sistem aplikasi dalaman MBSP secara atas talian, menggantikan proses borang manual (Kod Borang 119/D35). Skop merangkumi permohonan baharu, kemaskini dan pembatalan capaian; aliran kelulusan berperingkat; pemberian akses oleh unit IT; semakan dalaman; serta pengurusan tetapan induk sistem.</p>
+
+<h3>1.3 Definisi, Akronim &amp; Singkatan</h3>
+<table class="no-break">
+    <tr><th style="width:130px">Istilah</th><th>Keterangan</th></tr>
+    <tr><td>MBSP</td><td>Majlis Bandaraya Seberang Perai</td></tr>
+    <tr><td>JTIK</td><td>Jabatan Teknologi Maklumat &amp; Komunikasi</td></tr>
+    <tr><td>URS</td><td>User Requirement Specification (Spesifikasi Keperluan Pengguna)</td></tr>
+    <tr><td>Pemohon</td><td>Kakitangan yang memohon capaian sistem</td></tr>
+    <tr><td>Had Kuasa</td><td>Set fungsi yang dibenarkan bagi sesuatu peranan (cth: penyedia, pelulus)</td></tr>
+    <tr><td>Sistem Gaji</td><td>Sumber rujukan rasmi data kakitangan (nama, jawatan, gred, jabatan)</td></tr>
+    <tr><td>Pemberi Akses</td><td>Admin IT yang melaksanakan pemberian capaian sistem</td></tr>
+    <tr><td>Penyemak IT</td><td>Pegawai yang menyemak ketepatan kerja pemberian akses Admin IT</td></tr>
+</table>
+
+<h3>1.4 Rujukan</h3>
+<ul>
+    <li>Borang Capaian Sistem MBSP (Kod Borang 119/D35).</li>
+    <li>Dasar Keselamatan Siber / ICT MBSP.</li>
+    <li>Skema pangkalan data sistem (<code>oracle_schema.sql</code>).</li>
+</ul>
+
+<!-- ============ 2. GAMBARAN KESELURUHAN ============ -->
+<h2 class="page-break">2. Gambaran Keseluruhan Sistem</h2>
+
+<h3>2.1 Perihal Sistem</h3>
+<p>Sistem berasaskan web (PHP + pangkalan data melalui PDO) yang boleh dicapai menerusi pelayar di komputer meja dan telefon pintar (reka bentuk responsif). Setiap pengguna log masuk mengikut peranan dan hanya boleh mengakses fungsi yang dibenarkan bagi peranan tersebut.</p>
+
+<h3>2.2 Peranan Pengguna</h3>
+<table class="no-break">
+    <tr><th style="width:150px">Peranan</th><th>Tanggungjawab Utama</th></tr>
+    <tr><td>Pemohon</td><td>Menghantar permohonan capaian, menyemak status permohonan sendiri.</td></tr>
+    <tr><td>Pengarah Jabatan</td><td>Memperakukan (meluluskan/menolak) permohonan kakitangan jabatannya.</td></tr>
+    <tr><td>Pengarah JTIK</td><td>Memberi kelulusan muktamad sebelum akses diberikan.</td></tr>
+    <tr><td>Admin IT</td><td>Memberi akses sistem mengikut sistem yang ditugaskan kepadanya.</td></tr>
+    <tr><td>Penyemak IT</td><td>Menyemak ketepatan pemberian akses; boleh memberi akses semua sistem; memantau permohonan dalam proses.</td></tr>
+</table>
+
+<h3>2.3 Aliran Kerja Permohonan</h3>
+<ol>
+    <li><b>Pemohon</b> mengisi dan menghantar borang permohonan.</li>
+    <li><b>Pengarah Jabatan</b> memperakukan permohonan (Status: Menunggu Kelulusan Pengarah JTIK).</li>
+    <li><b>Pengarah JTIK</b> meluluskan permohonan (Status: Menunggu Akses JTIK).</li>
+    <li><b>Admin IT</b> memberikan akses (Status: Akses Diberikan).</li>
+    <li><b>Penyemak IT</b> menyemak dan mengesahkan pemberian akses (semakan dalaman).</li>
+</ol>
+<p class="muted">Nota: Langkah penyemakan oleh Penyemak IT adalah proses dalaman dan tidak dipaparkan kepada pemohon. Pemohon hanya melihat status "Akses Telah Diberikan oleh Admin IT".</p>
+
+<!-- ============ 3. KEPERLUAN FUNGSIAN ============ -->
+<h2 class="page-break">3. Keperluan Fungsian</h2>
+
+<h3>3.1 Log Masuk &amp; Keselamatan Capaian</h3>
+<table>
+    <tr><th style="width:70px">ID</th><th>Keperluan</th></tr>
+    <tr><td class="req-id">KF-01</td><td>Sistem hendaklah menyediakan skrin log masuk menggunakan nama pengguna dan kata laluan.</td></tr>
+    <tr><td class="req-id">KF-02</td><td>Kata laluan hendaklah disimpan dalam bentuk cincangan (hash) yang selamat.</td></tr>
+    <tr><td class="req-id">KF-03</td><td>Sistem hendaklah menghalakan pengguna ke papan pemuka mengikut peranan selepas log masuk berjaya.</td></tr>
+    <tr><td class="req-id">KF-04</td><td>Setiap halaman hendaklah menyekat capaian mengikut peranan (pengguna tidak dibenarkan mencapai fungsi luar perananya).</td></tr>
+</table>
+
+<h3>3.2 Semakan Pendaftaran Kakitangan</h3>
+<table>
+    <tr><th style="width:70px">ID</th><th>Keperluan</th></tr>
+    <tr><td class="req-id">KF-05</td><td>Sistem hendaklah membenarkan semakan sama ada No. Kakitangan telah didaftarkan dalam Sistem Gaji.</td></tr>
+    <tr><td class="req-id">KF-06</td><td>Jika data tiada dalam Sistem Gaji, sistem hendaklah memaparkan makluman supaya pemohon menghubungi Unit Gaji terlebih dahulu, dan menyekat permohonan.</td></tr>
+</table>
+
+<h3>3.3 Permohonan Capaian (Pemohon)</h3>
+<table>
+    <tr><th style="width:70px">ID</th><th>Keperluan</th></tr>
+    <tr><td class="req-id">KF-07</td><td>Maklumat kakitangan (nama, jawatan, gred, jabatan, telefon) hendaklah diisi secara automatik dari Sistem Gaji dan tidak boleh diubah oleh pemohon.</td></tr>
+    <tr><td class="req-id">KF-08</td><td>Pemohon hendaklah memilih Tujuan Permohonan (Permohonan Baharu / Kemaskini Capaian / Pembatalan Capaian) secara wajib.</td></tr>
+    <tr><td class="req-id">KF-09</td><td>Pemohon boleh memilih satu atau lebih sistem, menetapkan Peranan dan Had Kuasa bagi setiap sistem, serta catatan.</td></tr>
+    <tr><td class="req-id">KF-10</td><td>Had Kuasa hendaklah diisi secara automatik mengikut Peranan yang dipilih dan boleh dilaraskan.</td></tr>
+    <tr><td class="req-id">KF-11</td><td>Sistem yang permohonannya masih dalam proses hendaklah dihalang daripada dipohon semula, dengan makluman kepada pemohon.</td></tr>
+    <tr><td class="req-id">KF-12</td><td>Bagi setiap sistem, nama Admin IT (pemberi akses) yang bertanggungjawab hendaklah dipaparkan.</td></tr>
+    <tr><td class="req-id">KF-13</td><td>Pemohon boleh menyemak status dan senarai sistem bagi setiap permohonannya melalui papan pemuka.</td></tr>
+</table>
+
+<h3>3.4 Perakuan Pengarah Jabatan</h3>
+<table>
+    <tr><th style="width:70px">ID</th><th>Keperluan</th></tr>
+    <tr><td class="req-id">KF-14</td><td>Pengarah Jabatan hanya melihat permohonan bagi jabatan yang ditugaskan kepadanya.</td></tr>
+    <tr><td class="req-id">KF-15</td><td>Pengarah boleh meluluskan (memperaku) atau menolak permohonan berserta alasan.</td></tr>
+    <tr><td class="req-id">KF-16</td><td>Sistem hendaklah menyokong tindakan pukal (luluskan/tolak banyak permohonan serentak).</td></tr>
+</table>
+
+<h3>3.5 Kelulusan Pengarah JTIK</h3>
+<table>
+    <tr><th style="width:70px">ID</th><th>Keperluan</th></tr>
+    <tr><td class="req-id">KF-17</td><td>Pengarah JTIK boleh meluluskan atau menolak permohonan yang telah diperakukan Pengarah Jabatan.</td></tr>
+    <tr><td class="req-id">KF-18</td><td>Sistem hendaklah menyokong tindakan pukal bagi kelulusan JTIK.</td></tr>
+</table>
+
+<h3>3.6 Pemberian Akses (Admin IT)</h3>
+<table>
+    <tr><th style="width:70px">ID</th><th>Keperluan</th></tr>
+    <tr><td class="req-id">KF-19</td><td>Admin IT hanya melihat/memproses permohonan yang mengandungi sistem yang ditugaskan kepadanya.</td></tr>
+    <tr><td class="req-id">KF-20</td><td>Nama dan cop jawatan Pemberi Akses hendaklah diisi automatik dari rekod gaji pengguna yang log masuk.</td></tr>
+    <tr><td class="req-id">KF-21</td><td>Selepas akses diberikan, status permohonan bertukar kepada "Akses Diberikan".</td></tr>
+</table>
+
+<h3>3.7 Semakan (Penyemak IT)</h3>
+<table>
+    <tr><th style="width:70px">ID</th><th>Keperluan</th></tr>
+    <tr><td class="req-id">KF-22</td><td>Penyemak IT hendaklah dapat menyemak dan mengesahkan pemberian akses yang dilaksanakan oleh Admin IT.</td></tr>
+    <tr><td class="req-id">KF-23</td><td>Penyemak IT hendaklah dapat memantau semua permohonan yang masih dalam proses (belum diberi akses), termasuk Admin IT yang bertanggungjawab.</td></tr>
+    <tr><td class="req-id">KF-24</td><td>Penyemak IT boleh juga memberi akses bagi semua sistem tanpa had.</td></tr>
+    <tr><td class="req-id">KF-25</td><td>Langkah semakan adalah dalaman dan tidak dipaparkan kepada pemohon.</td></tr>
+</table>
+
+<h3>3.8 Modul Tetapan (Admin IT)</h3>
+<table>
+    <tr><th style="width:70px">ID</th><th>Keperluan</th></tr>
+    <tr><td class="req-id">KF-26</td><td><b>Tetapan Sistem</b> — tambah/kemaskini/aktif-nyahaktif senarai sistem yang boleh dipohon.</td></tr>
+    <tr><td class="req-id">KF-27</td><td><b>Tetapan Peranan &amp; Had Kuasa</b> — tambah/kemaskini peranan berserta had kuasa (fungsi dibenarkan).</td></tr>
+    <tr><td class="req-id">KF-28</td><td><b>Tetapan Pengarah</b> — petakan jabatan kepada Pengarah Jabatan (penghalaan automatik).</td></tr>
+    <tr><td class="req-id">KF-29</td><td><b>Tetapan Admin Sistem</b> — petakan sistem kepada Admin IT yang bertanggungjawab.</td></tr>
+    <tr><td class="req-id">KF-30</td><td><b>Tetapan Penyemak</b> — daftar penyemak (dihadkan kepada seorang sahaja).</td></tr>
+</table>
+
+<h3>3.9 Jejak Audit</h3>
+<table>
+    <tr><th style="width:70px">ID</th><th>Keperluan</th></tr>
+    <tr><td class="req-id">KF-31</td><td>Setiap tindakan penting (permohonan baharu, perakuan, kelulusan, pemberian akses, semakan) hendaklah direkod dalam jejak audit (siapa, bila, tindakan, catatan).</td></tr>
+    <tr><td class="req-id">KF-32</td><td>Jejak audit hendaklah boleh dilihat oleh peranan dalaman sahaja dan tidak dipaparkan kepada pemohon.</td></tr>
+</table>
+
+<!-- ============ 4. STATUS PERMOHONAN ============ -->
+<h2 class="page-break">4. Status Permohonan</h2>
+<table class="no-break">
+    <tr><th style="width:220px">Status</th><th>Maksud</th></tr>
+    <tr><td>Menunggu Pengarah Jabatan</td><td>Baru dihantar, menunggu perakuan Pengarah Jabatan.</td></tr>
+    <tr><td>Menunggu Kelulusan Pengarah JTIK</td><td>Telah diperaku Pengarah Jabatan, menunggu kelulusan JTIK.</td></tr>
+    <tr><td>Menunggu Akses JTIK</td><td>Telah diluluskan JTIK, menunggu Admin IT memberi akses.</td></tr>
+    <tr><td>Akses Diberikan</td><td>Akses telah diberikan; proses selesai bagi pemohon.</td></tr>
+    <tr><td>Tidak Diluluskan</td><td>Permohonan ditolak (di peringkat Pengarah Jabatan atau JTIK).</td></tr>
+</table>
+
+<!-- ============ 5. KEPERLUAN BUKAN FUNGSIAN ============ -->
+<h2>5. Keperluan Bukan Fungsian</h2>
+<table>
+    <tr><th style="width:70px">ID</th><th>Keperluan</th></tr>
+    <tr><td class="req-id">KBF-01</td><td><b>Kebolehgunaan</b> — antara muka kemas, formal dan mudah dibaca; menyokong paparan telefon pintar (responsif).</td></tr>
+    <tr><td class="req-id">KBF-02</td><td><b>Keselamatan</b> — kawalan capaian mengikut peranan; kata laluan dicincang; sekatan pengesahan di pihak pelayan.</td></tr>
+    <tr><td class="req-id">KBF-03</td><td><b>Integriti Data</b> — maklumat kakitangan diambil dari sumber rasmi (Sistem Gaji); sekatan permohonan berganda.</td></tr>
+    <tr><td class="req-id">KBF-04</td><td><b>Kebolehselenggaraan</b> — senarai sistem, peranan, pengarah dan admin boleh diurus melalui modul tetapan tanpa mengubah kod.</td></tr>
+    <tr><td class="req-id">KBF-05</td><td><b>Keserasian Pangkalan Data</b> — capaian data melalui PDO; menyokong penghijrahan ke Oracle (tetapan sambungan diasingkan).</td></tr>
+    <tr><td class="req-id">KBF-06</td><td><b>Kebolehjejakan</b> — semua tindakan penting direkod untuk tujuan audit.</td></tr>
+</table>
+
+<!-- ============ 6. ANDAIAN & KEKANGAN ============ -->
+<h2>6. Andaian &amp; Kekangan</h2>
+<ul>
+    <li>Data kakitangan yang sah telah sedia ada dalam Sistem Gaji sebagai sumber rujukan.</li>
+    <li>Setiap jabatan mempunyai seorang Pengarah Jabatan yang bertanggungjawab.</li>
+    <li>Setiap sistem dipetakan kepada sekurang-kurangnya seorang Admin IT.</li>
+    <li>Sistem hanya membenarkan seorang Penyemak IT pada satu-satu masa.</li>
+    <li>Capaian sistem memerlukan sambungan rangkaian dalaman MBSP.</li>
+</ul>
+
+<!-- ============ LAMPIRAN ============ -->
+<h2 class="page-break">Lampiran A: Senarai Peranan &amp; Had Kuasa (Contoh)</h2>
+<table class="no-break">
+    <tr><th>Peranan</th><th>Had Kuasa (Fungsi Dibenarkan)</th></tr>
+    <tr><td>PENGGUNA JAB</td><td>Penyedia, Pengemaskini, Pelapor</td></tr>
+    <tr><td>PIC JABATAN</td><td>Penyedia, Pengemaskini, Penyemak, Pelapor</td></tr>
+    <tr><td>ADMIN SISTEM</td><td>Penyedia, Pengemaskini, Penyemak, Pelapor, Penghapus</td></tr>
+    <tr><td>KETUA JABATAN</td><td>Penyemak, Pelapor, Pengesah, Pelulus</td></tr>
+    <tr><td>DB/SUB</td><td>Penyedia, Pengemaskini, Penyemak, Pelapor, Penghapus</td></tr>
+</table>
+
+<h2>Lampiran B: Pengesahan Dokumen</h2>
+<table class="no-break">
+    <tr><th style="width:33%">Disediakan Oleh</th><th style="width:33%">Disemak Oleh</th><th>Diluluskan Oleh</th></tr>
+    <tr>
+        <td style="height:70px">Nama:<br>Jawatan:<br>Tarikh:</td>
+        <td>Nama:<br>Jawatan:<br>Tarikh:</td>
+        <td>Nama:<br>Jawatan:<br>Tarikh:</td>
+    </tr>
+</table>
+
+<p style="margin-top:26px;text-align:center;color:#6b7280;font-size:9pt">&mdash; Tamat Dokumen &mdash;<br>&copy; 2026 Majlis Bandaraya Seberang Perai</p>
+
+</body>
+</html>
