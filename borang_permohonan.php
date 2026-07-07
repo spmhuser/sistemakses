@@ -31,6 +31,24 @@ $adminBySistem = [];
 foreach ($db->query("SELECT id_sistem, nama_admin FROM sistem_admin WHERE status = 1 AND nama_admin IS NOT NULL AND nama_admin <> '' ORDER BY nama_admin")->fetchAll() as $row) {
     $adminBySistem[(int)$row['id_sistem']][] = $row['nama_admin'];
 }
+
+// Mohon semula: prefill dari permohonan lama (mesti milik pemohon). Guna untuk permohonan yang ditolak.
+$resubmit = null;
+$rid = (int)($_GET['resubmit'] ?? 0);
+if ($rid && $g) {
+    $rq = $db->prepare("SELECT * FROM permohonan WHERE id=? AND user_id=?");
+    $rq->execute([$rid, $_SESSION['user_id']]);
+    if ($rp = $rq->fetch()) {
+        $resubmit = ['id'=>$rp['id'], 'no_rujukan'=>$rp['no_rujukan'], 'tujuan'=>$rp['tujuan'], 'sistem'=>[]];
+        $rs = $db->prepare("SELECT * FROM permohonan_sistem WHERE permohonan_id=? ORDER BY bil");
+        $rs->execute([$rid]);
+        foreach ($rs->fetchAll() as $srow) {
+            $hk = [];
+            foreach (SENARAI_FUNGSI as $f) $hk[$f] = (int)($srow[$f] ?? 0);
+            $resubmit['sistem'][(int)$srow['bil']] = ['peranan'=>$srow['peranan_sistem'], 'catatan'=>$srow['catatan'] ?? '', 'hk'=>$hk];
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -133,6 +151,11 @@ foreach ($db->query("SELECT id_sistem, nama_admin FROM sistem_admin WHERE status
     <?php if (($_GET['error'] ?? '') === 'simpan'): ?>
     <div class="locked-note" style="color:#B42318;background:#FFE2E0;border-color:#F3B4B0;margin-bottom:18px">
         <i class="bi bi-exclamation-triangle"></i> Permohonan gagal disimpan. Sila cuba semula. Tiada data separa direkodkan.
+    </div>
+    <?php endif; ?>
+    <?php if ($resubmit): ?>
+    <div class="locked-note" style="color:#2862C0;background:#E6EFFA;border-color:#BFD2EC;margin-bottom:18px">
+        <i class="bi bi-arrow-repeat"></i> Anda sedang <b>memohon semula</b> berdasarkan permohonan <b><?= htmlspecialchars($resubmit['no_rujukan'] ?? ('#'.$resubmit['id'])) ?></b>. Semak &amp; kemas kini maklumat sebelum hantar.
     </div>
     <?php endif; ?>
     <form method="POST" action="submit_permohonan.php" id="mainForm">
@@ -389,6 +412,28 @@ function toggleRow(chk, bil) {
         row.style.background = '';
         disableHadKuasa(bil);
     }
+}
+
+// Mohon semula: prefill borang dari permohonan lama
+const RESUBMIT = <?= $resubmit ? json_encode($resubmit) : 'null' ?>;
+if (RESUBMIT) {
+    const tj = document.querySelector('input[name="tujuan"][value="' + RESUBMIT.tujuan + '"]');
+    if (tj) { tj.checked = true; toggleSistem(tj); }
+    Object.keys(RESUBMIT.sistem).forEach(function(bil){
+        const info = RESUBMIT.sistem[bil];
+        const cb = document.querySelector('input[name="sistem[]"][value="' + bil + '"]');
+        if (!cb) return; // sistem tidak aktif atau sedang dalam proses — langkau
+        cb.checked = true;
+        toggleRow(cb, bil);
+        const sel = document.getElementById('ps-' + bil);
+        if (sel && info.peranan) sel.value = info.peranan;
+        const cat = document.getElementById('cat-' + bil);
+        if (cat) cat.value = info.catatan || '';
+        senaraiFungsi.forEach(function(f){
+            const hkcb = document.getElementById('hk-' + bil + '-' + f);
+            if (hkcb) hkcb.checked = !!(info.hk && info.hk[f]);
+        });
+    });
 }
 </script>
 <?php endif; ?>

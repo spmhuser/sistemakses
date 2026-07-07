@@ -277,6 +277,9 @@ $backUrl = match($_SESSION['role']) {
     <?php if ($_SESSION['role'] === 'penyemak_it' && $r['status'] === 'AKSES_DIBERIKAN' && empty($r['it_penyemak_nama'])): ?>
     <div style="margin-top:8px"><a href="tindakan_semakan.php?id=<?=$r['id']?>" class="btn-primary-dark"><i class="bi bi-patch-check"></i> Sahkan Semakan</a></div>
     <?php endif; ?>
+    <?php if ($_SESSION['role'] === 'pemohon' && $ditolak): ?>
+    <div style="margin-top:8px"><a href="borang_permohonan.php?resubmit=<?=$r['id']?>" class="btn-primary-dark"><i class="bi bi-arrow-repeat"></i> Mohon Semula</a></div>
+    <?php endif; ?>
 
     <!-- AUDIT TRAIL — jejak dalaman untuk pegawai sahaja; disembunyikan daripada pemohon -->
     <?php if ($_SESSION['role'] !== 'pemohon'): ?>
