@@ -64,6 +64,7 @@ if ($msg==='toggle') toastHTML('Status tugasan berjaya dikemas kini.');
 ?>
 <?php sidebarHTML($_SESSION['nama'] ?? $_SESSION['username'], 'Admin IT', [
     ['href'=>'dashboard_admin_it.php',   'icon'=>'bi-grid-1x2',     'label'=>'Dashboard',          'active'=>false],
+    ['href'=>'laporan.php',              'icon'=>'bi-bar-chart-line','label'=>'Laporan & Statistik','active'=>false],
     ['href'=>'tetapan_sistem.php',       'icon'=>'bi-hdd-stack',    'label'=>'Tetapan Sistem',     'active'=>false],
     ['href'=>'tetapan_peranan.php',      'icon'=>'bi-diagram-3',    'label'=>'Tetapan Peranan',    'active'=>false],
     ['href'=>'tetapan_pengarah.php',     'icon'=>'bi-person-badge', 'label'=>'Tetapan Pengarah',   'active'=>false],
