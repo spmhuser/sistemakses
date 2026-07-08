@@ -477,10 +477,13 @@ function appConfirm(message, onOk, okLabel, showCancel){
     okBtn.innerHTML = '<i class="bi bi-check-lg"></i> ' + (okLabel || 'Teruskan');
     cancelBtn.style.display = (showCancel === false) ? 'none' : '';
     ov.classList.add('show');
-    function close(){ ov.classList.remove('show'); }
+    function close(){ ov.classList.remove('show'); document.removeEventListener('keydown', onKey); }
+    function onKey(ev){ if(ev.key === 'Escape') close(); else if(ev.key === 'Enter'){ close(); if(onOk) onOk(); } }
     okBtn.onclick = function(){ close(); if(onOk) onOk(); };
     cancelBtn.onclick = close;
     ov.onclick = function(e){ if(e.target === ov) close(); };
+    document.addEventListener('keydown', onKey);
+    setTimeout(function(){ okBtn.focus(); }, 60);
 }
 function appAlert(message, okLabel){ appConfirm(message, null, okLabel || 'OK', false); }
 
