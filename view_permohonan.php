@@ -84,7 +84,10 @@ $backUrl = match($_SESSION['role']) {
                 <h4>Permohonan #<?= htmlspecialchars($r['no_rujukan'] ?? $r['id']) ?></h4>
                 <p><?= tujuanLabel($r['tujuan']) ?> &nbsp;|&nbsp; <span class="badge-status <?= statusClass($r['status']) ?>"><?= statusLabel($r['status']) ?></span></p>
             </div>
-            <a href="<?=$backUrl?>" class="btn-secondary-soft"><i class="bi bi-arrow-left"></i> Kembali</a>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <a href="cetak_borang.php?id=<?=$r['id']?>" target="_blank" class="btn-primary-dark"><i class="bi bi-printer"></i> Cetak Borang</a>
+                <a href="<?=$backUrl?>" class="btn-secondary-soft"><i class="bi bi-arrow-left"></i> Kembali</a>
+            </div>
         </div>
     </div>
 
