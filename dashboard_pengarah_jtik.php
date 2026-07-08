@@ -84,7 +84,7 @@ $sysByPerm = getSistemNamaByPermohonan(array_column($all,'id'));
     </div>
 
     <div id="tab-proses" class="dash-tab-pane active">
-        <form method="POST" action="bulk_action.php" id="bulkForm" onsubmit="return confirmBulk()">
+        <form method="POST" action="bulk_action.php" id="bulkForm" class="js-custom">
         <div class="bulk-bar">
             <label class="bulk-chk"><input type="checkbox" id="selAll" onclick="toggleAll(this)"> Pilih Semua</label>
             <span id="selCount" class="bulk-count">0 dipilih</span>
@@ -166,12 +166,17 @@ function updCount(){
     const n = document.querySelectorAll('#bulkForm .rowchk:checked').length;
     document.getElementById('selCount').textContent = n + ' dipilih';
 }
-function confirmBulk(){
+document.getElementById('bulkForm').addEventListener('submit', function(e){
+    e.preventDefault();
     const n = document.querySelectorAll('#bulkForm .rowchk:checked').length;
     const act = document.getElementById('bulkAct').value;
-    if(n === 0){ alert('Sila pilih sekurang-kurangnya satu permohonan.'); return false; }
-    if(!act){ alert('Sila pilih tindakan pukal.'); return false; }
-    return confirm('Laksana tindakan "' + act.toUpperCase() + '" untuk ' + n + ' permohonan?');
-}
+    if(n === 0){ appAlert('Sila pilih sekurang-kurangnya satu permohonan.'); return; }
+    if(!act){ appAlert('Sila pilih tindakan pukal.'); return; }
+    const self = this;
+    appConfirm('Laksana tindakan "' + act.toUpperCase() + '" untuk ' + n + ' permohonan?', function(){
+        btnLoading(self.querySelector('[type=submit]'));
+        self.submit();
+    }, 'Laksana');
+});
 </script>
 </body></html>

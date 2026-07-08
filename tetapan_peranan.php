@@ -135,7 +135,7 @@ if ($msg === 'dup')    toastHTML('Kod peranan sudah wujud.', 'error');
                                 onclick='openEdit(<?= (int)$r["id"] ?>, <?= htmlspecialchars(json_encode($r["kod"]), ENT_QUOTES) ?>, <?= htmlspecialchars(json_encode($r["nama"]), ENT_QUOTES) ?>, <?= htmlspecialchars(json_encode(["penyedia"=>(int)$r["penyedia"],"pengemaskini"=>(int)$r["pengemaskini"],"penyemak"=>(int)$r["penyemak"],"pelapor"=>(int)$r["pelapor"],"pengesah"=>(int)$r["pengesah"],"pelulus"=>(int)$r["pelulus"],"penghapus"=>(int)$r["penghapus"]]), ENT_QUOTES) ?>)'>
                                 <i class="bi bi-pencil"></i> Edit
                             </button>
-                            <form method="POST" style="margin:0" onsubmit="return confirm('Tukar status peranan ini?')">
+                            <form method="POST" style="margin:0" data-confirm="Tukar status peranan ini?">
                                 <input type="hidden" name="act" value="toggle">
                                 <input type="hidden" name="id" value="<?=$r['id']?>">
                                 <?php if ($r['status'] == 1): ?>

@@ -277,6 +277,45 @@ table.data-table tbody tr:hover td { background: #EFF4FC; }
 .filter-bar .flt-empty { display: none; padding: 30px; text-align: center; color: #8A93A0; }
 @media (max-width: 600px) { .filter-bar .flt-sel { flex: 1 1 auto; } }
 
+/* ===================== KEPALA JADUAL MELEKAT ===================== */
+table.data-table thead th { position: sticky; top: 0; z-index: 2; }
+
+/* ===================== SPINNER / LOADING BUTANG ===================== */
+.spin { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.45); border-top-color: #fff; border-radius: 50%; animation: acspin .6s linear infinite; vertical-align: -2px; margin-right: 6px; }
+@keyframes acspin { to { transform: rotate(360deg); } }
+
+/* ===================== MODAL PENGESAHAN GLOBAL ===================== */
+.app-confirm-overlay { position: fixed; inset: 0; background: rgba(30,58,95,0.55); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); display: none; align-items: center; justify-content: center; z-index: 11000; padding: 18px; }
+.app-confirm-overlay.show { display: flex; }
+.app-confirm-box { background: #fff; border-radius: 18px; max-width: 420px; width: 100%; padding: 28px 26px 22px; text-align: center; box-shadow: 0 24px 60px rgba(30,58,95,0.4); animation: acPop .18s ease; }
+@keyframes acPop { from { transform: scale(.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.app-confirm-ic { width: 58px; height: 58px; border-radius: 50%; background: linear-gradient(135deg,#2E73D8,#1FBCD4); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 14px; }
+.app-confirm-msg { color: #1E3A5F; font-weight: 600; font-size: 1.02rem; line-height: 1.5; margin-bottom: 20px; }
+.app-confirm-actions { display: flex; gap: 10px; }
+.app-confirm-actions button { flex: 1; border: none; border-radius: 11px; padding: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: filter .15s; }
+.app-confirm-actions button:hover { filter: brightness(1.05); }
+.app-confirm-actions .ac-cancel { background: #EEF2F7; color: #5B6675; }
+.app-confirm-actions .ac-ok { background: linear-gradient(135deg,#1E3A5F,#2C5488); color: #fff; }
+
+/* ===================== BUTANG SALIN ===================== */
+.btn-copy { border: none; background: #E6EFFA; color: #2C5488; border-radius: 7px; padding: 3px 10px; font-size: 0.76rem; font-weight: 700; cursor: pointer; margin-left: 10px; vertical-align: middle; }
+.btn-copy:hover { background: #D3E4F7; }
+
+/* ===================== STEPPER STATUS ===================== */
+.stepper { display: flex; margin: 6px 0 2px; flex-wrap: nowrap; overflow-x: auto; }
+.step { flex: 1 0 0; min-width: 92px; text-align: center; position: relative; padding-top: 30px; }
+.step::before { content: ''; position: absolute; top: 13px; left: -50%; width: 100%; height: 3px; background: #DCE6F2; z-index: 0; }
+.step:first-child::before { display: none; }
+.step .dot { position: absolute; top: 2px; left: 50%; transform: translateX(-50%); width: 26px; height: 26px; border-radius: 50%; background: #DCE6F2; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; z-index: 1; }
+.step.done .dot { background: #18A957; }
+.step.done::before { background: #18A957; }
+.step.active .dot { background: #2E73D8; box-shadow: 0 0 0 4px rgba(46,115,216,0.20); }
+.step.reject .dot { background: #E23B36; }
+.step.reject::before { background: #E23B36; }
+.step .lbl { font-size: 0.72rem; color: #8A93A0; font-weight: 600; line-height: 1.3; display: block; padding: 0 4px; }
+.step.done .lbl, .step.active .lbl { color: #1E3A5F; }
+.step.reject .lbl { color: #B42318; }
+
 /* ===================== MOBILE / RESPONSIVE ===================== */
 .mobile-topbar { display: none; }
 .sidebar-overlay { display: none; }
@@ -423,6 +462,61 @@ function initFilters(){
     });
 }
 document.addEventListener('DOMContentLoaded', initFilters);
+
+// ===== Modal pengesahan / makluman global =====
+function appConfirm(message, onOk, okLabel, showCancel){
+    var ov = document.getElementById('appConfirm');
+    if(!ov){
+        ov = document.createElement('div');
+        ov.id = 'appConfirm'; ov.className = 'app-confirm-overlay';
+        ov.innerHTML = '<div class="app-confirm-box"><div class="app-confirm-ic"><i class="bi bi-question-lg"></i></div><div class="app-confirm-msg"></div><div class="app-confirm-actions"><button type="button" class="ac-cancel"><i class="bi bi-x-lg"></i> Batal</button><button type="button" class="ac-ok"></button></div></div>';
+        document.body.appendChild(ov);
+    }
+    ov.querySelector('.app-confirm-msg').textContent = message || 'Adakah anda pasti?';
+    var okBtn = ov.querySelector('.ac-ok'), cancelBtn = ov.querySelector('.ac-cancel');
+    okBtn.innerHTML = '<i class="bi bi-check-lg"></i> ' + (okLabel || 'Teruskan');
+    cancelBtn.style.display = (showCancel === false) ? 'none' : '';
+    ov.classList.add('show');
+    function close(){ ov.classList.remove('show'); }
+    okBtn.onclick = function(){ close(); if(onOk) onOk(); };
+    cancelBtn.onclick = close;
+    ov.onclick = function(e){ if(e.target === ov) close(); };
+}
+function appAlert(message, okLabel){ appConfirm(message, null, okLabel || 'OK', false); }
+
+// ===== Loading state butang hantar (elak klik berganda) =====
+function btnLoading(btn){
+    if(!btn || btn.getAttribute('data-loading')) return;
+    btn.setAttribute('data-loading','1');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin"></span> Memproses...';
+}
+
+// Global: borang dgn data-confirm -> modal; selain itu -> loading state
+document.addEventListener('submit', function(e){
+    var f = e.target;
+    if(!f || !f.tagName || f.classList.contains('js-custom')) return;
+    if(f.getAttribute('data-confirm') && f.getAttribute('data-ok') !== '1'){
+        e.preventDefault();
+        appConfirm(f.getAttribute('data-confirm'), function(){
+            f.setAttribute('data-ok','1');
+            btnLoading(f.querySelector('[type=submit]'));
+            f.submit();
+        });
+        return;
+    }
+    var b = f.querySelector('[type=submit]');
+    if(b && !b.hasAttribute('data-no-spin')) btnLoading(b);
+}, true);
+
+// ===== Salin teks ke papan keratan =====
+function copyText(txt, el){
+    if(navigator.clipboard){
+        navigator.clipboard.writeText(txt).then(function(){
+            if(el){ var o = el.innerHTML; el.innerHTML = '<i class="bi bi-check-lg"></i> Disalin'; setTimeout(function(){ el.innerHTML = o; }, 1400); }
+        });
+    }
+}
 </script>
 <?php }
 

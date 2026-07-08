@@ -121,7 +121,7 @@ if ($msg === 'toggle') toastHTML('Status sistem berjaya dikemas kini.');
                                 onclick='openEdit(<?= (int)$r["id_sistem"] ?>, <?= htmlspecialchars(json_encode($r["nama_sistem"]), ENT_QUOTES) ?>, <?= htmlspecialchars(json_encode($r["kod_sistem"]), ENT_QUOTES) ?>)'>
                                 <i class="bi bi-pencil"></i> Edit
                             </button>
-                            <form method="POST" style="margin:0" onsubmit="return confirm('Tukar status sistem ini?')">
+                            <form method="POST" style="margin:0" data-confirm="Tukar status sistem ini?">
                                 <input type="hidden" name="act" value="toggle">
                                 <input type="hidden" name="id_sistem" value="<?=$r['id_sistem']?>">
                                 <?php if ($r['status'] == 1): ?>

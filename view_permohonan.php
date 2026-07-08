@@ -44,6 +44,17 @@ if ($ditolak) {
     }
 }
 
+// Stepper status permohonan
+$steps = [['Dihantar','bi-send'], ['Pengarah Jabatan','bi-person-check'], ['Pengarah JTIK','bi-check2-square'], ['Akses Diberikan','bi-key']];
+$stepState = array_fill(0, 4, '');
+if ($ditolak) {
+    $stepState = (($r['kelulusan_jtik'] ?? '') === 'TIDAK_DILULUSKAN') ? ['done','done','reject',''] : ['done','reject','',''];
+} else {
+    $active = ['MENUNGGU_PENGARAH_JAB'=>1, 'MENUNGGU_JTIK'=>2, 'DILULUSKAN'=>3, 'AKSES_DIBERIKAN'=>4][$r['status']] ?? 0;
+    for ($i = 0; $i < 4; $i++) if ($i < $active) $stepState[$i] = 'done';
+    if ($active >= 1 && $active <= 3) $stepState[$active] = 'active';
+}
+
 $audit = getAuditTrail($id);
 
 
@@ -81,12 +92,28 @@ $backUrl = match($_SESSION['role']) {
         </ol></nav>
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
             <div>
-                <h4>Permohonan #<?= htmlspecialchars($r['no_rujukan'] ?? $r['id']) ?></h4>
+                <h4>Permohonan #<?= htmlspecialchars($r['no_rujukan'] ?? $r['id']) ?>
+                    <button type="button" class="btn-copy" onclick="copyText(<?= htmlspecialchars(json_encode($r['no_rujukan'] ?? (string)$r['id']), ENT_QUOTES) ?>, this)"><i class="bi bi-clipboard"></i> Salin</button>
+                </h4>
                 <p><?= tujuanLabel($r['tujuan']) ?> &nbsp;|&nbsp; <span class="badge-status <?= statusClass($r['status']) ?>"><?= statusLabel($r['status']) ?></span></p>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
                 <a href="cetak_borang.php?id=<?=$r['id']?>" target="_blank" class="btn-primary-dark"><i class="bi bi-printer"></i> Cetak Borang</a>
                 <a href="<?=$backUrl?>" class="btn-secondary-soft"><i class="bi bi-arrow-left"></i> Kembali</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stepper Status -->
+    <div class="view-card">
+        <div class="view-card-body" style="padding-top:14px;padding-bottom:6px">
+            <div class="stepper">
+                <?php foreach ($steps as $i => $sp): $stt = $stepState[$i]; ?>
+                <div class="step <?= $stt ?>">
+                    <span class="dot"><i class="bi <?= $stt==='reject' ? 'bi-x-lg' : ($stt==='done' ? 'bi-check-lg' : $sp[1]) ?>"></i></span>
+                    <span class="lbl"><?= $sp[0] ?></span>
+                </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>

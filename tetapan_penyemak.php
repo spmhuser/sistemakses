@@ -120,7 +120,7 @@ if ($msg === 'limit')  toastHTML('Sistem hanya membenarkan seorang penyemak saha
                                 onclick='openEdit(<?= (int)$r["id"] ?>, <?= htmlspecialchars(json_encode($r["nama"]), ENT_QUOTES) ?>, <?= htmlspecialchars(json_encode($r["jawatan"]), ENT_QUOTES) ?>, <?= htmlspecialchars(json_encode($r["no_pekerja"]), ENT_QUOTES) ?>)'>
                                 <i class="bi bi-pencil"></i> Edit
                             </button>
-                            <form method="POST" style="margin:0" onsubmit="return confirm('Tukar status penyemak ini?')">
+                            <form method="POST" style="margin:0" data-confirm="Tukar status penyemak ini?">
                                 <input type="hidden" name="act" value="toggle">
                                 <input type="hidden" name="id" value="<?=$r['id']?>">
                                 <?php if ($r['status'] == 1): ?>
