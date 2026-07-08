@@ -25,6 +25,22 @@ if (!empty($r['pengarah_jtik_id'])) {
     $namaJtik = ($jn->fetch()['nama'] ?? '');
 }
 function fmtTkh($t) { return $t ? date('d/m/Y', strtotime($t)) : '.......................'; }
+
+// Blok tandatangan: jika sudah disahkan dalam sistem (ada tarikh) -> papar nama, jawatan, tarikh & masa.
+// Jika belum -> ruang tandatangan manual kosong.
+function sahBox($nama, $jawatan, $tarikh, $labelKosong = 'Tandatangan') {
+    if ($tarikh) {
+        $masa = date('d/m/Y  H:i', strtotime($tarikh));
+        $h  = '<div class="sah">';
+        $h .= '<div class="sah-badge"><i class="bi bi-patch-check-fill"></i> DISAHKAN DALAM SISTEM</div>';
+        $h .= '<div class="sah-nama">' . htmlspecialchars($nama ?: '-') . '</div>';
+        if ($jawatan) $h .= '<div class="sah-jaw">' . htmlspecialchars($jawatan) . '</div>';
+        $h .= '<div class="sah-masa"><i class="bi bi-clock"></i> Tarikh &amp; Masa: <b>' . $masa . '</b></div>';
+        $h .= '</div>';
+        return $h;
+    }
+    return '<div class="sign-line">' . htmlspecialchars($labelKosong) . '<br><span style="color:#888">( menunggu tindakan )</span></div>';
+}
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -58,6 +74,11 @@ function fmtTkh($t) { return $t ? date('d/m/Y', strtotime($t)) : '..............
     .sign-row { display:flex; gap:26px; margin-top:16px; }
     .sign-box { flex:1; }
     .sign-line { border-top:1px solid #000; margin-top:34px; padding-top:4px; font-size:9pt; }
+    .sah { border:1px solid #18A957; background:#F0FBF4; border-radius:8px; padding:8px 11px; margin-top:6px; }
+    .sah-badge { display:inline-block; background:#18A957; color:#fff; font-size:7.5pt; font-weight:700; padding:2px 9px; border-radius:20px; letter-spacing:0.3px; margin-bottom:5px; }
+    .sah-nama { font-weight:700; font-size:10.5pt; color:#000; }
+    .sah-jaw { font-size:9pt; color:#333; }
+    .sah-masa { font-size:8.5pt; color:#155e34; margin-top:4px; }
     .kv { font-size:9.5pt; margin:3px 0; }
     .kv b { display:inline-block; min-width:130px; }
     .status-line { font-size:9.5pt; margin-bottom:10px; }
@@ -141,8 +162,8 @@ function fmtTkh($t) { return $t ? date('d/m/Y', strtotime($t)) : '..............
         <div class="sec-b">
             <div class="decl">Saya dengan ini mengesahkan maklumat yang diberikan di atas adalah benar dan mengaku akan bertanggungjawab terhadap capaian yang dipohon.</div>
             <div class="sign-row">
-                <div class="sign-box"><div class="sign-line">Tandatangan Pemohon<br><b><?= htmlspecialchars($r['nama']) ?></b></div></div>
-                <div class="sign-box"><div class="sign-line">Tarikh: <?= fmtTkh($r['tkh_keyin']) ?></div></div>
+                <div class="sign-box"><div style="font-size:9pt;font-weight:700;margin-bottom:2px">Pemohon</div><?= sahBox($r['nama'], $r['jawatan'], $r['tkh_keyin'], 'Tandatangan Pemohon') ?></div>
+                <div class="sign-box"></div>
             </div>
         </div>
     </div>
@@ -158,8 +179,8 @@ function fmtTkh($t) { return $t ? date('d/m/Y', strtotime($t)) : '..............
                 <?php endif; ?>
             <?php endif; ?>
             <div class="sign-row">
-                <div class="sign-box"><div class="sign-line">Tandatangan &amp; Cop<br><b><?= htmlspecialchars($r['nama_pengarah_jab'] ?: '') ?></b></div></div>
-                <div class="sign-box"><div class="sign-line">Tarikh: <?= fmtTkh($r['tarikh_pengarah_jab']) ?></div></div>
+                <div class="sign-box"><?= sahBox($r['nama_pengarah_jab'], 'Pengarah Jabatan', $r['tarikh_pengarah_jab'], 'Tandatangan & Cop Pengarah Jabatan') ?></div>
+                <div class="sign-box"></div>
             </div>
         </div>
     </div>
@@ -173,8 +194,8 @@ function fmtTkh($t) { return $t ? date('d/m/Y', strtotime($t)) : '..............
                 <?php if (!empty($r['alasan_jtik'])): ?><div class="kv"><b>Alasan:</b> <?= htmlspecialchars($r['alasan_jtik']) ?></div><?php endif; ?>
             <?php endif; ?>
             <div class="sign-row">
-                <div class="sign-box"><div class="sign-line">Tandatangan &amp; Cop<br><b><?= htmlspecialchars($namaJtik) ?></b></div></div>
-                <div class="sign-box"><div class="sign-line">Tarikh: <?= fmtTkh($r['tarikh_jtik']) ?></div></div>
+                <div class="sign-box"><?= sahBox($namaJtik, 'Pengarah JTIK', $r['tarikh_jtik'], 'Tandatangan & Cop Pengarah JTIK') ?></div>
+                <div class="sign-box"></div>
             </div>
         </div>
     </div>
@@ -186,13 +207,11 @@ function fmtTkh($t) { return $t ? date('d/m/Y', strtotime($t)) : '..............
             <div class="sign-row">
                 <div class="sign-box">
                     <div style="font-weight:700;font-size:9.5pt;margin-bottom:2px">Pemberi Akses</div>
-                    <div class="sign-line">Tandatangan &amp; Cop<br><b><?= htmlspecialchars($r['it_pemberi_nama'] ?: '') ?></b><br><span style="font-weight:400"><?= htmlspecialchars($r['it_pemberi_cop'] ?: '') ?></span></div>
-                    <div class="kv" style="margin-top:4px">Tarikh: <?= fmtTkh($r['tarikh_it']) ?></div>
+                    <?= sahBox($r['it_pemberi_nama'], $r['it_pemberi_cop'] ?: 'Admin IT (JTIK)', $r['tarikh_it'], 'Tandatangan & Cop Pemberi Akses') ?>
                 </div>
                 <div class="sign-box">
                     <div style="font-weight:700;font-size:9.5pt;margin-bottom:2px">Penyemak</div>
-                    <div class="sign-line">Tandatangan &amp; Cop<br><b><?= htmlspecialchars($r['it_penyemak_nama'] ?: '') ?></b><br><span style="font-weight:400"><?= htmlspecialchars($r['it_penyemak_cop'] ?: '') ?></span></div>
-                    <div class="kv" style="margin-top:4px">Tarikh: <?= fmtTkh($r['tarikh_semakan']) ?></div>
+                    <?= sahBox($r['it_penyemak_nama'], $r['it_penyemak_cop'] ?: 'Penyemak IT', $r['tarikh_semakan'], 'Tandatangan & Cop Penyemak') ?>
                 </div>
             </div>
         </div>
