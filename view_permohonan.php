@@ -234,12 +234,23 @@ $backUrl = match($_SESSION['role']) {
 
     <!-- Section E - Perakuan Pengarah Jab -->
     <?php if ($r['tarikh_pengarah_jab']): ?>
+    <?php $jabTolak = ($ditolak && $tolakPeringkat === 'Pengarah Jabatan'); ?>
     <div class="view-card">
         <div class="view-card-header"><span style="background:#2C5488;color:#fff;font-size:0.82rem;font-weight:700;padding:3px 9px;border-radius:6px">E</span><h6>Perakuan Pengarah Jabatan</h6></div>
         <div class="view-card-body">
             <div class="info-row">
+                <div class="info-item"><label>Keputusan</label><div class="val">
+                    <?php if ($jabTolak): ?>
+                        <span class="badge-status badge-danger"><i class="bi bi-x-circle me-1"></i>Tidak Diperakukan</span>
+                    <?php else: ?>
+                        <span class="badge-status badge-success"><i class="bi bi-patch-check me-1"></i>Disahkan / Diperakukan</span>
+                    <?php endif; ?>
+                </div></div>
                 <div class="info-item"><label>Nama Pengarah</label><div class="val"><?= htmlspecialchars($r['nama_pengarah_jab']) ?></div></div>
-                <div class="info-item"><label>Tarikh</label><div class="val"><?= $r['tarikh_pengarah_jab'] ?></div></div>
+                <div class="info-item"><label>Tarikh &amp; Masa Disahkan</label><div class="val"><?= $r['tarikh_pengarah_jab'] ?></div></div>
+                <?php if ($jabTolak && !empty($r['alasan_pengarah_jab'])): ?>
+                <div class="info-item" style="grid-column:1/-1"><label>Alasan</label><div class="val"><?= htmlspecialchars($r['alasan_pengarah_jab']) ?></div></div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
